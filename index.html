@@ -161,6 +161,38 @@ body.mob #mechBtn{border:3px solid #3a3d42;box-shadow:inset 0 0 0 1px #8a8e96,0 
 .story{font-style:italic;font-size:14px;margin:4px 0;color:#4a2a10}
 .gemrew{font-size:13px;font-weight:bold;color:#3a5a10}.gemwarn{font-size:12px;color:#8a1a08}
 .chainh{font-size:13px;font-weight:bold;letter-spacing:1px;color:#5a1a06;text-transform:uppercase;margin-bottom:2px}
+
+/* ---- order scroll ---- */
+#fcard{display:none!important}
+#scrollOv{position:absolute;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.9));transition:background .55s;cursor:pointer;touch-action:none}
+#scrollOv.on{display:flex} #forge.scrolling #tut{opacity:0} #scrollOv.fade{background:rgba(0,0,0,0)}
+#scrollP{width:min(88vw,560px);transform-origin:50% 50%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.75))}
+#scrollP .rod{height:24px;margin:0 -16px;border-radius:12px;background:linear-gradient(#9a6a34,#4a2810 45%,#7a4c1c 70%,#2a1408);box-shadow:inset 0 2px 0 rgba(255,220,160,.35),0 4px 8px rgba(0,0,0,.6);position:relative;z-index:2}
+#scrollP .rod::before,#scrollP .rod::after{content:"";position:absolute;top:-5px;width:20px;height:34px;border-radius:8px;background:radial-gradient(circle at 40% 35%,#f0c868,#8a5c18 60%,#3a2408)}
+#scrollP .rod::before{left:-12px} #scrollP .rod::after{right:-12px}
+#scrollP .parch{margin:-5px 4px;padding:18px 24px 14px;color:#3a200c;text-align:center;font-family:Georgia,serif;
+ background:radial-gradient(ellipse at 50% 40%,rgba(255,250,228,.85),rgba(255,250,228,0) 70%),radial-gradient(circle at 18% 78%,rgba(120,70,20,.18),transparent 30%),radial-gradient(circle at 84% 22%,rgba(120,70,20,.14),transparent 26%),linear-gradient(90deg,#b08850,#e8d2a0 12%,#f3e4bb 50%,#e4cd98 88%,#a07c44);
+ box-shadow:inset 0 0 38px rgba(110,60,20,.55),inset 0 12px 14px -8px rgba(60,30,10,.75),inset 0 -12px 14px -8px rgba(60,30,10,.75)}
+.sc-title{font-size:14px;letter-spacing:5px;text-transform:uppercase;color:#7a3a10;border-bottom:1px solid rgba(90,40,10,.35);padding-bottom:4px}
+.sc-cust{font-size:19px;font-weight:bold;margin:6px 0 0;color:#4a1e06} .sc-cust .tag{font-size:11px;vertical-align:middle}
+#scWep{width:100%;height:auto;display:block;margin:-4px 0 -8px}
+.sc-name{font-size:21px;font-weight:bold;color:#2a1406}
+.sc-icons{display:flex;justify-content:center;gap:12px;margin:10px 0 4px}
+.sc-box{flex:1;max-width:150px;border:2px solid rgba(110,60,20,.45);border-radius:12px;padding:6px 4px;background:rgba(255,245,215,.35)}
+.sc-big{font-size:38px;line-height:1.15;font-weight:bold;color:#3a1a06;white-space:nowrap} .sc-box small{display:block;font-size:13px;color:#6a3a14;margin-top:2px}
+.sc-gemi{display:inline-block;filter:drop-shadow(0 0 7px var(--gc)) drop-shadow(0 0 3px var(--gc))}
+.sc-stars{color:#d09010;text-shadow:0 1px 0 #6a3a08,0 0 6px rgba(255,200,60,.6);letter-spacing:-1px;font-size:32px} .sc-stars .off{color:rgba(90,50,20,.22);text-shadow:none} .sc-stars.div{color:#58c8ff;text-shadow:0 0 6px #fff,0 0 12px #7fd0ff}
+.sc-coins{font-size:30px}
+.sc-story{font-style:italic;font-size:14px;color:#5a3414;margin-top:6px;line-height:1.35}
+.sc-tap{font-size:12px;color:#8a5a2a;margin-top:8px;letter-spacing:1px;animation:scblink 1.4s infinite}
+@keyframes scblink{50%{opacity:.35}}
+#scrollIco{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 8px);font-size:24px;padding:0 10px;min-height:44px;min-width:48px;margin:0;border-color:#b88a40;background:radial-gradient(#7a5424,#2a1808);transition:opacity .2s;pointer-events:auto}
+#scrollIco.hide{opacity:0} #scrollIco.pop{animation:scpop .5s}
+@keyframes scpop{0%{transform:scale(1.9)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+body.mob #scrollIco{right:60px;top:calc(env(safe-area-inset-top) + 6px)}
+body.mob #fhead .hud{padding-right:112px}
+body.mob #scrollP{width:92vw} body.mob .sc-big{font-size:32px} body.mob .sc-stars{font-size:28px}
+.langrow{display:flex;gap:10px;justify-content:center;margin:8px 0} .langrow .btn{width:auto;min-width:96px;margin:0}
 </style>
 </head>
 <body tabindex="-1">
@@ -173,62 +205,67 @@ body.mob #mechBtn{border:3px solid #3a3d42;box-shadow:inset 0 0 0 1px #8a8e96,0 
   <h1>DARK FORGE<small>BLOOD &amp; IRON</small></h1>
   <canvas id="logoCv" width="300" height="160" style="width:70%;margin:10px auto;display:block"></canvas>
   <div class="hud" id="menuHud" style="justify-content:center"></div>
-  <button class="btn gold" id="bPlay">⚒ KOVAŤ</button>
-  <button class="btn" id="bShop">🏚 Dielňa</button>
-  <button class="btn" id="bTroph">🏆 Sieň trofejí</button>
-  <button class="btn" id="bGuide">❓ Ako dať PERFEKTNÝ úder <span class="kbd">H</span></button>
-  <button class="btn" id="bSet">⚙ Nastavenia</button>
+  <button class="btn gold" id="bPlay" data-t="m_play"></button>
+  <button class="btn" id="bShop" data-t="m_shop"></button>
+  <button class="btn" id="bTroph" data-t="m_troph"></button>
+  <button class="btn" id="bGuide" data-t="m_guide"></button>
+  <button class="btn" id="bSet" data-t="m_set"></button>
+  <div class="langrow" id="menuLang"></div>
  </div>
- <div class="muted pconly" style="text-align:center"><span class="kbd">MEDZERNÍK</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / pravé tl. myši = mech (drž) · <span class="kbd">MYŠ</span> = kladivo (klikaj na terč) · <span class="kbd">Enter</span> pokračovať · <span class="kbd">P</span>/<span class="kbd">Esc</span> pauza</div>
+ <div class="muted pconly" style="text-align:center" data-t="m_keys"></div>
 </div>
 
 <!-- ORDERS -->
 <div class="screen" id="orders">
  <div class="hud" id="ordHud"></div>
- <h2>Zákazníci čakajú</h2><div class="muted pconly" style="text-align:center">Klávesy <span class="kbd">1</span>–<span class="kbd">4</span> alebo <span class="kbd">Enter</span> = prijať</div>
+ <h2 data-t="o_title"></h2><div class="muted pconly" style="text-align:center" data-t="o_keys"></div>
  <div class="hud" id="repBar" style="justify-content:center;flex-wrap:wrap;font-size:13px"></div>
  <div class="scroll" id="ordList"></div>
  <button class="btn small" id="bRefresh" style="align-self:center;width:auto"></button>
- <div class="panel"><div style="font-weight:bold;color:#ffbf70">Denné výzvy</div><div id="chalList"></div></div>
- <button class="btn" id="bOrdBack">← Späť</button>
+ <div class="panel"><div style="font-weight:bold;color:#ffbf70" data-t="o_chal"></div><div id="chalList"></div></div>
+ <button class="btn" id="bOrdBack" data-t="back"></button>
 </div>
 
 <!-- FORGE -->
 <div class="screen" id="forge">
  <canvas id="cv"></canvas>
  <div id="fhead">
-  <div class="hud"><button class="btn small" id="pauseBtn">❚❚</button><span id="fPhase"></span><span id="fCombo">Combo x1</span><span id="fHits"></span><button class="btn small mobonly" id="fGuideBtn">❓</button></div>
+  <div class="hud"><button class="btn small" id="pauseBtn">❚❚</button><span id="fPhase"></span><span id="fCombo">Combo x1</span><span id="fHits"></span><button class="btn small" id="scrollIco" aria-label="scroll">📜</button><button class="btn small mobonly" id="fGuideBtn">❓</button></div>
   <div id="fcard"></div>
  </div>
  <div id="tut"></div>
- <div id="mechInd"><b>🔥 MECH</b><small>medzerník · F · Shift · pravé tlačidlo myši</small></div>
- <div id="mechBtn" class="mobonly"><canvas id="belCv" width="300" height="190"></canvas><b>🔥 MECH</b></div>
+ <div id="mechInd" data-t="mech_ind"></div>
+ <div id="mechBtn" class="mobonly"><canvas id="belCv" width="300" height="190"></canvas><b data-t="mech_btn"></b></div>
  <div id="tapHint" class="mobonly"></div>
- <div id="focusOv">🖱 Klikni do hry, aby fungoval medzerník</div>
+ <div id="focusOv" data-t="focus"></div>
+ <div id="scrollOv"><div id="scrollP"><div class="rod"></div><div class="parch"><div class="sc-title" id="scTitle"></div><div class="sc-cust" id="scCust"></div>
+  <canvas id="scWep" width="420" height="150"></canvas><div class="sc-name" id="scName"></div>
+  <div class="sc-icons"><div class="sc-box" id="scGemBox"><div class="sc-big" id="scGem"></div><small id="scGemL"></small></div><div class="sc-box"><div class="sc-big sc-stars" id="scStars"></div><small id="scMinL"></small></div><div class="sc-box"><div class="sc-big" id="scCoins"></div><small id="scRewL"></small></div></div>
+  <div class="sc-story" id="scStory"></div><div class="sc-tap" id="scTap"></div></div><div class="rod"></div></div></div>
 </div>
 
 <!-- RESULT -->
 <div class="screen" id="result">
  <div id="resCoins" class="hudcoin">🪙 0</div>
  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
-  <h2 id="resTitle">Výsledok</h2>
+  <h2 id="resTitle" data-t="r_title"></h2>
   <canvas id="resCv" width="600" height="240" style="height:min(26vh,240px);max-width:90%;margin:0 auto;display:block;object-fit:contain"></canvas>
   <div class="big" id="resQ"></div>
   <div class="panel" id="resBox"></div>
-  <button class="btn gold" id="bNext">Ďalšia objednávka</button>
-  <button class="btn gold" id="bTest">🎋 Otestovať zbraň na bambuse <span class="kbd">T</span></button>
-  <div class="row"><button class="btn grow" id="bResShop">🏚 Dielňa</button><button class="btn grow" id="bResMenu">Menu</button></div>
+  <button class="btn gold" id="bNext" data-t="r_next"></button>
+  <button class="btn gold" id="bTest" data-t="r_test"></button>
+  <div class="row"><button class="btn grow" id="bResShop" data-t="m_shop"></button><button class="btn grow" id="bResMenu" data-t="r_menu"></button></div>
  </div>
 </div>
 
 <!-- ENDING -->
 <div class="screen" id="ending">
  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
-  <h1 class="divineh">BOŽSKÝ KOVÁČ<small>Kráľ Svätopluk ti ďakuje</small></h1>
+  <h1 class="divineh" data-t="e_title"></h1>
   <canvas id="endCv" width="700" height="300" style="width:min(90%,700px);margin:0 auto;display:block"></canvas>
-  <div class="panel" style="text-align:center;font-size:18px">Ukoval si <b class="q4">Božskú</b> Čepeľ Hviezd pre Kráľa. Tvoje meno bude žiariť v kronikách kráľovstva naveky.<br><span class="muted">Hra pokračuje v nekonečnom režime – kuj ďalej, zbieraj božské zbrane a trofeje.</span></div>
+  <div class="panel" style="text-align:center;font-size:18px" data-t="e_text"></div>
   <div class="panel" id="endStats"></div>
-  <button class="btn gold" id="bEndCont">⚒ Pokračovať – nekonečný režim</button>
+  <button class="btn gold" id="bEndCont" data-t="e_cont"></button>
  </div>
 </div>
 
@@ -236,72 +273,267 @@ body.mob #mechBtn{border:3px solid #3a3d42;box-shadow:inset 0 0 0 1px #8a8e96,0 
 <div class="screen" id="bamboo" style="padding:0">
  <canvas id="bcv" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair"></canvas>
  <div class="hud" style="position:absolute;top:calc(env(safe-area-inset-top) + 44px);left:0;right:0;justify-content:center;pointer-events:none"><span id="bHud"></span></div>
- <button class="btn small" id="bBSkip" style="position:absolute;right:12px;bottom:12px">Preskočiť ⏎</button>
+ <button class="btn small" id="bBSkip" style="position:absolute;right:12px;bottom:12px"></button>
 </div>
 
 <!-- SHOP -->
 <div class="screen" id="shop">
  <div class="hud" id="shopHud"></div>
- <h2>Dielňa</h2>
+ <h2 data-t="s_title"></h2>
  <div class="scroll" id="shopList"></div>
- <button class="btn gold" id="bShopPlay">⚒ Kovať</button>
- <button class="btn" id="bShopBack">← Menu</button>
+ <button class="btn gold" id="bShopPlay" data-t="s_play"></button>
+ <button class="btn" id="bShopBack" data-t="s_back"></button>
 </div>
 
 <!-- TROPHIES -->
 <div class="screen" id="troph">
- <h2>Sieň legendárnych zbraní</h2>
+ <h2 data-t="t_title"></h2>
  <div class="scroll"><div class="trophies" id="tropList"></div><div class="panel" id="statBox" style="margin-top:12px"></div></div>
- <button class="btn" id="bTropBack">← Späť</button>
+ <button class="btn" id="bTropBack" data-t="back"></button>
 </div>
 
 <!-- SETTINGS -->
 <div class="screen" id="settings">
- <h2>Nastavenia</h2>
+ <h2 data-t="set_title"></h2>
+ <div class="panel"><div class="muted" data-t="set_lang"></div><div class="langrow" id="setLang"></div></div>
  <div class="panel">
   <button class="btn" id="bSound"></button>
   <button class="btn" id="bVib"></button>
-  <button class="btn" id="bTutAgain">Zopakovať návod</button>
+  <button class="btn" id="bTutAgain" data-t="set_tut"></button>
  </div>
- <div class="panel"><div class="muted">Vymaže všetok postup, mince, vylepšenia aj trofeje.</div>
-  <button class="btn" id="bReset" style="border-color:#c03020;background:linear-gradient(#601810,#2a0805)">🗑 Resetovať postup</button></div>
+ <div class="panel"><div class="muted" data-t="set_resetInfo"></div>
+  <button class="btn" id="bReset" style="border-color:#c03020;background:linear-gradient(#601810,#2a0805)" data-t="set_reset"></button></div>
  <div style="flex:1"></div>
- <button class="btn" id="bSetBack">← Späť</button>
+ <button class="btn" id="bSetBack" data-t="back"></button>
 </div>
 
 <div class="overlay" id="pauseOv">
- <h2>Pauza</h2>
- <button class="btn gold" id="bResume">▶ Pokračovať</button>
- <button class="btn" id="bPGuide">❓ Ako dať PERFEKTNÝ úder (H)</button>
- <div class="muted pconly" style="text-align:center">P / Esc = pokračovať</div><button class="btn" id="bQuit">Vzdať objednávku</button>
+ <h2 data-t="p_title"></h2>
+ <button class="btn gold" id="bResume" data-t="p_resume"></button>
+ <button class="btn" id="bPGuide" data-t="p_guide"></button>
+ <div class="muted pconly" style="text-align:center" data-t="p_keys"></div><button class="btn" id="bQuit" data-t="p_quit"></button>
 </div>
 <div class="overlay" id="guideOv" style="z-index:12;overflow:auto">
  <div style="width:min(100%,760px);margin:auto">
- <h2>Ako dať PERFEKTNÝ úder</h2>
+ <h2 data-t="g_title"></h2>
  <canvas id="guideCv" width="720" height="300" style="width:100%;display:block"></canvas>
- <div class="panel" style="font-size:18px;line-height:1.5">
-  Úder je <b class="q2">PERFEKTNÝ</b>, len keď svietia <b class="q1">všetky 3 svetlá</b>:<br>
-  ① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span>).<br>
-  ② <b>Stred</b> – klikni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>
-  ③ <b>Načasovanie</b> – klikni, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>
-  💎 <b>Gemy (Fáza 3+)</b> – niektorí zákazníci chcú zbraň s konkrétnym gemom (napr. „Meč s Rubínom“). Na konci kovania osaď <b>presne ten gem</b>: ťukni/klikni, keď je nad objímkou, a drž kov horúci. Správne = platba ×1,6, reputácia a šanca na unikátnu trofej. Zlý alebo prasknutý gem = zákazník zbraň odmietne. Gemy získaš ako odmenu z iných objednávok alebo kúpiš v Dielni (obmedzený sklad).<br>
-  <span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>
- </div>
- <button class="btn gold" id="bGuideOk">Rozumiem! <span class="kbd">Enter</span></button>
- <div class="muted pconly" style="text-align:center">Návod otvoríš kedykoľvek klávesom <span class="kbd">H</span></div>
+ <div class="panel" style="font-size:18px;line-height:1.5" data-t="g_body"></div>
+ <button class="btn gold" id="bGuideOk" data-t="g_ok"></button>
+ <div class="muted pconly" style="text-align:center" data-t="g_hint"></div>
  </div>
 </div>
 <div class="overlay" id="confirmOv">
- <h2 id="confTxt">Naozaj?</h2>
- <button class="btn" id="bConfYes" style="border-color:#c03020">Áno</button>
- <button class="btn gold" id="bConfNo">Nie</button>
+ <h2 id="confTxt" data-t="c_q"></h2>
+ <button class="btn" id="bConfYes" style="border-color:#c03020" data-t="c_yes"></button>
+ <button class="btn gold" id="bConfNo" data-t="c_no"></button>
 </div>
 <div id="toast"></div>
-<div id="rotOv"><div style="font-size:64px">📱↻</div>Otoč telefón na výšku</div>
+<div id="rotOv"><div style="font-size:64px">📱↻</div><span data-t="rot"></span></div>
 </div>
 
 <script>
 "use strict";
+/* ===================== I18N – all texts (SK / EN) ===================== */
+const I18N = {
+sk: {
+ ui: {
+  langName: "Slovenčina",
+  m_play: "⚒ KOVAŤ", m_shop: "🏚 Dielňa", m_troph: "🏆 Sieň trofejí", m_guide: '❓ Ako dať PERFEKTNÝ úder <span class="kbd">H</span>', m_set: "⚙ Nastavenia",
+  m_keys: '<span class="kbd">MEDZERNÍK</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / pravé tl. myši = mech (drž) · <span class="kbd">MYŠ</span> = kladivo (klikaj na terč) · <span class="kbd">Q</span> zákazka · <span class="kbd">Enter</span> pokračovať · <span class="kbd">P</span>/<span class="kbd">Esc</span> pauza',
+  o_title: "Zákazníci čakajú", o_keys: 'Klávesy <span class="kbd">1</span>–<span class="kbd">4</span> alebo <span class="kbd">Enter</span> = prijať · <span class="kbd">R</span> = iní zákazníci', o_chal: "Denné výzvy", back: "← Späť",
+  mech_ind: "<b>🔥 MECH</b><small>medzerník · F · Shift · pravé tlačidlo myši</small>", mech_btn: "🔥 MECH", focus: "🖱 Klikni do hry, aby fungoval medzerník",
+  r_title: "Výsledok", r_next: "Ďalšia objednávka", r_test: '🎋 Otestovať zbraň na bambuse <span class="kbd">T</span>', r_menu: "Menu",
+  e_title: "BOŽSKÝ KOVÁČ<small>Kráľ Svätopluk ti ďakuje</small>",
+  e_text: 'Ukoval si <b class="q4">Božskú</b> Čepeľ Hviezd pre Kráľa. Tvoje meno bude žiariť v kronikách kráľovstva naveky.<br><span class="muted">Hra pokračuje v nekonečnom režime – kuj ďalej, zbieraj božské zbrane a trofeje.</span>',
+  e_cont: "⚒ Pokračovať – nekonečný režim", b_skip: "Preskočiť ⏎", b_skip_m: "Preskočiť ▶",
+  s_title: "Dielňa", s_play: "⚒ Kovať", s_back: "← Menu", t_title: "Sieň legendárnych zbraní",
+  set_title: "Nastavenia", set_tut: "Zopakovať návod", set_resetInfo: "Vymaže všetok postup, mince, vylepšenia aj trofeje.", set_reset: "🗑 Resetovať postup", set_lang: "Jazyk / Language",
+  p_title: "Pauza", p_resume: "▶ Pokračovať", p_guide: "❓ Ako dať PERFEKTNÝ úder (H)", p_keys: "P / Esc = pokračovať · Q = zákazka", p_quit: "Vzdať objednávku",
+  g_title: "Ako dať PERFEKTNÝ úder",
+  g_body: 'Úder je <b class="q2">PERFEKTNÝ</b>, len keď svietia <b class="q1">všetky 3 svetlá</b>:<br>① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span> / tlačidlo MECH).<br>② <b>Stred</b> – klikni/ťukni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>③ <b>Načasovanie</b> – udri, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>📜 <b>Zákazka</b> – na začiatku kovania sa rozvinie zvitok so zbraňou, gemom, kvalitou a odmenou. Znova ho otvoríš ikonou 📜 vpravo hore (alebo klávesom <span class="kbd">Q</span>) – kovanie sa vtedy pozastaví.<br>💎 <b>Gemy (Fáza 3+)</b> – niektorí zákazníci chcú zbraň s konkrétnym gemom (napr. „Meč s Rubínom“). Na konci kovania osaď <b>presne ten gem</b>: ťukni/klikni, keď je nad objímkou, a drž kov horúci. Správne = platba ×1,6, reputácia a šanca na unikátnu trofej. Zlý alebo prasknutý gem = zákazník zbraň odmietne. Gemy získaš ako odmenu z iných objednávok alebo kúpiš v Dielni (obmedzený sklad).<br><span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>',
+  g_ok: 'Rozumiem! <span class="kbd">Enter</span>', g_hint: 'Návod otvoríš kedykoľvek klávesom <span class="kbd">H</span>',
+  c_q: "Naozaj?", c_yes: "Áno", c_no: "Nie", rot: "Otoč telefón na výšku",
+  hud_phase: "Fáza {n}: {name}", toast_tut: "Návod sa spustí pri ďalšej objednávke", reset_q: "Naozaj vymazať celý postup?", reset_done: "Postup vymazaný",
+  sound: "Zvuk: {v}", vib: "Vibrácie: {v}", on: "ZAP", off: "VYP",
+  tag_rare: "VZÁCNA", tag_king: "👑 KRÁĽ", tag_ev: "⚡ UDALOSŤ",
+  gc_mission: "Misia: {n}", gc_wants: "Chce gem: {g}", gc_have: "máš {n}", gc_reward: "Odmena: platba ×{m} · +{r} reputácia · šanca na unikátnu trofej", gc_warn: "Zlý alebo prasknutý gem = zákazník odmietne zbraň!", gc_rewgem: "Odmenou pridá gem: <b>{g}</b> (aspoň Kvalitná)",
+  rep_pts: "{n} bodov", o_wants: "Chce", o_min: "Minimum", o_pays: "Platí", o_accept: "Prijať a kovať", o_missing: "Chýba ti {g}", o_refresh: "🔄 Iní zákazníci (🪙 {c})", o_missingToast: "Chýba ti {g} – kúp ho v Dielni alebo získaj ako odmenu.",
+  chal_done: "✔ Výzva splnená: {t}<br>+🪙 {r}",
+  sh_need: "Treba {x} XP (máš {h})", sh_own: "✔ Máš", sh_have: "máš {n}", sh_stock: "sklad {n}", sh_gemdesc: "{d}. Treba ho na objednávky „…s {ins}“. Sklad sa dopĺňa každé {n} objednávky.", sh_sold: "vypredané",
+  sh_phase: "Fáza {n} – {name}", sh_here: "HRÁŠ TU", sh_playph: "Hrať túto fázu", sh_gems: "💎 Gemy", sh_locked: "🔒 {env} – odomkneš v predchádzajúcej fáze (🪙 {c} + {x} XP) · {n} vylepšení",
+  sh_boughtGem: "Kúpený gem: {g}", sh_unlocked: "⚒ Fáza {n} odomknutá!<br>{name} – {env}", sh_bought: "Kúpené: {n}",
+  tr_unique: "💎 unikát", st_orders: "Objednávky", st_leg: "Legendárne", st_div: "Božské", st_gems: "Gemy", st_perf: "Perfektné údery", st_combo: "Najlepšie combo", st_burn: "Zhorené", st_earned: "Zarobené spolu", st_earned2: "Zarobené",
+  gd_gold: "← ① ZLATÉ pásmo", gd_center: "② klikni do stredu →", gd_ring: "③ biely krúžok v zelenom", gd_now: "= UDRI TERAZ!",
+  f_phase: "Fáza {n} · {env}",
+  tut0_pc: "Drž <span class='kbd'>MEDZERNÍK</span> (alebo <span class='kbd'>F</span>, <span class='kbd'>Shift</span>, pravé tlačidlo myši) – to je MECH. Pusti = kov chladne.<br>", tut0_m: "Drž prst na tlačidle <b>🔥 MECH</b> (vľavo dole) alebo na ľavej polovici. Pusti = kov chladne.<br>", tut0_b: "Rozpáľ kov do <span class='q2'>ZLATÉHO</span> pásma teplomera.",
+  tutNoHeat_pc: "Najprv rozpáľ kov MECHOM – drž <span class='kbd'>MEDZERNÍK</span>", tutNoHeat_m: "Najprv rozpáľ kov – drž <b>🔥 MECH</b> vľavo dole",
+  tut1_pc: "🖱 Výborne! Teraz KLADIVO: klikni MYŠOU na terč,<br>", tut1_m: "👆 Výborne! Teraz KLADIVO: ťukni prstom na terč,<br>", tut1_b: "keď je krúžok v <span class='q1'>ZELENOM</span> kruhu. (Teplotu ti teraz podržím.)",
+  tut2_pc: "🔥 Teraz OBOJE naraz:<br>medzerníkom drž teplotu v zlatom, myšou udieraj!", tut2_m: "🔥 Teraz OBOJE naraz:<br>ľavým palcom MECH, pravým ťukaj na terč!",
+  combo: "Combo x{v}", hits: "Úder {i}/{n}",
+  pop_core: "MÝTICKÉ JADRO – musí byť PERFEKTNÉ!",
+  why_cold: "Studený kov", why_hot: "Prehriaty kov", why_temp: "Teplota mimo zlatej", why_center: "Mimo stredu", why_early: "Príliš skoro", why_late: "Príliš neskoro", why_slow: "Neskoro – nestihol si", why_miss: "Mimo terča",
+  p_miss: "VEDĽA!", p_perf: "PERFEKTNÉ!", p_cold: "STUDENÝ KOV!", p_good: "DOBRÉ!", p_weak: "SLABÉ", p_coreOk: "✦ JADRO ZAŽIARILO ✦", p_coreNo: "Jadro nezažiarilo…", p_zone: "ZÓNA: {z}", p_noGem: "Nemáš žiadny gem!", p_burn: "ZHORENÉ!",
+  gem_pick_pc: "💎 <b>Osaď {g}</b> – zákazník chce práve tento! (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>)", gem_pick_m: "💎 <b>Osaď {g}</b> – zákazník chce práve tento!",
+  gem_slide_pc: "Klikni, keď je {i} nad objímkou · drž kov horúci (≥ {t}°) medzerníkom!", gem_slide_m: "Ťukni vpravo, keď je {i} nad objímkou · MECHOM drž kov ≥ {t}°!",
+  gf_none: "chýba gem", gf_skip: "bez gemu", gf_cold: "gem praskol (studený kov)", gf_align: "gem praskol (nezarovnaný)", gf_wrong: "zlý gem – chcel {g}",
+  gp_set: "{i} {g} OSADENÝ!", gp_crack: "{g} praskol – {why}", gp_cool: "kov vychladol", gp_mis: "nezarovnané",
+  g_aligned: "● Zarovnané", g_align: "○ Zarovnanie", g_hot: "● Kov horúci", g_cooling: "○ Kov chladne!", g_none: "Bez gemu", g_cont: "pokračovať",
+  hint_pc: "Klikni MYŠOU na terč = kladivo", green: "ZELENÁ", over_pc: "⚠ PREHRIATIE! PUSTI MEDZERNÍK!", over_m: "⚠ PREHRIATIE! PUSTI MECH!",
+  l_temp: "Teplota", l_center: "Stred", l_timing: "Načasovanie", ready: "PRIPRAV SA…",
+  b_cold: "STUDENÝ", b_work: "PRACOVNÝ", b_gold: "★ ZLATÝ ★", b_hot: "PREHRIATY",
+  r_angry: "Zákazník odchádza naštvaný", r_refuse: "💎 Zákazník odmieta: {w}", r_payGem: "Platba (gem ×{m})", r_pay: "Platba", r_under: "Nesplnené minimum (časť platby)", r_tip: "Sprepitné za kvalitu",
+  r_gemOk: "💎 {i} {g} osadený presne podľa želania", r_chainDone: "🏅 Misia „{n}“ splnená!", r_chainStep: "Misia „{n}“", r_step: "krok {a}/{b}", r_unique: "🏆 Unikátna trofej", r_rewGem: "Odmena: gem",
+  r_repLv: "Reputácia {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputácia: {f}", r_gambler: "🎲 Hazardér doplatí za test na bambuse", r_testIt: "otestuj!", r_xp: "Skúsenosti", r_perf: "Perfektné údery",
+  r_newTroph: "🏆 Nová trofej v Sieni!", r_canUnlock: "⚒ V Dielni môžeš odomknúť Fázu {n} – {name}!", r_total: "Spolu máš", r_bamboo: "Test na bambuse: {c}/{n} prerezané", r_gamblerPay: "🎲 Hazardér platí za {c} rezy",
+  bm_wpow: "Sila zbrane", bm_power: "Sila {p} {op} Tvrdosť {h}  (rýchlosť ×{s})", bm_clean: "ČISTÝ REZ!", bm_div: "BOŽSKÝ REZ!", bm_leg: "LEGENDÁRNY REZ!", bm_stuck: "ZASEKLO SA!",
+  bm_pole: "Tyč {i}/{n}: {name}", bm_hard: "Tvrdosť: {h}", bm_yours: "Tvoja sila: {d}  (×0,6 – ×1,3 podľa rýchlosti)", bm_swing: "Švihni rýchlo cez tyč!", bm_weak: "Na túto tyč je zbraň asi slabá…",
+  bm_cut: "✔ prerezaná", bm_stuckL: "✖ zaseknutá", bm_hint_pc: "Podrž tlačidlo myši a rýchlo švihni naprieč tyčou · Enter = preskočiť · {s} s", bm_hint_m: "Rýchlo švihni prstom naprieč tyčou · {s} s",
+  sc_reward: "Odmena", sc_min: "Minimálna kvalita", sc_gem: "Požadovaný gem", sc_tap: "ťukni / klikni pre začatie", sc_title: "Zákazka", sc_ico: "Zákazka (Q)", sc_from: "Zákazník",
+ },
+ data: {
+  QN: ["Obyčajná", "Kvalitná", "Legendárna", "Zhorený nepodarok", "Božská"],
+  PH: { 1: ["Dedinský Učeň", "Dedina"], 2: ["Kováčsky Tovariš", "Tovariš"], 3: ["Majster Mesta", "Mesto"], 4: ["Božský Kováč", "Kráľovstvo"] },
+  items: { tesak: "Obyčajný Tesák", sekera: "Drevorubačská Sekera", mec: "Rytiersky Meč", dyka: "Žoldnierska Dýka", halapartna: "Lovecká Halapartňa", dlhymec: "Strieborný Dlhý Meč",
+    gardovy: "Gardový Meč", bojsekera: "Bojová Sekera", kopija: "Kopija", rapir: "Mestský Rapír", kralmec: "Kráľovský Meč Úsvitu", drakobijca: "Drakobijca", jurkopija: "Kopija Svätého Juraja", cepel: "Čepeľ Hviezd" },
+  withGem: "{item} s {ins}",
+  cust: { 1: ["Dedinčan Ondrej", "Drevorubač Juro", "Lovec Matej", "Nočný strážnik Pavol", "Babka Zuzana", "Drevorubač Imro", "Lovkyňa Katka", "Strážnik Fero"],
+    2: ["Žoldnier Gregor", "Lovec monštier Vlk", "Žoldnierka Hela", "Lovec upírov Dušan", "Kapitán Radomír", "Lovkyňa beštií Mira"],
+    3: ["Mestský radca Bohuš", "Kapitán stráže Ladislav", "Cechmajster Ignác", "Šľachtičná Alžbeta", "Lovec drakov Svätoslav"],
+    4: ["Kráľovský rytier Ctibor", "Šampión turnajov Marek", "Hrdina Jánošík", "Paladínka Ľudmila", "Gardistka Vlasta"] },
+  rare: ["Grófsky posol", "Tajomný pútnik", "Rytier Čierneho rádu", "Mníška z kláštora"],
+  king: ["Kráľ Svätopluk", "Kráľovská objednávka – len BOŽSKÁ zbraň!"],
+  chal: { leg: "Ukovaj 2 legendárne", perf: "Daj 10 perfektných úderov", orders: "Splň 3 objednávky", combo: "Dosiahni combo x4", good: "Ukovaj 3× aspoň Kvalitnú", noburn: "4 objednávky bez zhorenia", tip: "Získaj 2× sprepitné", rare: "Splň vzácnu objednávku", trait: "Splň 2 objednávky so špeciálnou vlastnosťou" },
+  traits: { urgent: ["Súrne", "rýchlejší krúžok, platí o 40 % viac"], picky: ["Náročný", "vyššia minimálna kvalita, dvojnásobné sprepitné"], generous: ["Štedrý", "bez rizika – zaplatí skoro všetko"],
+    gambler: ["Hazardér", "platí málo, ale +45 % za každú prerezanú tyč bambusu"], material: ["Vlastný kov", "vzácny kov – zhorí rýchlejšie, platí o 80 % viac"], regular: ["Stály zákazník", "dvojnásobná reputácia"] },
+  events: [["Drak v okolí!", "Treba silnú zbraň proti drakovi"], ["Turnaj v meste", "Šampión chce zbraň na turnaj"], ["Obliehanie hradu", "Posádka potrebuje zbrane hneď"], ["Krvavý mesiac", "Beštie vychádzajú z lesov"]],
+  factions: { 1: "Dedinčania", 2: "Žoldnieri", 3: "Mesto", 4: "Kráľ" },
+  zones: { base: "Základňa", edge: "Ostrie", hilt: "Rukoväť", mid: "Stred", tip: "Špička", core: "Mýtické Jadro" },
+  poles: ["Tenký zelený bambus", "Hrubý bambus", "Suchý tvrdý bambus", "Čierny železný bambus", "Kamenný bambus", "Dračí bambus"],
+  gems: { rubin: ["Rubín", "Rubínom", "ohnivý kameň odvahy"], zafir: ["Zafír", "Zafírom", "kameň pokoja a múdrosti"], smaragd: ["Smaragd", "Smaragdom", "kameň života a ochrany"] },
+  stories: {
+    rubin: ["Syn ide prvý raz do boja – rubín mu má dodať odvahy.", "Rubín červený ako krv draka, ktorého chce premôcť.", "Rubín na pamiatku padlého brata."],
+    zafir: ["Pre sudcu mestskej rady – zafír vraj chladí hnev.", "Hvezdár chce zafír modrý ako nočné nebo.", "Zafír na pokoj duše pred dlhou plavbou."],
+    smaragd: ["Pre lesnú pani – smaragd vraj chráni pred jedom.", "Smaragd ako zásnubný dar pre nevestu.", "Liečiteľ verí, že smaragd zahojí každú ranu."] },
+  chains: { 3: ["Prísaha Mestskej gardy", [["Veliteľ stráže Ondrej", "Krok 1/3: Garde sa množia otrávené rany – potrebuje smaragdovú zbraň."], ["Kapitán gardy Matúš", "Krok 2/3: Kapitán chce chladnú hlavu pri obrane brány – zafír."], ["Purkmister mesta", "Krok 3/3: Slávnostná zbraň pre hrdinu mesta – rubín odvahy!"]]],
+    4: ["Kráľovská klenotnica", [["Kráľovský pokladník", "Krok 1/3: Do klenotnice chýba zafírová zbraň múdrosti."], ["Maršal kráľovstva", "Krok 2/3: Maršal prisahá na rubín – symbol kráľovej krvi."], ["Kráľovná Ľudmila", "Krok 3/3: Kráľovná chce smaragd pre následníka trónu."]]] },
+  shop: {
+    hammer: ["Ťažké Kováčske Kladivo", "+35 % sila úderu, údery menej chladia kov."], bellows: ["Kožený Mech", "Silnejšie fúkanie – kov sa ohrieva rýchlejšie."],
+    anvil: ["Dvojzónová Kovadlina", "Odomkne Fázu 2 a kovanie mečov (treba 220 XP)."], oil: ["Sud s Kaleným Olejom", "Širšie zlaté pásmo teploty."],
+    brus: ["Brus", "+15 % sila pri teste na bambuse za úroveň."], vyhna: ["Lepšia Vyhňa", "Kov chladne o 15 % pomalšie za úroveň."], presne: ["Presné Kladivo", "Väčší krúžok perfektného stredu."],
+    mech2: ["Majstrovský Mech", "Jemné ohrievanie pri zlatom pásme, +0,5 s kým kov zhorí."], stit: ["Kováčsky Štít (Reputácia)", "+10 % platby a častejšie vzácne objednávky za úroveň."],
+    ingoty: ["Oceľové Ingoty", "+20 % základná sila zbraní za úroveň."], cech: ["Majstrovský List Cechu", "Odomkne Fázu 3 – Majster Mesta (treba 900 XP)."],
+    kvyhna: ["Kamenná Vyhňa", "Kov chladne o ďalších 10 % pomalšie za úroveň."], lupa: ["Zlatnícka Lupa", "O 50 % ľahšie osadenie gemu."], runove: ["Runové Kladivo", "Zelená zóna krúžku o 20 % širšia za úroveň."],
+    pecat: ["Cechová Pečať", "+12 % platba za všetky objednávky."], damask: ["Damascénska Oceľ", "+25 % sila pri teste na bambuse za úroveň."], erb: ["Kráľovský Erb", "Odomkne Fázu 4 – Kráľovstvo (treba 2500 XP)."],
+    drakmech: ["Dračí Mech", "Fúka o 25 % silnejšie, +0,5 s kým kov zhorí."], hviezdna: ["Hviezdna Kovadlina", "Mýtické Jadro sa hýbe o 35 % pomalšie."], priazen: ["Kráľovská Priazeň", "+15 % platba a častejšie vzácne objednávky."],
+    iskra: ["Božská Iskra", "Ešte väčší krúžok perfektného stredu."], mytbrus: ["Mýtický Brus", "+40 % sila pri teste na bambuse."] },
+ } },
+en: {
+ ui: {
+  langName: "English",
+  m_play: "⚒ FORGE", m_shop: "🏚 Workshop", m_troph: "🏆 Hall of Trophies", m_guide: '❓ How to strike PERFECTLY <span class="kbd">H</span>', m_set: "⚙ Settings",
+  m_keys: '<span class="kbd">SPACE</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / right mouse = bellows (hold) · <span class="kbd">MOUSE</span> = hammer (click the target) · <span class="kbd">Q</span> order · <span class="kbd">Enter</span> continue · <span class="kbd">P</span>/<span class="kbd">Esc</span> pause',
+  o_title: "Customers Await", o_keys: 'Keys <span class="kbd">1</span>–<span class="kbd">4</span> or <span class="kbd">Enter</span> = accept · <span class="kbd">R</span> = other customers', o_chal: "Daily Challenges", back: "← Back",
+  mech_ind: "<b>🔥 BELLOWS</b><small>space · F · Shift · right mouse button</small>", mech_btn: "🔥 BELLOWS", focus: "🖱 Click the game so the spacebar works",
+  r_title: "Result", r_next: "Next order", r_test: '🎋 Test the weapon on bamboo <span class="kbd">T</span>', r_menu: "Menu",
+  e_title: "DIVINE SMITH<small>King Svätopluk thanks you</small>",
+  e_text: 'You forged the <b class="q4">Divine</b> Blade of Stars for the King. Your name will shine in the chronicles of the realm forever.<br><span class="muted">The game continues in endless mode – keep forging, collect divine weapons and trophies.</span>',
+  e_cont: "⚒ Continue – endless mode", b_skip: "Skip ⏎", b_skip_m: "Skip ▶",
+  s_title: "Workshop", s_play: "⚒ Forge", s_back: "← Menu", t_title: "Hall of Legendary Weapons",
+  set_title: "Settings", set_tut: "Replay tutorial", set_resetInfo: "Erases all progress, coins, upgrades and trophies.", set_reset: "🗑 Reset progress", set_lang: "Language / Jazyk",
+  p_title: "Paused", p_resume: "▶ Resume", p_guide: "❓ How to strike PERFECTLY (H)", p_keys: "P / Esc = resume · Q = order", p_quit: "Abandon order",
+  g_title: "How to Strike PERFECTLY",
+  g_body: 'A strike is <b class="q2">PERFECT</b> only when <b class="q1">all 3 lights</b> glow:<br>① <b>Heat</b> – the thermometer needle sits in the <b class="q2">GOLDEN band</b> (hold/release <span class="kbd">SPACE</span> / the BELLOWS button).<br>② <b>Center</b> – click/tap <b>inside the dashed yellow ring</b> at the heart of the target.<br>③ <b>Timing</b> – strike when the shrinking white ring is <b class="q1">inside the GREEN band</b>.<br>📜 <b>The order</b> – when forging begins, a scroll unrolls showing the weapon, gem, quality and reward. Reopen it with the 📜 icon top-right (or the <span class="kbd">Q</span> key) – forging pauses while it is open.<br>💎 <b>Gems (Phase 3+)</b> – some customers want a weapon set with a specific gem (e.g. “Sword with a Ruby”). At the end of forging, set <b>exactly that gem</b>: tap/click when it is above the socket and keep the metal hot. Correct = pay ×1.6, reputation and a chance at a unique trophy. A wrong or cracked gem = the customer rejects the weapon. Gems are earned as rewards from other orders or bought in the Workshop (limited stock).<br><span class="muted">After each strike the lights flash green/red and a note tells you what went wrong (e.g. “Too early”, “Off center”, “Cold metal”). Perfect strikes in a row = combo and more coins.</span>',
+  g_ok: 'Got it! <span class="kbd">Enter</span>', g_hint: 'Open this guide anytime with <span class="kbd">H</span>',
+  c_q: "Are you sure?", c_yes: "Yes", c_no: "No", rot: "Turn your phone upright",
+  hud_phase: "Phase {n}: {name}", toast_tut: "The tutorial will play on your next order", reset_q: "Really erase all progress?", reset_done: "Progress erased",
+  sound: "Sound: {v}", vib: "Vibration: {v}", on: "ON", off: "OFF",
+  tag_rare: "RARE", tag_king: "👑 KING", tag_ev: "⚡ EVENT",
+  gc_mission: "Quest: {n}", gc_wants: "Wants gem: {g}", gc_have: "you have {n}", gc_reward: "Reward: pay ×{m} · +{r} reputation · chance of a unique trophy", gc_warn: "Wrong or cracked gem = the customer rejects the weapon!", gc_rewgem: "Adds a gem as reward: <b>{g}</b> (Fine or better)",
+  rep_pts: "{n} points", o_wants: "Wants", o_min: "Minimum", o_pays: "Pays", o_accept: "Accept & forge", o_missing: "You lack {g}", o_refresh: "🔄 Other customers (🪙 {c})", o_missingToast: "You lack {g} – buy it in the Workshop or earn it as a reward.",
+  chal_done: "✔ Challenge complete: {t}<br>+🪙 {r}",
+  sh_need: "Requires {x} XP (you have {h})", sh_own: "✔ Owned", sh_have: "you have {n}", sh_stock: "in stock {n}", sh_gemdesc: "{d}. Needed for orders “…with {ins}”. Stock refills every {n} orders.", sh_sold: "sold out",
+  sh_phase: "Phase {n} – {name}", sh_here: "PLAYING HERE", sh_playph: "Play this phase", sh_gems: "💎 Gems", sh_locked: "🔒 {env} – unlock it in the previous phase (🪙 {c} + {x} XP) · {n} upgrades",
+  sh_boughtGem: "Gem bought: {g}", sh_unlocked: "⚒ Phase {n} unlocked!<br>{name} – {env}", sh_bought: "Bought: {n}",
+  tr_unique: "💎 unique", st_orders: "Orders", st_leg: "Legendary", st_div: "Divine", st_gems: "Gems", st_perf: "Perfect strikes", st_combo: "Best combo", st_burn: "Burned", st_earned: "Total earned", st_earned2: "Earned",
+  gd_gold: "← ① GOLDEN band", gd_center: "② hit the center →", gd_ring: "③ white ring inside green", gd_now: "= STRIKE NOW!",
+  f_phase: "Phase {n} · {env}",
+  tut0_pc: "Hold <span class='kbd'>SPACE</span> (or <span class='kbd'>F</span>, <span class='kbd'>Shift</span>, right mouse button) – that's the BELLOWS. Release = the metal cools.<br>", tut0_m: "Hold your finger on <b>🔥 BELLOWS</b> (bottom left) or anywhere on the left half. Release = the metal cools.<br>", tut0_b: "Heat the metal into the <span class='q2'>GOLDEN</span> band of the thermometer.",
+  tutNoHeat_pc: "Heat the metal with the BELLOWS first – hold <span class='kbd'>SPACE</span>", tutNoHeat_m: "Heat the metal first – hold <b>🔥 BELLOWS</b> bottom left",
+  tut1_pc: "🖱 Well done! Now the HAMMER: click the target with the MOUSE,<br>", tut1_m: "👆 Well done! Now the HAMMER: tap the target with your finger,<br>", tut1_b: "when the ring is inside the <span class='q1'>GREEN</span> band. (I'll hold the heat for you for now.)",
+  tut2_pc: "🔥 Now BOTH at once:<br>keep the heat golden with space, strike with the mouse!", tut2_m: "🔥 Now BOTH at once:<br>left thumb on BELLOWS, right thumb taps the target!",
+  combo: "Combo x{v}", hits: "Strike {i}/{n}",
+  pop_core: "MYTHIC CORE – must be PERFECT!",
+  why_cold: "Cold metal", why_hot: "Overheated metal", why_temp: "Heat outside the gold", why_center: "Off center", why_early: "Too early", why_late: "Too late", why_slow: "Too slow – you missed it", why_miss: "Off target",
+  p_miss: "MISS!", p_perf: "PERFECT!", p_cold: "COLD METAL!", p_good: "GOOD!", p_weak: "WEAK", p_coreOk: "✦ THE CORE BLAZES ✦", p_coreNo: "The core stays dark…", p_zone: "ZONE: {z}", p_noGem: "You have no gems!", p_burn: "BURNED!",
+  gem_pick_pc: "💎 <b>Set {g}</b> – the customer wants exactly this one! (click or <span class='kbd'>1</span>–<span class='kbd'>3</span>)", gem_pick_m: "💎 <b>Set {g}</b> – the customer wants exactly this one!",
+  gem_slide_pc: "Click when {i} is above the socket · keep the metal hot (≥ {t}°) with space!", gem_slide_m: "Tap on the right when {i} is above the socket · keep the metal ≥ {t}° with the BELLOWS!",
+  gf_none: "no gem set", gf_skip: "no gem", gf_cold: "gem cracked (metal too cold)", gf_align: "gem cracked (misaligned)", gf_wrong: "wrong gem – wanted {g}",
+  gp_set: "{i} {g} SET!", gp_crack: "{g} cracked – {why}", gp_cool: "the metal cooled", gp_mis: "misaligned",
+  g_aligned: "● Aligned", g_align: "○ Alignment", g_hot: "● Metal hot", g_cooling: "○ Metal cooling!", g_none: "No gem", g_cont: "continue",
+  hint_pc: "Click the target with the MOUSE = hammer", green: "GREEN", over_pc: "⚠ OVERHEATING! RELEASE SPACE!", over_m: "⚠ OVERHEATING! RELEASE THE BELLOWS!",
+  l_temp: "Heat", l_center: "Center", l_timing: "Timing", ready: "GET READY…",
+  b_cold: "COLD", b_work: "WORKING", b_gold: "★ GOLDEN ★", b_hot: "OVERHEATED",
+  r_angry: "The customer storms off", r_refuse: "💎 Customer refuses: {w}", r_payGem: "Payment (gem ×{m})", r_pay: "Payment", r_under: "Minimum not met (partial pay)", r_tip: "Tip for quality",
+  r_gemOk: "💎 {i} {g} set exactly as requested", r_chainDone: "🏅 Quest “{n}” complete!", r_chainStep: "Quest “{n}”", r_step: "step {a}/{b}", r_unique: "🏆 Unique trophy", r_rewGem: "Reward: gem",
+  r_repLv: "Reputation {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputation: {f}", r_gambler: "🎲 The gambler pays extra for the bamboo test", r_testIt: "test it!", r_xp: "Experience", r_perf: "Perfect strikes",
+  r_newTroph: "🏆 New trophy in the Hall!", r_canUnlock: "⚒ You can unlock Phase {n} – {name} in the Workshop!", r_total: "You now have", r_bamboo: "Bamboo test: {c}/{n} cut", r_gamblerPay: "🎲 The gambler pays for {c} cuts",
+  bm_wpow: "Weapon power", bm_power: "Power {p} {op} Hardness {h}  (speed ×{s})", bm_clean: "CLEAN CUT!", bm_div: "DIVINE CUT!", bm_leg: "LEGENDARY CUT!", bm_stuck: "STUCK!",
+  bm_pole: "Pole {i}/{n}: {name}", bm_hard: "Hardness: {h}", bm_yours: "Your power: {d}  (×0.6 – ×1.3 by speed)", bm_swing: "Slash fast across the pole!", bm_weak: "Your weapon may be too weak for this pole…",
+  bm_cut: "✔ cut", bm_stuckL: "✖ stuck", bm_hint_pc: "Hold the mouse button and slash fast across the pole · Enter = skip · {s} s", bm_hint_m: "Slash your finger fast across the pole · {s} s",
+  sc_reward: "Reward", sc_min: "Minimum quality", sc_gem: "Required gem", sc_tap: "tap / click to begin", sc_title: "Commission", sc_ico: "Order (Q)", sc_from: "Customer",
+ },
+ data: {
+  QN: ["Common", "Fine", "Legendary", "Burnt Failure", "Divine"],
+  PH: { 1: ["Village Apprentice", "Village"], 2: ["Journeyman Smith", "Journeyman"], 3: ["Master of the City", "City"], 4: ["Divine Smith", "Kingdom"] },
+  items: { tesak: "Plain Hunting Knife", sekera: "Woodcutter's Axe", mec: "Knight's Sword", dyka: "Mercenary's Dagger", halapartna: "Hunter's Halberd", dlhymec: "Silver Longsword",
+    gardovy: "Guardsman's Sword", bojsekera: "Battle Axe", kopija: "War Spear", rapir: "City Rapier", kralmec: "Royal Sword of Dawn", drakobijca: "Dragonslayer", jurkopija: "Spear of Saint George", cepel: "Blade of Stars" },
+  withGem: "{item} with {ins}",
+  cust: { 1: ["Villager Ondrej", "Woodcutter Juro", "Hunter Matej", "Night Watchman Pavol", "Granny Zuzana", "Woodcutter Imro", "Huntress Katka", "Watchman Fero"],
+    2: ["Mercenary Gregor", "Monster Hunter Vlk", "Mercenary Hela", "Vampire Hunter Dušan", "Captain Radomír", "Beast Huntress Mira"],
+    3: ["Councillor Bohuš", "Guard Captain Ladislav", "Guildmaster Ignác", "Lady Alžbeta", "Dragon Hunter Svätoslav"],
+    4: ["Royal Knight Ctibor", "Tourney Champion Marek", "The Hero Jánošík", "Paladin Ľudmila", "Guardswoman Vlasta"] },
+  rare: ["The Count's Herald", "A Mysterious Pilgrim", "Knight of the Black Order", "A Cloistered Nun"],
+  king: ["King Svätopluk", "A royal commission – DIVINE weapons only!"],
+  chal: { leg: "Forge 2 legendary weapons", perf: "Land 10 perfect strikes", orders: "Complete 3 orders", combo: "Reach a x4 combo", good: "Forge 3× at least Fine", noburn: "4 orders without burning", tip: "Earn a tip 2×", rare: "Complete a rare order", trait: "Complete 2 orders with a special trait" },
+  traits: { urgent: ["Urgent", "faster ring, pays 40 % more"], picky: ["Picky", "higher minimum quality, double tip"], generous: ["Generous", "no risk – pays almost everything"],
+    gambler: ["Gambler", "pays little, but +45 % for every bamboo pole you cut"], material: ["Own Metal", "precious metal – burns faster, pays 80 % more"], regular: ["Regular", "double reputation"] },
+  events: [["A dragon nearby!", "A mighty weapon is needed against the dragon"], ["Tournament in town", "The champion wants a weapon for the joust"], ["Castle under siege", "The garrison needs weapons now"], ["Blood Moon", "Beasts are pouring out of the forests"]],
+  factions: { 1: "Villagers", 2: "Mercenaries", 3: "City", 4: "King" },
+  zones: { base: "Base", edge: "Edge", hilt: "Hilt", mid: "Middle", tip: "Tip", core: "Mythic Core" },
+  poles: ["Thin green bamboo", "Thick bamboo", "Dry hard bamboo", "Black iron bamboo", "Stone bamboo", "Dragon bamboo"],
+  gems: { rubin: ["Ruby", "a Ruby", "fiery stone of courage"], zafir: ["Sapphire", "a Sapphire", "stone of calm and wisdom"], smaragd: ["Emerald", "an Emerald", "stone of life and protection"] },
+  stories: {
+    rubin: ["My son rides to his first battle – a ruby shall lend him courage.", "A ruby red as the blood of the dragon he means to slay.", "A ruby in memory of a fallen brother."],
+    zafir: ["For the city's high judge – they say sapphire cools wrath.", "The astronomer wants a sapphire blue as the night sky.", "A sapphire for peace of soul before a long voyage."],
+    smaragd: ["For the Lady of the Forest – emerald is said to ward off poison.", "An emerald as a betrothal gift for the bride.", "The healer believes an emerald mends every wound."] },
+  chains: { 3: ["Oath of the City Guard", [["Watch Commander Ondrej", "Step 1/3: Poisoned wounds spread through the guard – they need an emerald weapon."], ["Guard Captain Matúš", "Step 2/3: The captain needs a cool head to hold the gate – sapphire."], ["The Burgomaster", "Step 3/3: A ceremonial blade for the city's hero – a ruby of courage!"]]],
+    4: ["The Royal Treasury", [["The Royal Treasurer", "Step 1/3: The treasury lacks a sapphire weapon of wisdom."], ["Marshal of the Realm", "Step 2/3: The marshal swears by the ruby – symbol of royal blood."], ["Queen Ľudmila", "Step 3/3: The queen wants an emerald for the heir to the throne."]]] },
+  shop: {
+    hammer: ["Heavy Smith's Hammer", "+35 % strike power, strikes cool the metal less."], bellows: ["Leather Bellows", "Stronger blast – the metal heats faster."],
+    anvil: ["Two-Zone Anvil", "Unlocks Phase 2 and sword forging (needs 220 XP)."], oil: ["Barrel of Quenching Oil", "Wider golden heat band."],
+    brus: ["Whetstone", "+15 % power on the bamboo test per level."], vyhna: ["Better Forge", "Metal cools 15 % slower per level."], presne: ["Precision Hammer", "Larger perfect-center ring."],
+    mech2: ["Master Bellows", "Gentle heating near the golden band, +0.5 s before the metal burns."], stit: ["Smith's Shield (Reputation)", "+10 % pay and more rare orders per level."],
+    ingoty: ["Steel Ingots", "+20 % base weapon power per level."], cech: ["Guild Master's Charter", "Unlocks Phase 3 – Master of the City (needs 900 XP)."],
+    kvyhna: ["Stone Forge", "Metal cools another 10 % slower per level."], lupa: ["Jeweller's Loupe", "Gem setting 50 % easier."], runove: ["Rune Hammer", "Green ring zone 20 % wider per level."],
+    pecat: ["Guild Seal", "+12 % pay on all orders."], damask: ["Damascus Steel", "+25 % power on the bamboo test per level."], erb: ["Royal Coat of Arms", "Unlocks Phase 4 – the Kingdom (needs 2500 XP)."],
+    drakmech: ["Dragon Bellows", "Blows 25 % harder, +0.5 s before the metal burns."], hviezdna: ["Star Anvil", "The Mythic Core moves 35 % slower."], priazen: ["Royal Favour", "+15 % pay and more rare orders."],
+    iskra: ["Divine Spark", "An even larger perfect-center ring."], mytbrus: ["Mythic Whetstone", "+40 % power on the bamboo test."] },
+ } },
+};
+function langDefault() {
+  try { const u = new URLSearchParams(location.search).get("lang"); if (u === "sk" || u === "en") return u; } catch (e) { }
+  const st = localStorage.getItem("darkforge_lang"); if (st === "sk" || st === "en") return st;
+  const ls = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "sk"]).map(l => (l || "").toLowerCase());
+  return ls.some(l => l.startsWith("sk") || l.startsWith("cs")) ? "sk" : "en";
+}
+let LANG = langDefault();
+function TR(k, v) { let s = I18N[LANG].ui[k]; if (s == null) s = I18N.sk.ui[k]; if (s == null) return k; if (v) for (const n in v) s = s.split("{" + n + "}").join(v[n]); return s; }
+function DD() { return I18N[LANG].data; }
+function MTk(k, v) { return TR(k + (MOB ? "_m" : "_pc"), v); }
+function zoneName(k) { return DD().zones[k] || k; }
+function gemName(k) { return DD().gems[k][0]; }
+function gemFull(k) { return CONFIG.gems.types[k].icon + " " + gemName(k); }
+
 /* =====================================================================
    CONFIG – všetky ladiace čísla na jednom mieste
    ===================================================================== */
@@ -349,42 +581,42 @@ const CONFIG = {
   },
   unlock: { coins: 350, xp: 220 }, // Fáza 2: Dvojzónová Kovadlina (350) + 220 XP
   shop: {
-    hammer:  { name: "Ťažké Kováčske Kladivo", price: 140, icon: "🔨", desc: "+35 % sila úderu, údery menej chladia kov." },
-    bellows: { name: "Kožený Mech", price: 100, icon: "🌬", desc: "Silnejšie fúkanie – kov sa ohrieva rýchlejšie." },
-    anvil:   { name: "Dvojzónová Kovadlina", price: 350, icon: "⚒", desc: "Odomkne Fázu 2 a kovanie mečov (treba 220 XP)." },
-    oil:     { name: "Sud s Kaleným Olejom", price: 180, icon: "🛢", desc: "Širšie zlaté pásmo teploty." },
+    hammer:  { price: 140, icon: "🔨", desc: "" },
+    bellows: { price: 100, icon: "🌬", desc: "" },
+    anvil:   { price: 350, icon: "⚒", desc: "" },
+    oil:     { price: 180, icon: "🛢", desc: "" },
     // ---- Fáza 2 (zobrazí sa po kúpe Kovadliny); prices = ceny jednotlivých úrovní ----
-    brus:   { phase: 2, name: "Brus", icon: "🪨", prices: [300, 550, 900], desc: "+15 % sila pri teste na bambuse za úroveň." },
-    vyhna:  { phase: 2, name: "Lepšia Vyhňa", icon: "🔥", prices: [400, 800], desc: "Kov chladne o 15 % pomalšie za úroveň." },
-    presne: { phase: 2, name: "Presné Kladivo", icon: "🎯", prices: [450, 900], desc: "Väčší krúžok perfektného stredu." },
-    mech2:  { phase: 2, name: "Majstrovský Mech", icon: "💨", prices: [600], desc: "Jemné ohrievanie pri zlatom pásme, +0,5 s kým kov zhorí." },
-    stit:   { phase: 2, name: "Kováčsky Štít (Reputácia)", icon: "🛡", prices: [500, 1000], desc: "+10 % platby a častejšie vzácne objednávky za úroveň." },
-    ingoty: { phase: 2, name: "Oceľové Ingoty", icon: "🧱", prices: [700, 1200], desc: "+20 % základná sila zbraní za úroveň." },
-    cech:   { phase: 2, unlock: 3, name: "Majstrovský List Cechu", price: 1500, icon: "📜", desc: "Odomkne Fázu 3 – Majster Mesta (treba 900 XP)." },
+    brus:   { phase: 2, icon: "🪨", prices: [300, 550, 900], desc: "" },
+    vyhna:  { phase: 2, icon: "🔥", prices: [400, 800], desc: "" },
+    presne: { phase: 2, icon: "🎯", prices: [450, 900], desc: "" },
+    mech2:  { phase: 2, icon: "💨", prices: [600], desc: "" },
+    stit:   { phase: 2, icon: "🛡", prices: [500, 1000], desc: "" },
+    ingoty: { phase: 2, icon: "🧱", prices: [700, 1200], desc: "" },
+    cech:   { phase: 2, unlock: 3, price: 1500, icon: "📜", desc: "" },
     // ---- Fáza 3 ----
-    kvyhna: { phase: 3, name: "Kamenná Vyhňa", icon: "🏛", prices: [1000, 1800], desc: "Kov chladne o ďalších 10 % pomalšie za úroveň." },
-    lupa:   { phase: 3, name: "Zlatnícka Lupa", icon: "🔍", prices: [900], desc: "O 50 % ľahšie osadenie gemu." },
-    runove: { phase: 3, name: "Runové Kladivo", icon: "ᚱ", prices: [1200, 2000], desc: "Zelená zóna krúžku o 20 % širšia za úroveň." },
-    pecat:  { phase: 3, name: "Cechová Pečať", icon: "🔏", prices: [1500], desc: "+12 % platba za všetky objednávky." },
-    damask: { phase: 3, name: "Damascénska Oceľ", icon: "🌊", prices: [1400, 2200], desc: "+25 % sila pri teste na bambuse za úroveň." },
-    erb:    { phase: 3, unlock: 4, name: "Kráľovský Erb", price: 4000, icon: "👑", desc: "Odomkne Fázu 4 – Kráľovstvo (treba 2500 XP)." },
+    kvyhna: { phase: 3, icon: "🏛", prices: [1000, 1800], desc: "" },
+    lupa:   { phase: 3, icon: "🔍", prices: [900], desc: "" },
+    runove: { phase: 3, icon: "ᚱ", prices: [1200, 2000], desc: "" },
+    pecat:  { phase: 3, icon: "🔏", prices: [1500], desc: "" },
+    damask: { phase: 3, icon: "🌊", prices: [1400, 2200], desc: "" },
+    erb:    { phase: 3, unlock: 4, price: 4000, icon: "👑", desc: "" },
     // ---- Fáza 4 ----
-    drakmech: { phase: 4, name: "Dračí Mech", icon: "🐲", prices: [2500], desc: "Fúka o 25 % silnejšie, +0,5 s kým kov zhorí." },
-    hviezdna: { phase: 4, name: "Hviezdna Kovadlina", icon: "✨", prices: [3000], desc: "Mýtické Jadro sa hýbe o 35 % pomalšie." },
-    priazen:  { phase: 4, name: "Kráľovská Priazeň", icon: "🎖", prices: [3500], desc: "+15 % platba a častejšie vzácne objednávky." },
-    iskra:    { phase: 4, name: "Božská Iskra", icon: "🌟", prices: [4000], desc: "Ešte väčší krúžok perfektného stredu." },
-    mytbrus:  { phase: 4, name: "Mýtický Brus", icon: "💠", prices: [3000], desc: "+40 % sila pri teste na bambuse." },
+    drakmech: { phase: 4, icon: "🐲", prices: [2500], desc: "" },
+    hviezdna: { phase: 4, icon: "✨", prices: [3000], desc: "" },
+    priazen:  { phase: 4, icon: "🎖", prices: [3500], desc: "" },
+    iskra:    { phase: 4, icon: "🌟", prices: [4000], desc: "" },
+    mytbrus:  { phase: 4, icon: "💠", prices: [3000], desc: "" },
   },
   up3: { kvyhnaCool: 0.10, lupaTol: 0.5, runoveGreen: 0.20, pecatPay: 0.12, damaskDmg: 0.25 },
   up4: { drakPump: 1.25, drakBurn: 0.5, hviezdnaSlow: 0.35, priazenPay: 0.15, priazenRare: 0.05, iskraCenter: 0.06, mytbrusDmg: 0.40 },
   unlockPhase: { 3: { coins: 1500, xp: 900 }, 4: { coins: 4000, xp: 2500 } },
-  zones: { 1: [["", 5]], 2: [["Základňa", 3], ["Ostrie", 3]], 3: [["Rukoväť", 2], ["Stred", 2], ["Špička", 2]],
-           4: [["Rukoväť", 2], ["Stred", 2], ["Ostrie", 2], ["Mýtické Jadro", 1]] },
+  zones: { 1: [["", 5]], 2: [["base", 3], ["edge", 3]], 3: [["hilt", 2], ["mid", 2], ["tip", 2]],
+           4: [["hilt", 2], ["mid", 2], ["edge", 2], ["core", 1]] },   // keys -> I18N data.zones
   core: { amp: 150, speed: 1.8, ringMult: 1.3 },  // pohyblivý terč Mýtického Jadra
   gems: {
-    types: { rubin: { name: "Rubín", icon: "🔴", col: "#ff2a48", price: 220, ins: "Rubínom", desc: "ohnivý kameň odvahy" },
-             zafir: { name: "Zafír", icon: "🔵", col: "#3a7bff", price: 200, ins: "Zafírom", desc: "kameň pokoja a múdrosti" },
-             smaragd: { name: "Smaragd", icon: "🟢", col: "#2ee07a", price: 240, ins: "Smaragdom", desc: "kameň života a ochrany" } },
+    types: { rubin: { icon: "🔴", col: "#ff2a48", price: 220, name: "", ins: "", desc: "" },
+             zafir: { name: "", icon: "🔵", col: "#3a7bff", price: 200, ins: "", desc: "" },
+             smaragd: { name: "", icon: "🟢", col: "#2ee07a", price: 240, ins: "", desc: "" } },
     minTemp: 50, tol: 20, speed: 420, range: 250, pickTime: 12,
     rubinDmg: 1.1, zafirCool: 0,           // drobné vedľajšie efekty (takmer žiadne)
     stockStart: 1, stockMax: 3, restockEvery: 3, // obmedzený sklad v Dielni
@@ -394,39 +626,34 @@ const CONFIG = {
     failFrac: 0.15, failRep: 2,            // zlý / chýbajúci / prasknutý gem = takmer nič + strata reputácie
     rewardChance: 0.3,                     // niektoré bežné objednávky platia gemom
     chainFinalBonus: 700,
-    stories: {
-      rubin: ["Syn ide prvý raz do boja – rubín mu má dodať odvahy.", "Rubín červený ako krv draka, ktorého chce premôcť.", "Rubín na pamiatku padlého brata."],
-      zafir: ["Pre sudcu mestskej rady – zafír vraj chladí hnev.", "Hvezdár chce zafír modrý ako nočné nebo.", "Zafír na pokoj duše pred dlhou plavbou."],
-      smaragd: ["Pre lesnú pani – smaragd vraj chráni pred jedom.", "Smaragd ako zásnubný dar pre nevestu.", "Liečiteľ verí, že smaragd zahojí každú ranu."],
-    },
   },
   chains: {                               // malé misie frakcií (3 kroky)
-    3: { name: "Prísaha Mestskej gardy", ico: "🛡", steps: [
-      { gem: "smaragd", cust: "Veliteľ stráže Ondrej", story: "Krok 1/3: Garde sa množia otrávené rany – potrebuje smaragdovú zbraň." },
-      { gem: "zafir", cust: "Kapitán gardy Matúš", story: "Krok 2/3: Kapitán chce chladnú hlavu pri obrane brány – zafír." },
-      { gem: "rubin", cust: "Purkmister mesta", story: "Krok 3/3: Slávnostná zbraň pre hrdinu mesta – rubín odvahy!" } ] },
-    4: { name: "Kráľovská klenotnica", ico: "👑", steps: [
-      { gem: "zafir", cust: "Kráľovský pokladník", story: "Krok 1/3: Do klenotnice chýba zafírová zbraň múdrosti." },
-      { gem: "rubin", cust: "Maršal kráľovstva", story: "Krok 2/3: Maršal prisahá na rubín – symbol kráľovej krvi." },
-      { gem: "smaragd", cust: "Kráľovná Ľudmila", story: "Krok 3/3: Kráľovná chce smaragd pre následníka trónu." } ] },
+    3: { name: "", ico: "🛡", steps: [
+      { gem: "smaragd", cust: "", story: "" },
+      { gem: "zafir", cust: "", story: "" },
+      { gem: "rubin", cust: "", story: "" } ] },
+    4: { name: "", ico: "👑", steps: [
+      { gem: "zafir", cust: "", story: "" },
+      { gem: "rubin", cust: "", story: "" },
+      { gem: "smaragd", cust: "", story: "" } ] },
   },
   traits: {
-    urgent:   { icon: "⏱", name: "Súrne", w: 1.2, pay: 1.4, ring: 0.8, desc: "rýchlejší krúžok, platí o 40 % viac" },
-    picky:    { icon: "🧐", name: "Náročný", w: 1.1, tip: 2, desc: "vyššia minimálna kvalita, dvojnásobné sprepitné" },
-    generous: { icon: "😊", name: "Štedrý", w: 1.2, pay: 1.1, under: 0.85, desc: "bez rizika – zaplatí skoro všetko" },
-    gambler:  { icon: "🎲", name: "Hazardér", w: 0.9, pay: 0.55, perCut: 0.45, desc: "platí málo, ale +45 % za každú prerezanú tyč bambusu" },
-    material: { icon: "💎", name: "Vlastný kov", w: 0.8, pay: 1.8, burn: 0.55, desc: "vzácny kov – zhorí rýchlejšie, platí o 80 % viac" },
-    regular:  { icon: "⭐", name: "Stály zákazník", w: 1.0, rep: 2, desc: "dvojnásobná reputácia" },
+    urgent:   { icon: "⏱", w: 1.2, pay: 1.4, ring: 0.8, desc: "" },
+    picky:    { icon: "🧐", w: 1.1, tip: 2, desc: "" },
+    generous: { icon: "😊", w: 1.2, pay: 1.1, under: 0.85, desc: "" },
+    gambler:  { icon: "🎲", w: 0.9, pay: 0.55, perCut: 0.45, desc: "" },
+    material: { icon: "💎", w: 0.8, pay: 1.8, burn: 0.55, desc: "" },
+    regular:  { icon: "⭐", w: 1.0, rep: 2, desc: "" },
   },
   traitNone: 3.5,                 // váha objednávky bez vlastnosti
   events: [
-    { name: "Drak v okolí!", ico: "🐉", pay: 2.5, minQ: 2, rep: 3, desc: "Treba silnú zbraň proti drakovi" },
-    { name: "Turnaj v meste", ico: "🏆", pay: 2.0, minQ: 1, rep: 2, desc: "Šampión chce zbraň na turnaj" },
-    { name: "Obliehanie hradu", ico: "🏰", pay: 2.2, minQ: 1, rep: 2, desc: "Posádka potrebuje zbrane hneď" },
-    { name: "Krvavý mesiac", ico: "🌕", pay: 2.4, minQ: 2, rep: 3, desc: "Beštie vychádzajú z lesov" },
+    { name: "", ico: "🐉", pay: 2.5, minQ: 2, rep: 3, desc: "" },
+    { name: "", ico: "🏆", pay: 2.0, minQ: 1, rep: 2, desc: "" },
+    { name: "", ico: "🏰", pay: 2.2, minQ: 1, rep: 2, desc: "" },
+    { name: "", ico: "🌕", pay: 2.4, minQ: 2, rep: 3, desc: "" },
   ],
   eventChance: 0.07,
-  factions: { 1: "Dedinčania", 2: "Žoldnieri", 3: "Mesto", 4: "Kráľ" },
+  factions: { 1: "", 2: "", 3: "", 4: "" },
   rep: { perLevel: 10, maxLevel: 5, payPerLevel: 0.03 },
   refreshCost: { 1: 5, 2: 12, 3: 25, 4: 50 },
   king: { afterOrders: 4, pay: 1800 },
@@ -438,58 +665,103 @@ const CONFIG = {
     weaponDmg: { tesak: 10, sekera: 14, mec: 22, dyka: 16, halapartna: 26, dlhymec: 28, gardovy: 34, bojsekera: 38, kopija: 32, rapir: 30, kralmec: 55, drakobijca: 62, jurkopija: 52, cepel: 70 },
     qualityMult: [1, 1.5, 2.5, 0, 4],   // Obyčajná, Kvalitná, Legendárna, (zhorená), Božská
     hammerBonus: 1.15,           // Ťažké kladivo
-    poles: [["Tenký zelený bambus", 10, "#5fae3a"], ["Hrubý bambus", 20, "#3f8a2a"], ["Suchý tvrdý bambus", 35, "#b8a35a"], ["Čierny železný bambus", 60, "#2a2a30"], ["Kamenný bambus", 100, "#8a8a92"], ["Dračí bambus", 160, "#a02818"]],
+    poles: [["", 10, "#5fae3a"], ["", 20, "#3f8a2a"], ["", 35, "#b8a35a"], ["", 60, "#2a2a30"], ["", 100, "#8a8a92"], ["", 160, "#a02818"]],
     startPole: { 1: 0, 2: 1, 3: 2, 4: 3 },   // fáza 2 začína od hrubého
     speedRef: 1600,              // px/s (logických) pre faktor 1.0
     speedMin: 0.6, speedMax: 1.3,
     bonusPerCut: 0.05, slowmo: 0.8, slowFactor: 0.3,   // spomalenie pri legendárnej/božskej           // +5 % z platby za každý prerezaný
     maxTime: 20,                 // s
   },
-  hitsPhase1: 5, zonesPhase2: [["Základňa", 3], ["Ostrie", 3]],
+  scroll: { autoClose: 2.5, closeMs: 750 },   // order scroll: auto roll-up after s, animation ms
+  hitsPhase1: 5, zonesPhase2: [["base", 3], ["edge", 3]],
   challengeReward: [40, 70],
 };
 
 /* ===================== DÁTA ===================== */
-const QN = ["Obyčajná", "Kvalitná", "Legendárna", "Zhorený nepodarok", "Božská"];
+const QN = ["", "", "", "", ""];   // filled from I18N
 function rank(q) { return q === 3 ? -1 : q === 4 ? 3 : q; }   // poradie kvality (4 = Božská je najvyššia)
-const PH = { 1: { name: "Dedinský Učeň", env: "Dedina" }, 2: { name: "Kováčsky Tovariš", env: "Tovariš" }, 3: { name: "Majster Mesta", env: "Mesto" }, 4: { name: "Božský Kováč", env: "Kráľovstvo" } };
+const PH = { 1: {}, 2: {}, 3: {}, 4: {} };   // filled from I18N
 const ITEMS = {
-  1: [{ id: "tesak", name: "Obyčajný Tesák", base: 26, shape: "knife" },
-      { id: "sekera", name: "Drevorubačská Sekera", base: 32, shape: "axe" }],
-  2: [{ id: "mec", name: "Rytiersky Meč", base: 60, shape: "sword" },
-      { id: "dyka", name: "Žoldnierska Dýka", base: 50, shape: "knife" },
-      { id: "halapartna", name: "Lovecká Halapartňa", base: 70, shape: "axe" },
-      { id: "dlhymec", name: "Strieborný Dlhý Meč", base: 80, shape: "sword" }],
-  3: [{ id: "gardovy", name: "Gardový Meč", base: 150, shape: "sword" },
-      { id: "bojsekera", name: "Bojová Sekera", base: 140, shape: "axe" },
-      { id: "kopija", name: "Kopija", base: 130, shape: "spear" },
-      { id: "rapir", name: "Mestský Rapír", base: 165, shape: "sword" }],
-  4: [{ id: "kralmec", name: "Kráľovský Meč Úsvitu", base: 320, shape: "sword" },
-      { id: "drakobijca", name: "Drakobijca", base: 360, shape: "axe" },
-      { id: "jurkopija", name: "Kopija Svätého Juraja", base: 340, shape: "spear" },
-      { id: "cepel", name: "Čepeľ Hviezd", base: 400, shape: "sword" }],
+  1: [{ id: "tesak", name: "", base: 26, shape: "knife" },
+      { id: "sekera", name: "", base: 32, shape: "axe" }],
+  2: [{ id: "mec", name: "", base: 60, shape: "sword" },
+      { id: "dyka", name: "", base: 50, shape: "knife" },
+      { id: "halapartna", name: "", base: 70, shape: "axe" },
+      { id: "dlhymec", name: "", base: 80, shape: "sword" }],
+  3: [{ id: "gardovy", name: "", base: 150, shape: "sword" },
+      { id: "bojsekera", name: "", base: 140, shape: "axe" },
+      { id: "kopija", name: "", base: 130, shape: "spear" },
+      { id: "rapir", name: "", base: 165, shape: "sword" }],
+  4: [{ id: "kralmec", name: "", base: 320, shape: "sword" },
+      { id: "drakobijca", name: "", base: 360, shape: "axe" },
+      { id: "jurkopija", name: "", base: 340, shape: "spear" },
+      { id: "cepel", name: "", base: 400, shape: "sword" }],
 };
 function itemPhase(id) { for (const k in ITEMS) if (ITEMS[k].some(i => i.id === id)) return +k; return 1; }
-const CUST = {
-  1: [["Dedinčan Ondrej", "🧑‍🌾"], ["Drevorubač Juro", "🪓"], ["Lovec Matej", "🏹"], ["Nočný strážnik Pavol", "🏮"],
-      ["Babka Zuzana", "👵"], ["Drevorubač Imro", "🌲"], ["Lovkyňa Katka", "🦌"], ["Strážnik Fero", "🛡"]],
-  2: [["Žoldnier Gregor", "⚔"], ["Lovec monštier Vlk", "🐺"], ["Žoldnierka Hela", "🗡"], ["Lovec upírov Dušan", "🧛"],
-      ["Kapitán Radomír", "🎖"], ["Lovkyňa beštií Mira", "🐉"]],
-  3: [["Mestský radca Bohuš", "🏛"], ["Kapitán stráže Ladislav", "💂"], ["Cechmajster Ignác", "⚖"], ["Šľachtičná Alžbeta", "👸"], ["Lovec drakov Svätoslav", "🐲"]],
-  4: [["Kráľovský rytier Ctibor", "🛡"], ["Šampión turnajov Marek", "🏆"], ["Hrdina Jánošík", "🪶"], ["Paladínka Ľudmila", "⚜"], ["Gardistka Vlasta", "🗡"]],
+const CUST_ICO = {
+  1: ["🧑‍🌾", "🪓", "🏹", "🏮",
+      "👵", "🌲", "🦌", "🛡"],
+  2: ["⚔", "🐺", "🗡", "🧛",
+      "🎖", "🐉"],
+  3: ["🏛", "💂", "⚖", "👸", "🐲"],
+  4: ["🛡", "🏆", "🪶", "⚜", "🗡"],
 };
-const RARE = ["Grófsky posol", "Tajomný pútnik", "Rytier Čierneho rádu", "Mníška z kláštora"];
+
 const CHAL_POOL = [
-  { t: "leg", n: 2, txt: "Ukovaj 2 legendárne" },
-  { t: "perf", n: 10, txt: "Daj 10 perfektných úderov" },
-  { t: "orders", n: 3, txt: "Splň 3 objednávky" },
-  { t: "combo", n: 4, txt: "Dosiahni combo x4" },
-  { t: "good", n: 3, txt: "Ukovaj 3× aspoň Kvalitnú" },
-  { t: "noburn", n: 4, txt: "4 objednávky bez zhorenia" },
-  { t: "tip", n: 2, txt: "Získaj 2× sprepitné" },
-  { t: "rare", n: 1, txt: "Splň vzácnu objednávku" },
-  { t: "trait", n: 2, txt: "Splň 2 objednávky so špeciálnou vlastnosťou" },
+  { t: "leg", n: 2 },
+  { t: "perf", n: 10 },
+  { t: "orders", n: 3 },
+  { t: "combo", n: 4 },
+  { t: "good", n: 3 },
+  { t: "noburn", n: 4 },
+  { t: "tip", n: 2 },
+  { t: "rare", n: 1 },
+  { t: "trait", n: 2 },
 ];
+
+/* ===================== I18N APPLY ===================== */
+function applyData() {
+  const d = DD();
+  d.QN.forEach((q, i) => QN[i] = q);
+  for (const n in d.PH) { PH[n].name = d.PH[n][0]; PH[n].env = d.PH[n][1]; }
+  for (const k in ITEMS) ITEMS[k].forEach(it => it.name = d.items[it.id]);
+  for (const k in CONFIG.shop) { CONFIG.shop[k].name = d.shop[k][0]; CONFIG.shop[k].desc = d.shop[k][1]; }
+  for (const k in CONFIG.gems.types) { const g = CONFIG.gems.types[k]; [g.name, g.ins, g.desc] = d.gems[k]; }
+  for (const k in CONFIG.traits) { CONFIG.traits[k].name = d.traits[k][0]; CONFIG.traits[k].desc = d.traits[k][1]; }
+  CONFIG.events.forEach((e, i) => { e.name = d.events[i][0]; e.desc = d.events[i][1]; });
+  for (const f in CONFIG.factions) CONFIG.factions[f] = d.factions[f];
+  CONFIG.bamboo.poles.forEach((p, i) => p[0] = d.poles[i]);
+  for (const ph in CONFIG.chains) { const ch = CONFIG.chains[ph]; ch.name = d.chains[ph][0]; ch.steps.forEach((st, i) => { st.cust = d.chains[ph][1][i][0]; st.story = d.chains[ph][1][i][1]; }); }
+}
+function itemName(id) { return DD().items[id] || id; }
+function withGem(id, k) { return DD().withGem.replace("{item}", itemName(id)).replace("{ins}", DD().gems[k][1]); }
+function locOrder(o) {   // recompute all displayed texts of an order from its keys
+  const d = DD(), k = o.ck || {};
+  if (o.king) { o.cust = d.king[0]; o.ev = d.king[1]; }
+  else if (o.chain) o.cust = d.chains[o.chain.ph][1][o.chain.step][0];
+  else if (k.t === "e") { o.cust = d.events[k.i][0]; o.ev = d.events[k.i][1]; }
+  else if (k.t === "r") o.cust = d.rare[k.i];
+  else if (k.t === "c") o.cust = d.cust[k.ph][k.i];
+  o.name = o.gemReq ? withGem(o.item, o.gemReq) : itemName(o.item); o.baseName = itemName(o.item);
+  if (o.gemReq) o.story = o.chain ? d.chains[o.chain.ph][1][o.chain.step][1] : d.stories[o.gemReq][o.si || 0];
+  return o;
+}
+function chalTxt(c) { return DD().chal[c.t] || ""; }
+function setLang(l, user) {
+  if (l !== "sk" && l !== "en") return; LANG = l; if (user) { try { localStorage.setItem("darkforge_lang", l); } catch (e) { } }
+  applyLang();
+}
+function langButtons() { return ["sk", "en"].map(l => `<button class="btn small langb ${LANG === l ? "gold" : ""}" data-lang="${l}">${l === "sk" ? "🇸🇰 SK" : "🇬🇧 EN"}</button>`).join(""); }
+function applyLang() {
+  document.documentElement.lang = LANG; applyData();
+  document.querySelectorAll("[data-t]").forEach(e => e.innerHTML = TR(e.dataset.t));
+  const ic = document.getElementById("scrollIco"); if (ic) ic.title = TR("sc_ico");
+  ["menuLang", "setLang"].forEach(id => { const e = document.getElementById(id); if (!e) return; e.innerHTML = langButtons();
+    e.querySelectorAll("[data-lang]").forEach(b => b.onclick = ev => { ev.stopPropagation(); setLang(b.dataset.lang, true); SFX.click(); }); });
+  if (S && S.orders) S.orders.forEach(locOrder);
+  if (typeof updMobTexts === "function") updMobTexts();
+  if (typeof cur !== "undefined" && document.getElementById(cur) && cur !== "forge" && cur !== "bamboo" && cur !== "result") show(cur);
+}
 
 /* ===================== ULOŽENIE ===================== */
 const SAVE_KEY = "darkforge_save_v1";
@@ -509,6 +781,7 @@ function load() {
   S.chain = Object.assign({ 3: 0, 4: 0 }, S.chain || {}); S.gemTroph = S.gemTroph || {}; S.restock = S.restock || 0;
   if (S.phase > maxPhase()) S.phase = maxPhase();
   if (!S.chal || S.chal.length < 3) refillChal();
+  S.orders = (S.orders || []).filter(o => o.v === 2); S.orders.forEach(locOrder);   // old saves: regenerate orders
 }
 function maxPhase() { return S.up && S.up.erb ? 4 : S.up && S.up.cech ? 3 : S.up && S.up.anvil ? 2 : 1; }
 function repLevel(f) { return Math.min(CONFIG.rep.maxLevel, Math.floor((S.rep[f] || 0) / CONFIG.rep.perLevel)); }
@@ -518,7 +791,7 @@ function refillChal() {
   while (S.chal.length < 3) {
     const pool = CHAL_POOL.filter(c => !S.chal.some(x => x.t === c.t));
     const c = pool[Math.floor(Math.random() * pool.length)];
-    S.chal.push({ t: c.t, n: c.n, txt: c.txt, p: 0, r: Math.round(CONFIG.challengeReward[0] + Math.random() * (CONFIG.challengeReward[1] - CONFIG.challengeReward[0])) });
+    S.chal.push({ t: c.t, n: c.n, p: 0, r: Math.round(CONFIG.challengeReward[0] + Math.random() * (CONFIG.challengeReward[1] - CONFIG.challengeReward[0])) });
   }
 }
 
@@ -579,7 +852,7 @@ function vib(p) { if (S.vib && navigator.vibrate) try { navigator.vibrate(p); } 
 const $ = id => document.getElementById(id);
 let clickGuard = 0;
 document.addEventListener("click", e => { if (performance.now() < clickGuard) { e.stopPropagation(); e.preventDefault(); } }, true);
-function show(id) { if (id !== "forge") { const po = document.getElementById("pauseOv"); if (po) po.classList.remove("on"); }
+function show(id) { if (id !== "forge") { const po = document.getElementById("pauseOv"); if (po) po.classList.remove("on"); const so = document.getElementById("scrollOv"); if (so) so.classList.remove("on"); $("forge").classList.remove("scrolling"); if (F) { clearTimeout(F.scrollT); F.scroll = null; } }
   if ((cur === "forge" || cur === "bamboo") && id !== cur) clickGuard = performance.now() + 700;
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
   cur = id; $("app").className = "env" + (F ? F.phase : S.phase);
@@ -588,7 +861,7 @@ function show(id) { if (id !== "forge") { const po = document.getElementById("pa
 }
 let cur = "menu";
 function hudHtml() {
-  return `<span id="hudCoins">🪙 ${S.coins}</span><span>✦ ${S.xp} XP</span><span>Fáza ${S.phase}: ${PH[S.phase].name}${S.ending ? " ∞" : ""}</span>`;
+  return `<span id="hudCoins">🪙 ${S.coins}</span><span>✦ ${S.xp} XP</span><span>${TR("hud_phase", { n: S.phase, name: PH[S.phase].name })}${S.ending ? " ∞" : ""}</span>`;
 }
 let toastT = 0;
 function toast(t, ms = 2200) { const e = $("toast"); e.innerHTML = t; e.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => e.style.display = "none", ms); }
@@ -603,9 +876,9 @@ bind("bTropBack", () => show("menu")); bind("bSetBack", () => show("menu"));
 bind("bNext", () => show("orders")); bind("bEndCont", () => show("orders")); bind("bResShop", () => show("shop")); bind("bResMenu", () => show("menu"));
 bind("bSound", () => { S.sound = !S.sound; save(); renderSettings(); });
 bind("bVib", () => { S.vib = !S.vib; save(); renderSettings(); vib(40); });
-bind("bTutAgain", () => { S.tutDone = false; save(); toast("Návod sa spustí pri ďalšej objednávke"); });
-bind("bReset", () => confirmBox("Naozaj vymazať celý postup?", () => { localStorage.removeItem(SAVE_KEY); S = freshSave(); refillChal(); save(); toast("Postup vymazaný"); show("menu"); }));
-bind("pauseBtn", () => pause(true)); bind("fGuideBtn", () => { if (F && !F.done) { if (F.paused) { $("pauseOv").classList.remove("on"); F.paused = false; } guideOpen(); } });
+bind("bTutAgain", () => { S.tutDone = false; save(); toast(TR("toast_tut")); });
+bind("bReset", () => confirmBox(TR("reset_q"), () => { localStorage.removeItem(SAVE_KEY); S = freshSave(); refillChal(); save(); toast(TR("reset_done")); show("menu"); }));
+bind("pauseBtn", () => pause(true)); bind("fGuideBtn", () => { if (F && !F.done && !F.scroll) { if (F.paused) { $("pauseOv").classList.remove("on"); F.paused = false; } guideOpen(); } });
 (function () {
   const mb = $("mechBtn");
   mb.addEventListener("pointerdown", e => { e.preventDefault(); audioInit(); if (!F || F.done || F.paused) return; F.bellows.add(e.pointerId); try { mb.setPointerCapture(e.pointerId); } catch (_) { } vib(10); });
@@ -622,12 +895,12 @@ function drawBelBtn() { const c = $("belCv"), x = c.getContext("2d"); x.setTrans
   if (on) { x.strokeStyle = "rgba(230,235,255,.35)"; x.lineWidth = 3; x.lineCap = "round"; for (let i = 0; i < 3; i++) { const t = ((F.t * 3 + i / 3) % 1); x.beginPath(); x.moveTo(205 + t * 70, 60 - t * 45 + i * 8); x.lineTo(225 + t * 70, 47 - t * 45 + i * 8); x.stroke(); } }
 }
 function updMobTexts() {
-  const sk = $("bBSkip"); if (sk) sk.textContent = MOB ? "Preskočiť ▶" : "Preskočiť ⏎";
+  const sk = $("bBSkip"); if (sk) sk.textContent = MOB ? TR("b_skip_m") : TR("b_skip");
 } bind("bResume", () => pause(false));
 bind("bQuit", () => { $("pauseOv").classList.remove("on"); F.paused = false; finishForge(true); });
 
 function renderMenu() { $("menuHud").innerHTML = hudHtml(); }
-function renderSettings() { $("bSound").textContent = "Zvuk: " + (S.sound ? "ZAP" : "VYP"); $("bVib").textContent = "Vibrácie: " + (S.vib ? "ZAP" : "VYP"); }
+function renderSettings() { $("bSound").textContent = TR("sound", { v: TR(S.sound ? "on" : "off") }); $("bVib").textContent = TR("vib", { v: TR(S.vib ? "on" : "off") }); }
 
 /* ===================== OBJEDNÁVKY ===================== */
 function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -649,9 +922,11 @@ function makeOrder(forceSimple) {
   if (trait === "generous") minQ = 0;
   if (trait && T[trait] && T[trait].pay) payM *= T[trait].pay;
   if (ev) { payM *= ev.pay; minQ = Math.max(minQ, ev.minQ); }
-  const c = ev ? [ev.name, ev.ico] : rare ? [rnd(RARE), "👑"] : rnd(CUST[ph]);
+  const ci = Math.floor(Math.random() * CUST_ICO[ph].length), ri = Math.floor(Math.random() * DD().rare.length);
+  const ck = ev ? { t: "e", i: CONFIG.events.indexOf(ev) } : rare ? { t: "r", i: ri } : { t: "c", ph, i: ci };
+  const c = ev ? [ev.name, ev.ico] : rare ? [DD().rare[ri], "👑"] : [DD().cust[ph][ci], CUST_ICO[ph][ci]];
   let pay = Math.round((it.base + minQ * it.base * 0.5) * (0.9 + Math.random() * 0.25) * payM);
-  const o = { cust: c[0], ico: c[1], item: it.id, name: it.name, shape: it.shape, minQ, pay, rare, phase: ph, trait, ev: ev ? ev.desc : null, evRep: ev ? ev.rep : 0, fac: ph };
+  const o = { v: 2, ck, cust: c[0], ico: c[1], item: it.id, name: it.name, shape: it.shape, minQ, pay, rare, phase: ph, trait, ev: ev ? ev.desc : null, evRep: ev ? ev.rep : 0, fac: ph };
   const GO = CONFIG.gemOrders;
   if (!forceSimple && ph >= 3 && !ev) {
     if (Math.random() < GO.chance) makeGemOrder(o, rnd(Object.keys(CONFIG.gems.types)));
@@ -661,17 +936,18 @@ function makeOrder(forceSimple) {
 }
 function makeGemOrder(o, k, story) {
   const gt = CONFIG.gems.types[k];
-  o.gemReq = k; o.baseName = o.baseName || o.name; o.name = o.baseName + " s " + gt.ins; o.story = story || rnd(CONFIG.gemOrders.stories[k]);
+  o.gemReq = k; o.si = Math.floor(Math.random() * DD().stories[k].length); locOrder(o);
   o.pay = Math.round(o.pay * CONFIG.gemOrders.payMult); return o;
 }
+function gemFailTxt(f, o) { return f === "wrong" ? TR("gf_wrong", { g: gemName(o.gemReq) }) : TR("gf_" + f); }
 function chainOrder(ph) {
   const ch = CONFIG.chains[ph]; if (!ch) return null; const st = S.chain[ph] || 0; if (st >= ch.steps.length) return null;
   const sp = ch.steps[st], it = ITEMS[ph][st % ITEMS[ph].length];
-  const o = { cust: sp.cust, ico: ch.ico, item: it.id, name: it.name, shape: it.shape, minQ: st >= 2 ? 1 : 0, pay: Math.round(it.base * 1.2 * payBonusAll()), rare: true, phase: ph, trait: null, ev: null, evRep: 1, fac: ph, chain: { ph, step: st } };
+  const o = { v: 2, cust: sp.cust, ico: ch.ico, item: it.id, name: it.name, shape: it.shape, minQ: st >= 2 ? 1 : 0, pay: Math.round(it.base * 1.2 * payBonusAll()), rare: true, phase: ph, trait: null, ev: null, evRep: 1, fac: ph, chain: { ph, step: st } };
   return makeGemOrder(o, sp.gem, sp.story);
 }
 function kingOrder() {
-  return { cust: "Kráľ Svätopluk", ico: "👑", item: "cepel", name: "Čepeľ Hviezd", shape: "sword", minQ: 4, pay: Math.round(CONFIG.king.pay * payBonusAll()), rare: true, phase: 4, trait: "event", ev: "Kráľovská objednávka – len BOŽSKÁ zbraň!", evRep: 5, fac: 4, king: true };
+  return locOrder({ v: 2, ico: "👑", item: "cepel", shape: "sword", minQ: 4, pay: Math.round(CONFIG.king.pay * payBonusAll()), rare: true, phase: 4, trait: "event", evRep: 5, fac: 4, king: true });
 }
 function ensureOrders() {
   S.orders = (S.orders || []).filter(o => o.phase === S.phase);
@@ -681,36 +957,36 @@ function ensureOrders() {
   save();
 }
 function traitTags(o) {
-  let h = o.rare && !o.king ? '<span class="tag">VZÁCNA</span>' : "";
-  if (o.trait === "event") h += `<span class="tag ev">${o.king ? "👑 KRÁĽ" : "⚡ UDALOSŤ"}</span>`;
-  else if (o.trait) { const t = CONFIG.traits[o.trait]; h += `<span class="tag tr" title="${t.desc}">${t.icon} ${t.name}</span>`; }
+  let h = o.rare && !o.king ? `<span class="tag">${TR("tag_rare")}</span>` : "";
+  if (o.trait === "event") h += `<span class="tag ev">${o.king ? TR("tag_king") : TR("tag_ev")}</span>`;
+  else if (o.trait) { const tr = CONFIG.traits[o.trait]; h += `<span class="tag tr" title="${tr.desc}">${tr.icon} ${tr.name}</span>`; }
   return h;
 }
 function gemCardHtml(o) {
   if (o.gemReq) { const g = CONFIG.gems.types[o.gemReq], n = S.gems[o.gemReq] || 0, ch = o.chain ? CONFIG.chains[o.chain.ph] : null;
-    return `<div class="gemreq" style="--gc:${g.col}">${ch ? `<div class="chainh">${ch.ico} Misia: ${ch.name}</div>` : ""}<div class="gemline"><span class="gemico">${g.icon}</span><b>Chce gem: ${g.name}</b><span class="gemhave ${n ? "" : "no"}">máš ${n}</span></div>
-      <div class="story">„${o.story}“</div><div class="gemrew">Odmena: platba ×${CONFIG.gemOrders.payMult} · +${CONFIG.gemOrders.rep} reputácia · šanca na unikátnu trofej${o.chain && o.chain.step === CONFIG.chains[o.chain.ph].steps.length - 1 ? ` · 🏅 +🪙${CONFIG.gemOrders.chainFinalBonus}` : ""}</div>
-      <div class="gemwarn">Zlý alebo prasknutý gem = zákazník odmietne zbraň!</div></div>`; }
-  if (o.rewardGem) { const g = CONFIG.gems.types[o.rewardGem]; return `<div class="gemreq small" style="--gc:${g.col}"><div class="gemline"><span class="gemico">${g.icon}</span>Odmenou pridá gem: <b>${g.name}</b> (aspoň Kvalitná)</div></div>`; }
+    return `<div class="gemreq" style="--gc:${g.col}">${ch ? `<div class="chainh">${ch.ico} ${TR("gc_mission", { n: ch.name })}</div>` : ""}<div class="gemline"><span class="gemico">${g.icon}</span><b>${TR("gc_wants", { g: g.name })}</b><span class="gemhave ${n ? "" : "no"}">${TR("gc_have", { n })}</span></div>
+      <div class="story">„${o.story}“</div><div class="gemrew">${TR("gc_reward", { m: CONFIG.gemOrders.payMult, r: CONFIG.gemOrders.rep })}${o.chain && o.chain.step === CONFIG.chains[o.chain.ph].steps.length - 1 ? ` · 🏅 +🪙${CONFIG.gemOrders.chainFinalBonus}` : ""}</div>
+      <div class="gemwarn">${TR("gc_warn")}</div></div>`; }
+  if (o.rewardGem) { const g = CONFIG.gems.types[o.rewardGem]; return `<div class="gemreq small" style="--gc:${g.col}"><div class="gemline"><span class="gemico">${g.icon}</span>${TR("gc_rewgem", { g: g.name })}</div></div>`; }
   return "";
 }
 function traitDesc(o) { return o.trait === "event" ? o.ev : o.trait ? CONFIG.traits[o.trait].desc : ""; }
 function renderOrders() {
   ensureOrders();
   $("ordHud").innerHTML = hudHtml();
-  $("repBar").innerHTML = Object.entries(CONFIG.factions).map(([f, n]) => `<span title="${S.rep[f]} bodov">${n}: Lv ${repLevel(f)}${repLevel(f) ? ` (+${Math.round(repLevel(f) * CONFIG.rep.payPerLevel * 100)} %)` : ""}</span>`).join("");
+  $("repBar").innerHTML = Object.entries(CONFIG.factions).map(([f, n]) => `<span title="${TR("rep_pts", { n: S.rep[f] })}">${n}: Lv ${repLevel(f)}${repLevel(f) ? ` (+${Math.round(repLevel(f) * CONFIG.rep.payPerLevel * 100)} %)` : ""}</span>`).join("");
   $("ordList").innerHTML = S.orders.map((o, i) => `
    <div class="panel card ${o.rare ? "rare" : ""} ${o.trait === "event" ? "evcard" : ""}">
     <div class="row"><div class="icon">${o.ico}</div><div class="grow">
      <div class="name">${i + 1}. ${o.cust}</div><div>${traitTags(o)}</div>
-     <div>Chce: <b>${o.name}</b></div>
-     <div class="muted">Minimum: <b class="q${o.minQ}">${QN[o.minQ]}</b> · Platí: <b>🪙 ${o.pay}</b></div>
+     <div>${TR("o_wants")}: <b>${o.name}</b></div>
+     <div class="muted">${TR("o_min")}: <b class="q${o.minQ}">${QN[o.minQ]}</b> · ${TR("o_pays")}: <b>🪙 ${o.pay}</b></div>
      ${traitDesc(o) ? `<div class="muted" style="font-style:italic">${traitDesc(o)}</div>` : ""}
     </div></div>${gemCardHtml(o)}
-    <button class="btn gold" data-o="${i}" style="min-height:48px" ${o.gemReq && !S.gems[o.gemReq] ? "disabled" : ""}>${o.gemReq && !S.gems[o.gemReq] ? `Chýba ti ${CONFIG.gems.types[o.gemReq].icon} ${CONFIG.gems.types[o.gemReq].name}` : "Prijať a kovať"}</button>
+    <button class="btn gold" data-o="${i}" style="min-height:48px" ${o.gemReq && !S.gems[o.gemReq] ? "disabled" : ""}>${o.gemReq && !S.gems[o.gemReq] ? TR("o_missing", { g: gemFull(o.gemReq) }) : TR("o_accept")}</button>
    </div>`).join("");
   $("ordList").querySelectorAll("[data-o]").forEach(b => b.onclick = () => { audioInit(); SFX.click(); startForge(+b.dataset.o); });
-  const rc = CONFIG.refreshCost[S.phase]; $("bRefresh").textContent = `🔄 Iní zákazníci (🪙 ${rc})`; $("bRefresh").disabled = S.coins < rc;
+  const rc = CONFIG.refreshCost[S.phase]; $("bRefresh").textContent = TR("o_refresh", { c: rc }); $("bRefresh").disabled = S.coins < rc;
   renderChal();
 }
 function refreshOrders() {
@@ -718,7 +994,7 @@ function refreshOrders() {
   S.coins -= rc; S.orders = S.orders.filter(o => o.king); save(); renderOrders(); SFX.coin();
 }
 function renderChal() {
-  $("chalList").innerHTML = S.chal.map(c => `<div class="chal"><div class="grow">${c.txt}<div class="bar"><i style="width:${Math.min(100, c.p / c.n * 100)}%"></i></div></div><div style="margin-left:10px">${c.p}/${c.n} · 🪙${c.r}</div></div>`).join("");
+  $("chalList").innerHTML = S.chal.map(c => `<div class="chal"><div class="grow">${chalTxt(c)}<div class="bar"><i style="width:${Math.min(100, c.p / c.n * 100)}%"></i></div></div><div style="margin-left:10px">${c.p}/${c.n} · 🪙${c.r}</div></div>`).join("");
 }
 function chalProgress(t, amt = 1, setMax) {
   const done = [];
@@ -727,7 +1003,7 @@ function chalProgress(t, amt = 1, setMax) {
     c.p = setMax ? Math.max(c.p, amt) : c.p + amt;
     if (c.p >= c.n) done.push(c);
   });
-  done.forEach(c => { S.coins += c.r; S.chal.splice(S.chal.indexOf(c), 1); toast(`✔ Výzva splnená: ${c.txt}<br>+🪙 ${c.r}`, 2600); SFX.fanfare(); });
+  done.forEach(c => { S.coins += c.r; S.chal.splice(S.chal.indexOf(c), 1); toast(TR("chal_done", { t: chalTxt(c), r: c.r }), 2600); SFX.fanfare(); });
   if (done.length) refillChal();
   return done;
 }
@@ -751,33 +1027,33 @@ function unlockReq(k) { const it = CONFIG.shop[k]; if (k === "anvil") return CON
 function shopCard(k) {
   const it = CONFIG.shop[k], L = lvl(k), M = maxLvl(k), own = L >= M; let lock = "";
   const req = unlockReq(k);
-  if (req && !own && S.xp < req.xp) lock = `Treba ${req.xp} XP (máš ${S.xp})`;
+  if (req && !own && S.xp < req.xp) lock = TR("sh_need", { x: req.xp, h: S.xp });
   const pr = own ? 0 : priceOf(k), can = !own && !lock && S.coins >= pr;
   const lv = M > 1 ? ` <span class="tag">${["", "I", "II", "III"][L] || "–"} / ${["", "I", "II", "III"][M]}</span>` : "";
   return `<div class="panel shopitem ${it.unlock || k === "anvil" ? "unlockitem" : ""}"><div class="icon">${it.icon}</div><div class="grow"><div class="name" style="font-weight:bold;color:#ffd6a0">${it.name}${lv}</div>
    <div class="muted">${it.desc}</div>${lock ? `<div class="q3" style="font-size:13px">${lock}</div>` : ""}</div>
-   <button class="btn small ${can ? "gold" : ""}" data-b="${k}" ${own || !can ? "disabled" : ""}>${own ? "✔ Máš" : (M > 1 && L ? "↑ " : "") + "🪙 " + pr}</button></div>`;
+   <button class="btn small ${can ? "gold" : ""}" data-b="${k}" ${own || !can ? "disabled" : ""}>${own ? TR("sh_own") : (M > 1 && L ? "↑ " : "") + "🪙 " + pr}</button></div>`;
 }
 function gemCards() {
   return Object.entries(CONFIG.gems.types).map(([k, g]) => `<div class="panel shopitem"><div class="icon" style="box-shadow:0 0 14px ${g.col}">${g.icon}</div><div class="grow">
-   <div class="name" style="font-weight:bold;color:#ffd6a0">${g.name} <span class="tag">máš ${S.gems[k] || 0}</span> <span class="tag tr">sklad ${S.gemStock[k] || 0}</span></div><div class="muted">${g.desc}. Treba ho na objednávky „…s ${g.ins}“. Sklad sa dopĺňa každé ${CONFIG.gems.restockEvery} objednávky.</div></div>
-   <button class="btn small ${S.coins >= g.price && S.gemStock[k] > 0 ? "gold" : ""}" data-gem="${k}" ${S.coins >= g.price && S.gemStock[k] > 0 ? "" : "disabled"}>${S.gemStock[k] > 0 ? "🪙 " + g.price : "vypredané"}</button></div>`).join("");
+   <div class="name" style="font-weight:bold;color:#ffd6a0">${g.name} <span class="tag">${TR("sh_have", { n: S.gems[k] || 0 })}</span> <span class="tag tr">${TR("sh_stock", { n: S.gemStock[k] || 0 })}</span></div><div class="muted">${TR("sh_gemdesc", { d: g.desc, ins: g.ins, n: CONFIG.gems.restockEvery })}</div></div>
+   <button class="btn small ${S.coins >= g.price && S.gemStock[k] > 0 ? "gold" : ""}" data-gem="${k}" ${S.coins >= g.price && S.gemStock[k] > 0 ? "" : "disabled"}>${S.gemStock[k] > 0 ? "🪙 " + g.price : TR("sh_sold")}</button></div>`).join("");
 }
 function renderShop() {
   $("shopHud").innerHTML = hudHtml();
   const keys = Object.keys(CONFIG.shop), mp = maxPhase();
-  const head = (ph) => `<div class="shophead">Fáza ${ph} – ${PH[ph].name}${ph <= mp ? (S.phase === ph ? ' <span class="tag">HRÁŠ TU</span>' : ` <button class="btn small" data-ph="${ph}">Hrať túto fázu</button>`) : ""}</div>`;
+  const head = (ph) => `<div class="shophead">${TR("sh_phase", { n: ph, name: PH[ph].name })}${ph <= mp ? (S.phase === ph ? ` <span class="tag">${TR("sh_here")}</span>` : ` <button class="btn small" data-ph="${ph}">${TR("sh_playph")}</button>`) : ""}</div>`;
   let h = "";
   for (let ph = 1; ph <= 4; ph++) {
     const list = keys.filter(k => (CONFIG.shop[k].phase || 1) === ph);
     h += head(ph);
-    if (ph <= mp) { h += list.map(shopCard).join(""); if (ph === 3) h += `<div class="shophead" style="font-size:16px">💎 Gemy</div>` + gemCards(); }
-    else { const req = CONFIG.unlockPhase[ph] || CONFIG.unlock; h += `<div class="panel muted lockedph">🔒 ${PH[ph].env} – odomkneš v predchádzajúcej fáze (🪙 ${req.coins} + ${req.xp} XP) · ${list.length} vylepšení</div>`; }
+    if (ph <= mp) { h += list.map(shopCard).join(""); if (ph === 3) h += `<div class="shophead" style="font-size:16px">${TR("sh_gems")}</div>` + gemCards(); }
+    else { const req = CONFIG.unlockPhase[ph] || CONFIG.unlock; h += `<div class="panel muted lockedph">${TR("sh_locked", { env: PH[ph].env, c: req.coins, x: req.xp, n: list.length })}</div>`; }
   }
   $("shopList").innerHTML = h;
   $("shopList").querySelectorAll("[data-b]").forEach(b => b.onclick = () => buy(b.dataset.b));
-  $("shopList").querySelectorAll("[data-gem]").forEach(b => b.onclick = () => { const g = CONFIG.gems.types[b.dataset.gem]; if (S.coins < g.price || !(S.gemStock[b.dataset.gem] > 0)) return; S.coins -= g.price; S.gemStock[b.dataset.gem]--; S.gems[b.dataset.gem]++; save(); SFX.coin(); toast("Kúpený gem: " + g.icon + " " + g.name); renderShop(); });
-  $("shopList").querySelectorAll("[data-ph]").forEach(b => b.onclick = () => { S.phase = +b.dataset.ph; save(); SFX.click(); toast(`Fáza ${S.phase}: ${PH[S.phase].name}`); show("shop"); });
+  $("shopList").querySelectorAll("[data-gem]").forEach(b => b.onclick = () => { const g = CONFIG.gems.types[b.dataset.gem]; if (S.coins < g.price || !(S.gemStock[b.dataset.gem] > 0)) return; S.coins -= g.price; S.gemStock[b.dataset.gem]--; S.gems[b.dataset.gem]++; save(); SFX.coin(); toast(TR("sh_boughtGem", { g: g.icon + " " + g.name })); renderShop(); });
+  $("shopList").querySelectorAll("[data-ph]").forEach(b => b.onclick = () => { S.phase = +b.dataset.ph; save(); SFX.click(); toast(TR("hud_phase", { n: S.phase, name: PH[S.phase].name })); show("shop"); });
 }
 function buy(k) {
   audioInit();
@@ -788,8 +1064,8 @@ function buy(k) {
   const req = unlockReq(k); if (req && S.xp < req.xp) return;
   S.coins -= pr; S.up[k] = it.prices ? L + 1 : true;
   const unl = k === "anvil" ? 2 : it.unlock;
-  if (unl) { S.phase = unl; toast(`⚒ Fáza ${unl} odomknutá!<br>${PH[unl].name} – ${PH[unl].env}`, 3000); SFX.fanfare(); }
-  else { toast("Kúpené: " + it.name + (it.prices && maxLvl(k) > 1 ? " " + ["", "I", "II", "III"][L + 1] : "")); SFX.coin(); }
+  if (unl) { S.phase = unl; toast(TR("sh_unlocked", { n: unl, name: PH[unl].name, env: PH[unl].env }), 3000); SFX.fanfare(); }
+  else { toast(TR("sh_bought", { n: it.name + (it.prices && maxLvl(k) > 1 ? " " + ["", "I", "II", "III"][L + 1] : "") })); SFX.coin(); }
   save(); show("shop");
 }
 
@@ -797,12 +1073,12 @@ function buy(k) {
 function renderTroph() {
   const all = [...ITEMS[1], ...ITEMS[2], ...ITEMS[3], ...ITEMS[4]];
   $("tropList").innerHTML = all.map(it => { const n = S.trophies[it.id] || 0; return `<div class="trophy ${n ? "" : "off"}"><canvas width="80" height="60" data-s="${it.shape}" data-id="${it.id}"></canvas><div>${it.name}</div><div class="q2">${n ? "×" + n : "?"}</div></div>`; }).join("");
-  const ut = Object.values(S.gemTroph || {}); if (ut.length) $("tropList").innerHTML += ut.map(u => `<div class="trophy" style="border-color:${CONFIG.gems.types[u.gem].col};box-shadow:0 0 12px ${CONFIG.gems.types[u.gem].col}"><canvas width="80" height="60" data-s="${u.shape}" data-id="${u.item}" data-gem="${u.gem}"></canvas><div>${u.name}</div><div class="q2">💎 unikát</div></div>`).join("");
+  const ut = Object.values(S.gemTroph || {}); if (ut.length) $("tropList").innerHTML += ut.map(u => `<div class="trophy" style="border-color:${CONFIG.gems.types[u.gem].col};box-shadow:0 0 12px ${CONFIG.gems.types[u.gem].col}"><canvas width="80" height="60" data-s="${u.shape}" data-id="${u.item}" data-gem="${u.gem}"></canvas><div>${u.chain ? CONFIG.chains[u.chain].name : withGem(u.item, u.gem)}</div><div class="q2">${TR("tr_unique")}</div></div>`).join("");
   $("tropList").querySelectorAll("canvas").forEach(c => { const x = c.getContext("2d"); x.translate(40, 30); x.rotate(-0.6); x.scale(0.5, 0.5); drawWeapon(x, c.dataset.s, 0, 0, 120, 60, (S.divine || {})[c.dataset.id] ? 4 : 2, null, itemPhase(c.dataset.id), c.dataset.id); if (c.dataset.gem) { x.fillStyle = CONFIG.gems.types[c.dataset.gem].col; x.beginPath(); x.arc(-44, 0, 9, 0, 7); x.fill(); } });
   const s = S.stats;
-  $("statBox").innerHTML = `<div class="res-line"><span>Objednávky</span><b>${s.orders}</b></div><div class="res-line"><span>Legendárne</span><b class="q2">${s.leg}</b></div><div class="res-line"><span>Božské</span><b class="q4">${s.divine || 0}</b></div><div class="res-line"><span>Gemy</span><b>🔴${S.gems.rubin} 🔵${S.gems.zafir} 🟢${S.gems.smaragd}</b></div>
-   <div class="res-line"><span>Perfektné údery</span><b>${s.perfects}</b></div><div class="res-line"><span>Najlepšie combo</span><b>x${s.bestCombo}</b></div>
-   <div class="res-line"><span>Zhorené</span><b class="q3">${s.burned}</b></div><div class="res-line"><span>Zarobené spolu</span><b>🪙 ${s.earned}</b></div>`;
+  $("statBox").innerHTML = `<div class="res-line"><span>${TR("st_orders")}</span><b>${s.orders}</b></div><div class="res-line"><span>${TR("st_leg")}</span><b class="q2">${s.leg}</b></div><div class="res-line"><span>${TR("st_div")}</span><b class="q4">${s.divine || 0}</b></div><div class="res-line"><span>${TR("st_gems")}</span><b>🔴${S.gems.rubin} 🔵${S.gems.zafir} 🟢${S.gems.smaragd}</b></div>
+   <div class="res-line"><span>${TR("st_perf")}</span><b>${s.perfects}</b></div><div class="res-line"><span>${TR("st_combo")}</span><b>x${s.bestCombo}</b></div>
+   <div class="res-line"><span>${TR("st_burn")}</span><b class="q3">${s.burned}</b></div><div class="res-line"><span>${TR("st_earned")}</span><b>🪙 ${s.earned}</b></div>`;
 }
 
 /* ===================== KRESLENIE ZBRANE ===================== */
@@ -1115,7 +1391,7 @@ function drawGuide() {
   [[0, 40, "#2050c0"], [40, 62, "#d06010"], [62, 74, "#ffd030"], [74, 86, "#d06010"], [86, 100, "#ff3030"]].forEach(([a, b, col]) => { x.fillStyle = col; x.globalAlpha = .55; x.fillRect(X - 15, y(b), 30, y(a) - y(b)); });
   x.globalAlpha = 1; x.strokeStyle = "#ffe080"; x.lineWidth = 3; x.strokeRect(X - 15, y(74), 30, y(62) - y(74));
   x.fillStyle = "#fff"; x.fillRect(X - 22, y(68) - 2, 44, 4);
-  x.fillStyle = "#ffd030"; x.font = "bold 18px Georgia"; x.textAlign = "left"; x.fillText("← ① ZLATÉ pásmo", X + 26, y(68) + 6);
+  x.fillStyle = "#ffd030"; x.font = "bold 18px Georgia"; x.textAlign = "left"; x.fillText(TR("gd_gold"), X + 26, y(68) + 6);
   // terč
   const cx = 470, cy = 150, r = 70;
   x.lineWidth = r * 0.44; x.strokeStyle = "rgba(80,255,100,.6)"; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.stroke();
@@ -1123,9 +1399,9 @@ function drawGuide() {
   x.strokeStyle = "#ffd75a"; x.lineWidth = 2; x.setLineDash([5, 4]); x.beginPath(); x.arc(cx, cy, r * 0.64, 0, 7); x.stroke(); x.setLineDash([]);
   x.strokeStyle = "#40ff60"; x.lineWidth = 4; x.beginPath(); x.arc(cx, cy, r * 1.02, 0, 7); x.stroke();
   x.fillStyle = "#40ff60"; x.beginPath(); x.arc(cx + 8, cy - 6, 6, 0, 7); x.fill();
-  x.fillStyle = "#ffd75a"; x.font = "bold 17px Georgia"; x.textAlign = "right"; x.fillText("② klikni do stredu →", cx - r * 1.3, cy + 6);
-  x.fillStyle = "#7dff8c"; x.textAlign = "left"; x.fillText("③ biely krúžok v zelenom", cx + r * 0.5, cy - r * 1.35);
-  x.fillText("= KLIKNI TERAZ!", cx + r * 0.5, cy - r * 1.35 + 20);
+  x.fillStyle = "#ffd75a"; x.font = "bold 17px Georgia"; x.textAlign = "right"; x.fillText(TR("gd_center"), cx - r * 1.3, cy + 6);
+  x.fillStyle = "#7dff8c"; x.textAlign = "left"; x.fillText(TR("gd_ring"), cx + r * 0.5, cy - r * 1.35);
+  x.fillText(TR("gd_now"), cx + r * 0.5, cy - r * 1.35 + 20);
   drawLights(x, cx - 30, 280, true, true, true, 1, false);
 }
 bind("bGuide", () => guideOpen()); bind("bPGuide", () => { $("pauseOv").classList.remove("on"); F.paused = false; guideOpen(() => pause(true)); });
@@ -1133,7 +1409,7 @@ bind("bGuideOk", () => guideClose());
 function startForge(idx) {
   if (!S.guideSeen) { guideOpen(() => startForge(idx)); return; }
   const o = S.orders[idx]; if (!o) return;
-  if (o.gemReq && !S.gems[o.gemReq]) { toast(`Chýba ti ${CONFIG.gems.types[o.gemReq].icon} ${CONFIG.gems.types[o.gemReq].name} – kúp ho v Dielni alebo získaj ako odmenu.`); return; }
+  if (o.gemReq && !S.gems[o.gemReq]) { toast(TR("o_missingToast", { g: gemFull(o.gemReq) })); return; }
   S.orders.splice(idx, 1); save();
   resize();
   const zones = CONFIG.zones[o.phase];
@@ -1146,22 +1422,71 @@ function startForge(idx) {
     hot: 0, bellows: new Set(), combo: 0, maxCombo: 0, perfects: 0, legPts: 0, popups: [], sparks: [], shake: 0, done: false, paused: false,
     t: 0, lastBand: "cold", warnT: 0, tut: !S.tutDone ? 0 : -1, tutT: 0, goldHold: 0, flash: 0, hammerAnim: 0 };
   if (S.buffs.zafir) { S.buffs.zafir = 0; save(); }
-  $("fPhase").textContent = `Fáza ${o.phase} · ${PH[o.phase].env}`;
-  $("fcard").innerHTML = `<span style="font-size:22px">${o.ico}</span><div class="grow"><b>${o.cust}</b>${traitTags(o)}${F.coolMult < 1 ? '<span class="tag">🔵 Zafír</span>' : ""}<br>${o.name} · min. <span class="q${o.minQ}">${QN[o.minQ]}</span> · 🪙${o.pay}</div>`;
-  show("forge"); focusGame();
-  if (F.tut === 0) tutMsg(MT("Drž <span class='kbd'>MEDZERNÍK</span> (alebo <span class='kbd'>F</span>, <span class='kbd'>Shift</span>, pravé tlačidlo myši) – to je MECH. Pusti = kov chladne.<br>", "Drž prst na tlačidle <b>🔥 MECH</b> (vľavo dole) alebo na ľavej polovici. Pusti = kov chladne.<br>") + "Rozpáľ kov do <span class='q2'>ZLATÉHO</span> pásma teplomera.");
+  $("fPhase").textContent = TR("f_phase", { n: o.phase, env: PH[o.phase].env });
+  $("fcard").innerHTML = `<span style="font-size:22px">${o.ico}</span><div class="grow"><b>${o.cust}</b>${traitTags(o)}${F.coolMult < 1 ? `<span class="tag">🔵 ${gemName("zafir")}</span>` : ""}<br>${o.name} · min. <span class="q${o.minQ}">${QN[o.minQ]}</span> · 🪙${o.pay}</div>`;
+  show("forge"); focusGame(); scrollOpen(true);
+  if (F.tut === 0) tutMsg(MTk("tut0") + TR("tut0_b"));
   else tutMsg("");
   updFHud();
   last = performance.now();
 }
+
+/* ---------- order scroll ---------- */
+function scrollFill(o) {
+  $("scTitle").textContent = TR("sc_title");
+  $("scCust").innerHTML = `<span style="font-size:24px">${o.ico}</span> ${o.cust} ${traitTags(o)}`;
+  $("scName").textContent = o.name;
+  if (o.gemReq) { const g = CONFIG.gems.types[o.gemReq]; $("scGemBox").style.display = ""; $("scGem").innerHTML = `<span class="sc-gemi" style="--gc:${g.col}">${g.icon}</span>`; $("scGemL").textContent = g.name; }
+  else $("scGemBox").style.display = "none";
+  const on = o.minQ === 4 ? 3 : o.minQ + 1;
+  $("scStars").className = "sc-big sc-stars" + (o.minQ === 4 ? " div" : "");
+  $("scStars").innerHTML = "★".repeat(on) + `<span class="off">${"★".repeat(3 - on)}</span>`;
+  $("scMinL").textContent = TR("sc_min") + ": " + QN[o.minQ];
+  $("scCoins").textContent = "🪙 " + o.pay; $("scCoins").className = "sc-big sc-coins"; $("scRewL").textContent = TR("sc_reward");
+  const st = o.gemReq ? o.story : traitDesc(o); $("scStory").textContent = st ? "„" + st + "“" : "";
+  $("scTap").textContent = TR("sc_tap");
+  const c = $("scWep"), x = c.getContext("2d"); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.width, c.height);
+  x.save(); x.translate(205, 80); x.rotate(-0.06); const ks = /axe|spear/.test(o.shape) ? 1.45 : 1.8; x.scale(ks, ks);
+  try { drawWeapon(x, o.shape, 0, 0, 120, 60, o.minQ === 4 ? 4 : Math.max(1, o.minQ), null, itemPhase(o.item), o.item); } catch (e) { }
+  x.restore();
+}
+function scrollOpen(auto) {
+  if (!F || F.done || F.scroll) return;
+  if (F.paused && !$("pauseOv").classList.contains("on")) return;   // e.g. guide open
+  const ov = $("scrollOv"), p = $("scrollP");
+  F.scroll = "open"; F.paused = true; F.bellows.clear(); $("pauseOv").classList.remove("on");
+  scrollFill(F.o); $("forge").classList.add("scrolling"); ov.classList.remove("fade"); ov.classList.add("on"); $("scrollIco").classList.add("hide");
+  if (p.getAnimations) p.getAnimations().forEach(a => a.cancel());
+  if (p.animate) p.animate([{ transform: "scaleY(.06)", opacity: .5 }, { transform: "scaleY(1)", opacity: 1 }], { duration: 420, easing: "cubic-bezier(.2,.9,.3,1.1)" });
+  SFX.whoosh();
+  clearTimeout(F.scrollT); if (auto) F.scrollT = setTimeout(scrollClose, CONFIG.scroll.autoClose * 1000);
+}
+function scrollClose() {
+  if (!F || F.scroll !== "open") return;
+  const FF = F; FF.scroll = "closing"; clearTimeout(FF.scrollT);
+  const p = $("scrollP"), ic = $("scrollIco").getBoundingClientRect(), r = p.getBoundingClientRect();
+  const dx = ic.left + ic.width / 2 - (r.left + r.width / 2), dy = ic.top + ic.height / 2 - (r.top + r.height / 2);
+  $("scrollOv").classList.add("fade"); SFX.whoosh();
+  let fin = false;
+  const done = () => { if (fin) return; fin = true; $("scrollOv").classList.remove("on", "fade"); $("forge").classList.remove("scrolling"); if (p.getAnimations) p.getAnimations().forEach(a => a.cancel());
+    if (F !== FF) return; FF.scroll = null;
+    if (!FF.done) { FF.paused = false; last = performance.now(); }
+    const i = $("scrollIco"); i.classList.remove("hide", "pop"); void i.offsetWidth; i.classList.add("pop"); focusGame(); };
+  if (p.animate) { const a = p.animate([{ transform: "translate(0,0) scale(1,1)", opacity: 1 }, { transform: "translate(0,0) scale(1,.07)", opacity: 1, offset: .45 },
+    { transform: `translate(${dx}px,${dy}px) scale(.07,.03)`, opacity: .25 }], { duration: CONFIG.scroll.closeMs, easing: "ease-in", fill: "forwards" }); a.onfinish = done; }
+  setTimeout(done, CONFIG.scroll.closeMs + 150);
+}
+function scrollToggle() { if (!F || F.done || cur !== "forge") return; if (F.scroll === "open") scrollClose(); else if (!F.scroll) scrollOpen(false); }
+$("scrollOv").addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); audioInit(); scrollClose(); });
+bind("scrollIco", () => scrollToggle());
 function tutMsg(t) { const e = $("tut"); e.innerHTML = t; e.style.display = t ? "block" : "none"; }
 function updFHud() {
   if (!F) return;
-  $("fCombo").textContent = (F.combo >= 2 ? "🔥 " : "") + "Combo x" + (1 + Math.min(CONFIG.combo.max - 1, F.combo * CONFIG.combo.step)).toFixed(1);
+  $("fCombo").textContent = (F.combo >= 2 ? "🔥 " : "") + TR("combo", { v: (1 + Math.min(CONFIG.combo.max - 1, F.combo * CONFIG.combo.step)).toFixed(1) });
   $("fCombo").className = F.combo >= 4 ? "fire fire2" : F.combo >= 2 ? "fire" : "";
-  const z = F.seq[F.idx]; $("fHits").textContent = `Úder ${Math.min(F.idx + 1, F.seq.length)}/${F.seq.length}${z && z.zone ? " · " + z.zone : ""}`;
+  const z = F.seq[F.idx]; $("fHits").textContent = TR("hits", { i: Math.min(F.idx + 1, F.seq.length), n: F.seq.length }) + (z && z.zone ? " · " + zoneName(z.zone) : "");
 }
-function pause(on) { if (!F || F.done) return; F.paused = on; $("pauseOv").classList.toggle("on", on); if (on) F.bellows.clear(); }
+function pause(on) { if (!F || F.done || F.scroll) return; F.paused = on; $("pauseOv").classList.toggle("on", on); if (on) F.bellows.clear(); }
 document.addEventListener("visibilitychange", () => { if (document.hidden && cur === "forge") pause(true); });
 
 // layout geometry
@@ -1178,11 +1503,11 @@ function zoneRange(zi, nz) { return nz === 1 ? [0.12, 0.9] : [0.08 + zi / nz * 0
 function spawnTarget() {
   const g = geo(), s = F.seq[F.idx];
   const nz = CONFIG.zones[F.phase].length, zr = zoneRange(s.zi, nz);
-  const core = s.zone === "Mýtické Jadro";
+  const core = s.zone === "core";
   const fx = core ? 0.6 : zr[0] + Math.random() * (zr[1] - zr[0]);
   const [x, y] = bp(g, g.bladeX - g.bladeL / 2 + g.bladeL * fx, g.bladeY + (core ? 0 : (Math.random() - 0.5) * 30));
   F.target = { x, y, baseX: x, baseY: y, vert: !!g.vert, core, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
-  if (core) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 380 : 235, txt: "MÝTICKÉ JADRO – musí byť PERFEKTNÉ!", col: "#9fe0ff", life: 2, small: true }); }
+  if (core) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 380 : 235, txt: TR("pop_core"), col: "#9fe0ff", life: 2, small: true }); }
   F.first = false;
 }
 
@@ -1221,6 +1546,8 @@ function kbd(e) {
   if (e.type !== "keydown" || e.repeat) return;
   if ($("confirmOv").classList.contains("on")) { if (k === "Escape") $("confirmOv").classList.remove("on"); return; }
   if ($("guideOv").classList.contains("on") && k !== "h" && k !== "H" && k !== "Enter" && k !== "Escape") return;
+  if (cur === "forge" && F && !F.done && F.scroll) { if (["q", "Q", "Enter", "Escape", "p", "P"].includes(k)) { e.preventDefault(); scrollClose(); } return; }
+  if ((k === "q" || k === "Q") && cur === "forge" && F && !F.done && !$("guideOv").classList.contains("on")) { e.preventDefault(); scrollToggle(); return; }
   if ((k === "p" || k === "P" || k === "Escape") && !$("guideOv").classList.contains("on")) {
     if (cur === "forge" && F && !F.done) { e.preventDefault(); pause(!F.paused); return; }
     if (k === "Escape" && cur === "bamboo") { endBamboo(); return; }
@@ -1262,7 +1589,7 @@ document.addEventListener("dblclick", e => e.preventDefault());
 function ringT(t) { return F.ringTime * (t.core ? CONFIG.core.ringMult : 1); }
 function ringR(t) { const tt = Math.max(0, t.life - t.delay); return t.r * CONFIG.hammer.ringStart * Math.max(0, 1 - tt / ringT(t)); }
 function hammerTap(x, y) {
-  if (F.tut === 0) { tutMsg(MT("Najprv rozpáľ kov MECHOM – drž <span class='kbd'>MEDZERNÍK</span>", "Najprv rozpáľ kov – drž <b>🔥 MECH</b> vľavo dole")); return; }
+  if (F.tut === 0) { tutMsg(MTk("tutNoHeat")); return; }
   if (F.gem) { gemClick(x, y); return; }
   const t = F.target; if (!t) return;
   F.hammerAnim = 1;
@@ -1294,41 +1621,41 @@ function registerHit(center, timing, x, y, miss, green, when) {
   const okT = b === "gold", okC = !miss && center >= perfC(), okG = !miss && !!green;
   F.judge = { t: okT, c: okC, g: okG, x, y, life: 1.6 };
   const why = [];
-  if (!okT) why.push(b === "cold" ? "Studený kov" : b === "hot" ? "Prehriaty kov" : "Teplota mimo zlatej");
-  if (!miss && !okC) why.push("Mimo stredu");
-  if (!miss && !okG) why.push(when < 0 ? "Príliš skoro" : "Príliš neskoro");
-  if (miss) why.push(when === 0 && F.target && x === F.target.x ? "Neskoro – nestihol si" : "Mimo terča");
+  if (!okT) why.push(TR(b === "cold" ? "why_cold" : b === "hot" ? "why_hot" : "why_temp"));
+  if (!miss && !okC) why.push(TR("why_center"));
+  if (!miss && !okG) why.push(TR(when < 0 ? "why_early" : "why_late"));
+  if (miss) why.push(when === 0 && F.target && x === F.target.x ? TR("why_slow") : TR("why_miss"));
   if (!perfect && why.length) F.popups.push({ x, y: y + 34, txt: why.join(" · "), col: "#ffb0a0", life: 1.8, small: true });
-  if (miss) { txt = "VEDĽA!"; col = "#ff6040"; SFX.miss(); vib(25); }
-  else if (perfect) { txt = F.combo >= 3 ? `PERFEKTNÉ! x${F.combo}` : "PERFEKTNÉ!"; col = "#ffd040"; SFX.clang(1); SFX.perfect(); vib([30, 20, 40]); F.shake = 12; F.flash = 1; }
-  else if (b === "cold") { txt = "STUDENÝ KOV!"; col = "#80b0ff"; SFX.clang(0); vib(30); F.shake = 5; }
-  else if (sc > 0.6) { txt = "DOBRÉ!"; col = "#80ff80"; SFX.clang(0.6); vib(30); F.shake = 7; }
-  else { txt = "SLABÉ"; col = "#ddd"; SFX.clang(0.3); vib(20); F.shake = 4; }
+  if (miss) { txt = TR("p_miss"); col = "#ff6040"; SFX.miss(); vib(25); }
+  else if (perfect) { txt = F.combo >= 3 ? `${TR("p_perf")} x${F.combo}` : TR("p_perf"); col = "#ffd040"; SFX.clang(1); SFX.perfect(); vib([30, 20, 40]); F.shake = 12; F.flash = 1; }
+  else if (b === "cold") { txt = TR("p_cold"); col = "#80b0ff"; SFX.clang(0); vib(30); F.shake = 5; }
+  else if (sc > 0.6) { txt = TR("p_good"); col = "#80ff80"; SFX.clang(0.6); vib(30); F.shake = 7; }
+  else { txt = TR("p_weak"); col = "#ddd"; SFX.clang(0.3); vib(20); F.shake = 4; }
   F.popups.push({ x, y: y - 30, txt, col, life: 1.1, big: perfect });
   if (!miss) { const n = Math.round(perfect ? 80 : 10 + sc * 50); for (let i = 0; i < n; i++) sparkAt(x, y, perfect); }
-  if (wasCore) F.popups.push({ x, y: y - 80, txt: perfect ? "✦ JADRO ZAŽIARILO ✦" : "Jadro nezažiarilo…", col: perfect ? "#9fe0ff" : "#aaa", life: 1.8, big: perfect });
+  if (wasCore) F.popups.push({ x, y: y - 80, txt: perfect ? TR("p_coreOk") : TR("p_coreNo"), col: perfect ? "#9fe0ff" : "#aaa", life: 1.8, big: perfect });
   if (F.combo >= 2) chalProgress("combo", F.combo, true);
   F.target = null; F.idx++; F.wait = C.hammer.betweenHits;
-  if (F.tut === 1 && F.idx >= 2) { F.tut = 2; tutMsg(MT("🔥 Teraz OBOJE naraz:<br>medzerníkom drž teplotu v zlatom, myšou udieraj!", "🔥 Teraz OBOJE naraz:<br>ľavým palcom MECH, pravým ťukaj na terč!")); F.tutT = 3.5; }
+  if (F.tut === 1 && F.idx >= 2) { F.tut = 2; tutMsg(MTk("tut2")); F.tutT = 3.5; }
   // fázová zmena zóny
   const nz = F.seq[F.idx];
-  if (nz && F.seq[F.idx - 1] && nz.zi !== F.seq[F.idx - 1].zi) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 330 : 190, txt: "ZÓNA: " + nz.zone.toUpperCase(), col: "#ffb060", life: 1.6, big: true }); F.wait = 1.0; }
+  if (nz && F.seq[F.idx - 1] && nz.zi !== F.seq[F.idx - 1].zi) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 330 : 190, txt: TR("p_zone", { z: zoneName(nz.zone).toUpperCase() }), col: "#ffb060", life: 1.6, big: true }); F.wait = 1.0; }
   updFHud();
   if (F.idx >= F.seq.length) { if (F.o.gemReq) startGem(); else { F.done = true; setTimeout(() => finishForge(false), 900); } }
 }
 /* ---------- Osadenie gemu (Fáza 3+) ---------- */
 function startGem() {
   const opts = Object.keys(CONFIG.gems.types).filter(k => S.gems[k] > 0);
-  if (!opts.length) { F.gemFail = "chýba gem"; F.popups.push({ x: VW / 2, y: 300, txt: "Nemáš žiadny gem!", col: "#ff7a60", life: 1.4, small: true }); F.done = true; setTimeout(() => finishForge(false), 1000); return; }
+  if (!opts.length) { F.gemFail = "none"; F.popups.push({ x: VW / 2, y: 300, txt: TR("p_noGem"), col: "#ff7a60", life: 1.4, small: true }); F.done = true; setTimeout(() => finishForge(false), 1000); return; }
   F.gem = { stage: "pick", opts, t: 0, x: 0, dir: 1, sel: null };
-  tutMsg(MT(`💎 <b>Osaď ${CONFIG.gems.types[F.o.gemReq].icon} ${CONFIG.gems.types[F.o.gemReq].name}</b> – zákazník chce práve tento! (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>)`, `💎 <b>Osaď ${CONFIG.gems.types[F.o.gemReq].icon} ${CONFIG.gems.types[F.o.gemReq].name}</b> – zákazník chce práve tento!`));
+  tutMsg(MTk("gem_pick", { g: gemFull(F.o.gemReq) }));
 }
 function gemBoxes() { const ks = Object.keys(CONFIG.gems.types); return [...ks, "none"].map((k, i) => MOB ? ({ k, x: 300 + (i % 2) * 208, y: geo().cy - geo().bladeL / 2 + Math.floor(i / 2) * 105, w: 200, h: 92 }) : ({ k, x: 300 + i * 190, y: 150, w: 170, h: 70 })); }
 function gemPick(k) {
   const G = F.gem; if (!G || G.stage !== "pick") return;
-  if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; F.gemFail = "bez gemu"; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
+  if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; F.gemFail = "skip"; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
   G.sel = k; G.stage = "slide"; G.t = 0; G.x = -CONFIG.gems.range; G.dir = 1;
-  tutMsg(MT(`Klikni, keď je ${CONFIG.gems.types[k].icon} nad objímkou · drž kov horúci (≥ ${CONFIG.gems.minTemp}°) medzerníkom!`, `Ťukni vpravo, keď je ${CONFIG.gems.types[k].icon} nad objímkou · MECHOM drž kov ≥ ${CONFIG.gems.minTemp}°!`));
+  tutMsg(MTk("gem_slide", { i: CONFIG.gems.types[k].icon, t: CONFIG.gems.minTemp }));
 }
 function gemClick(x, y) {
   const G = F.gem;
@@ -1336,12 +1663,12 @@ function gemClick(x, y) {
   if (G.stage !== "slide") return;
   const tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol), al = Math.abs(G.x) <= tol, hot = F.temp >= CONFIG.gems.minTemp;
   const gt = CONFIG.gems.types[G.sel]; S.gems[G.sel]--; save();
-  G.stage = "done"; G.ok = al && hot; tutMsg(""); if (!G.ok) F.gemFail = !hot ? "gem praskol (studený kov)" : "gem praskol (nezarovnaný)"; else if (G.sel !== F.o.gemReq) F.gemFail = "zlý gem – chcel " + CONFIG.gems.types[F.o.gemReq].name;
+  G.stage = "done"; G.ok = al && hot; tutMsg(""); if (!G.ok) F.gemFail = !hot ? "cold" : "align"; else if (G.sel !== F.o.gemReq) F.gemFail = "wrong";
   const g = geo();
   if (G.ok) { F.gemSet = G.sel; SFX.perfect(); SFX.clang(1); F.flash = 1; for (let i = 0; i < 60; i++) sparkAt(...bp(g, g.bladeX + G.x, g.bladeY), true);
-    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: `${gt.icon} ${gt.name.toUpperCase()} OSADENÝ!`, col: gt.col, life: 1.8, big: true }); }
+    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: TR("gp_set", { i: gt.icon, g: gt.name.toUpperCase() }), col: gt.col, life: 1.8, big: true }); }
   else { SFX.miss(); F.shake = 10;
-    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: `${gt.name} praskol – ${!hot ? "kov vychladol" : "nezarovnané"}`, col: "#ff7a60", life: 1.8 }); }
+    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: TR("gp_crack", { g: gt.name, why: TR(!hot ? "gp_cool" : "gp_mis") }), col: "#ff7a60", life: 1.8 }); }
   F.done = true; setTimeout(() => finishForge(false), 1300);
 }
 function updateGem(dt) {
@@ -1361,8 +1688,8 @@ function drawGem(x) {
     x.strokeStyle = "#fff"; x.lineWidth = 1.5; x.stroke(); x.restore();
     const hot = F.temp >= CONFIG.gems.minTemp, al = Math.abs(G.x) <= tol;
     x.font = "bold 20px Georgia"; x.textAlign = "right";
-    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(al ? "● Zarovnané" : "○ Zarovnanie", g.cx - 40, g.cy - 14);
-    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(hot ? "● Kov horúci" : "○ Kov chladne!", g.cx - 40, g.cy + 18); x.textAlign = "center";
+    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(TR(al ? "g_aligned" : "g_align"), g.cx - 40, g.cy - 14);
+    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(TR(hot ? "g_hot" : "g_cooling"), g.cx - 40, g.cy + 18); x.textAlign = "center";
     return;
   }
   if (g.vert) { x.fillStyle = "#1a1008"; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(g.cx, g.cy, 16, 0, 7); x.fill(); x.stroke(); }
@@ -1371,8 +1698,8 @@ function drawGem(x) {
   if (G.stage === "pick") {
     gemBoxes().forEach((b, i) => { const gt = CONFIG.gems.types[b.k], n = gt ? S.gems[b.k] : 1;
       x.globalAlpha = n ? 1 : 0.35; x.fillStyle = "rgba(20,8,4,.92)"; x.strokeStyle = gt ? gt.col : "#888"; x.lineWidth = 3; x.fillRect(b.x, b.y, b.w, b.h); x.strokeRect(b.x, b.y, b.w, b.h);
-      x.fillStyle = "#ffe6c0"; x.font = "bold 20px Georgia"; x.textAlign = "center"; x.fillText(`${i < 3 ? i + 1 : 0}. ${gt ? gt.icon + " " + gt.name : "Bez gemu"}`, b.x + b.w / 2, b.y + 30);
-      x.font = "15px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(gt ? `máš ${n}` : "pokračovať", b.x + b.w / 2, b.y + 54); x.globalAlpha = 1; });
+      x.fillStyle = "#ffe6c0"; x.font = "bold 20px Georgia"; x.textAlign = "center"; x.fillText(`${i < 3 ? i + 1 : 0}. ${gt ? gt.icon + " " + gt.name : TR("g_none")}`, b.x + b.w / 2, b.y + 30);
+      x.font = "15px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(gt ? TR("sh_have", { n }) : TR("g_cont"), b.x + b.w / 2, b.y + 54); x.globalAlpha = 1; });
   } else if (G.stage === "slide" || G.stage === "done") {
     const gt = CONFIG.gems.types[G.sel], tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol);
     x.fillStyle = "rgba(80,255,100,.18)"; x.fillRect(g.bladeX - tol, g.bladeY - 120, tol * 2, 110);
@@ -1382,8 +1709,8 @@ function drawGem(x) {
     x.strokeStyle = "#fff"; x.lineWidth = 1.5; x.stroke();
     const hot = F.temp >= CONFIG.gems.minTemp, al = Math.abs(G.x) <= tol;
     x.font = "bold 18px Georgia"; x.textAlign = "center";
-    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(al ? "● Zarovnané" : "○ Zarovnanie", g.bladeX - 110, g.bladeY - 140);
-    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(hot ? "● Kov horúci" : "○ Kov chladne!", g.bladeX + 110, g.bladeY - 140);
+    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(TR(al ? "g_aligned" : "g_align"), g.bladeX - 110, g.bladeY - 140);
+    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(TR(hot ? "g_hot" : "g_cooling"), g.bladeX + 110, g.bladeY - 140);
   }
 }
 function sparkAt(x, y, gold) {
@@ -1393,7 +1720,7 @@ function sparkAt(x, y, gold) {
 function burn() {
   F.done = true; F.burned = true; SFX.burn(); vib([100, 50, 200]); F.shake = 20;
   { const g = geo(); for (let i = 0; i < 80; i++) sparkAt(...bp(g, g.bladeX, g.bladeY), false); }
-  F.popups.push({ x: VW / 2, y: geo().vert ? geo().cy : geo().bladeY - 60, txt: "ZHORENÉ!", col: "#ff3020", life: 1.6, big: true });
+  F.popups.push({ x: VW / 2, y: geo().vert ? geo().cy : geo().bladeY - 60, txt: TR("p_burn"), col: "#ff3020", life: 1.6, big: true });
   setTimeout(() => finishForge(false), 1300);
 }
 
@@ -1422,7 +1749,7 @@ function update(dt) {
   // tutorial
   if (F.tut === 0) {
     if (b === "gold") F.goldHold += dt; else F.goldHold = Math.max(0, F.goldHold - dt * 0.5);
-    if (F.goldHold > 0.6) { F.tut = 1; tutMsg(MT("🖱 Výborne! Teraz KLADIVO: klikni MYŠOU na terč,<br>", "👆 Výborne! Teraz KLADIVO: ťukni prstom na terč,<br>") + "keď je krúžok v <span class='q1'>ZELENOM</span> kruhu. (Teplotu ti teraz podržím.)"); }
+    if (F.goldHold > 0.6) { F.tut = 1; tutMsg(MTk("tut1") + TR("tut1_b")); }
   }
   if (F.tut === 2) { F.tutT -= dt; if (F.tutT <= 0) { F.tut = 3; tutMsg(""); } }
   // targets
@@ -1488,7 +1815,7 @@ function draw() {
   if (!MOB) {
     drawBellows(x, 270, VH - 72, 0.6, F.belSq, -0.12);
     x.fillStyle = pumping ? "#ffb060" : "rgba(255,200,150,.6)"; x.font = "bold 20px Georgia"; x.textAlign = "center";
-    x.fillText("Klikni MYŠOU na terč = kladivo", 900, VH - 20);
+    x.fillText(TR("hint_pc"), 900, VH - 20);
   }
   if (g.vert) { x.save(); x.translate(g.cx, g.cy); x.rotate(Math.PI / 2); }
   // čepeľ
@@ -1499,8 +1826,8 @@ function draw() {
   if (F.temp > 50) { x.strokeStyle = `rgba(255,${120 + F.temp},60,${(F.temp - 50) / 200})`; x.lineWidth = 2; for (let i = 0; i < 4; i++) { x.beginPath(); for (let k = 0; k <= 20; k++) { const px = g.bladeX - g.bladeL * 0.4 + k * g.bladeL * 0.04; const py = g.bladeY - 45 - i * 14 + Math.sin(k * 0.8 + F.t * 6 + i) * 4; k ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); } }
   const nzz = CONFIG.zones[F.phase].length;
   if (nzz > 1 && !F.done && !F.gem) {
-    const z = F.seq[F.idx]; if (z) { const zr = zoneRange(z.zi, nzz), x0 = g.bladeX - g.bladeL / 2; x.fillStyle = z.zone === "Mýtické Jadro" ? "rgba(140,220,255,.12)" : "rgba(255,220,120,.10)";
-      x.save(); x.strokeStyle = z.zone === "Mýtické Jadro" ? "rgba(140,220,255,.55)" : "rgba(255,210,120,.45)"; x.lineWidth = 2; x.setLineDash([10, 8]); rr2(x, x0 + g.bladeL * zr[0] - 20, g.bladeY - 58, g.bladeL * (zr[1] - zr[0]) + 40, 116, 14); x.stroke(); x.restore(); x.fillStyle = "rgba(255,220,150,.7)"; x.font = "bold 16px Georgia"; x.textAlign = "center";
+    const z = F.seq[F.idx]; if (z) { const zr = zoneRange(z.zi, nzz), x0 = g.bladeX - g.bladeL / 2; x.fillStyle = z.zone === "core" ? "rgba(140,220,255,.12)" : "rgba(255,220,120,.10)";
+      x.save(); x.strokeStyle = z.zone === "core" ? "rgba(140,220,255,.55)" : "rgba(255,210,120,.45)"; x.lineWidth = 2; x.setLineDash([10, 8]); rr2(x, x0 + g.bladeL * zr[0] - 20, g.bladeY - 58, g.bladeL * (zr[1] - zr[0]) + 40, 116, 14); x.stroke(); x.restore(); x.fillStyle = "rgba(255,220,150,.7)"; x.font = "bold 16px Georgia"; x.textAlign = "center";
       if (g.vert) { x.restore(); x.save(); const [lx, ly] = bp(g, x0 + g.bladeL * (zr[0] + zr[1]) / 2, 0); x.font = "bold 20px Georgia"; x.textAlign = "right"; x.translate(lx - 60, ly); x.fillText(z.zone, 0, 6); x.restore(); x.save(); x.translate(g.cx, g.cy); x.rotate(Math.PI / 2); }
       else x.fillText(z.zone, x0 + g.bladeL * (zr[0] + zr[1]) / 2, g.bladeY + 60); }
   }
@@ -1515,7 +1842,7 @@ function draw() {
     x.beginPath(); x.arc(t.x, t.y, t.r, 0, Math.PI * 2); x.stroke();
     x.lineWidth = 2.5; x.strokeStyle = "#7dff8c"; x.shadowColor = "#3f6"; x.shadowBlur = 8;
     [t.r - gt, t.r + gt].forEach(rad => { x.beginPath(); x.arc(t.x, t.y, rad, 0, Math.PI * 2); x.stroke(); }); x.shadowBlur = 0;
-    x.fillStyle = "#9f9"; x.font = "bold 13px Georgia"; x.textAlign = "center"; x.fillText("ZELENÁ", t.x, t.y + t.r + gt + 14);
+    x.fillStyle = "#9f9"; x.font = "bold 13px Georgia"; x.textAlign = "center"; x.fillText(TR("green"), t.x, t.y + t.r + gt + 14);
     [[1, "#7a1a10"], [0.66, "#e8d8c0"], [0.33, "#c02010"]].forEach(([k, c]) => { x.fillStyle = c; x.globalAlpha = 0.85; x.beginPath(); x.arc(t.x, t.y, t.r * k * 0.8, 0, Math.PI * 2); x.fill(); });
     x.globalAlpha = 1;
     x.lineWidth = 4; x.strokeStyle = green ? "#40ff60" : "#fff"; x.shadowColor = green ? "#40ff60" : "#fff"; x.shadowBlur = 12;
@@ -1562,10 +1889,10 @@ function draw() {
   x.restore();
   if (F.flash > 0) { x.fillStyle = `rgba(255,220,120,${F.flash * 0.25})`; x.fillRect(-OX / SC, -OY / SC, RW / SC, RH / SC); }
   if (band(F.temp) === "hot" && !F.done) { x.fillStyle = `rgba(255,0,0,${0.1 + 0.15 * Math.sin(F.t * 20)})`; x.fillRect(-OX / SC, -OY / SC, RW / SC, RH / SC);
-    x.fillStyle = "#fff"; x.font = "bold 30px Georgia"; x.textAlign = "center"; x.fillText(MT("⚠ PREHRIATIE! PUSTI MEDZERNÍK!", "⚠ PREHRIATIE! PUSTI MECH!"), MOB ? VW / 2 : VW / 2 + 60, MOB ? 300 : 170); }
+    x.fillStyle = "#fff"; x.font = "bold 30px Georgia"; x.textAlign = "center"; x.fillText(MTk("over"), MOB ? VW / 2 : VW / 2 + 60, MOB ? 300 : 170); }
 }
 function drawLights(x, cx, cy, a, b, c, alpha, judged) {
-  const L = [["Teplota", a], ["Stred", b], ["Načasovanie", c]], w = 124;
+  const L = [[TR("l_temp"), a], [TR("l_center"), b], [TR("l_timing"), c]], w = 124;
   x.save(); x.globalAlpha = alpha;
   x.fillStyle = "rgba(15,6,3,.85)"; x.strokeStyle = judged ? "#ffd070" : "#6a3416"; x.lineWidth = 2;
   x.beginPath(); x.roundRect ? x.roundRect(cx - w * 1.5 - 8, cy - 22, w * 3 + 16, 44, 10) : x.rect(cx - w * 1.5 - 8, cy - 22, w * 3 + 16, 44); x.fill(); x.stroke();
@@ -1595,7 +1922,7 @@ function drawTherm(x, g) {
   x.fillStyle = "#fff"; x.fillRect(X - w / 2 - 6, y(F.temp) - 2, w + 12, 4);
   if (F.hot > 0) { x.fillStyle = "#ff3020"; x.fillRect(X + w / 2 + 6, B - H * Math.min(1, F.hot / burnLimit()), 5, H * Math.min(1, F.hot / burnLimit())); }
   x.save(); x.translate(X + w / 2 + 26, (T + B) / 2); x.rotate(-Math.PI / 2);
-  const bn = band(F.temp), names = { cold: ["STUDENÝ", "#80a8ff"], work: ["PRACOVNÝ", "#ffa040"], gold: ["★ ZLATÝ ★", "#ffd030"], hot: ["PREHRIATY", "#ff4040"] };
+  const bn = band(F.temp), names = { cold: [TR("b_cold"), "#80a8ff"], work: [TR("b_work"), "#ffa040"], gold: [TR("b_gold"), "#ffd030"], hot: [TR("b_hot"), "#ff4040"] };
   x.font = "bold 20px Georgia"; x.textAlign = "center"; x.fillStyle = names[bn][1]; x.fillText(names[bn][0], 0, 0); x.restore();
 }
 
@@ -1608,6 +1935,7 @@ function loop(now) {
   }
   if (cur === "bamboo" && BT && !BT.ended) { try { updateBamboo(dt); if (BT) drawBamboo(); } catch (err) { console.error(err); } }
   if (cur === "forge" && F && !F.paused) { try { update(dt); draw(); } catch (err) { console.error(err); } }
+  else if (cur === "forge" && F && F.scroll) { try { draw(); } catch (err) { console.error(err); } }
   else if (bellowsGain && AC) { bellowsGain.gain.setTargetAtTime(0, AC.currentTime, 0.05); humGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
   if (cur === "result") { try { drawResult(dt); } catch (err) { console.error(err); } }
   if (cur === "ending") drawEnding(dt);
@@ -1633,34 +1961,34 @@ function finishForge(quit) {
   const ok = q !== 3 && rank(q) >= rank(o.minQ) && !gemBad;
   const mult = 1 + Math.min(C.combo.max - 1, F.maxCombo * C.combo.step);
   let pay = 0, tip = 0, xp = 0, lines = [];
-  if (q === 3) { lines.push(["Zákazník odchádza naštvaný", "🪙 0"]); xp = 3; }
+  if (q === 3) { lines.push([TR("r_angry"), "🪙 0"]); xp = 3; }
   else {
-    if (gemBad) { pay = Math.round(o.pay * C.gemOrders.failFrac); lines.push([`💎 Zákazník odmieta: ${F.gemFail || "chýba gem"}`, "🪙 " + pay]); }
+    if (gemBad) { pay = Math.round(o.pay * C.gemOrders.failFrac); lines.push([TR("r_refuse", { w: gemFailTxt(F.gemFail || "none", o) }), "🪙 " + pay]); }
     else if (ok) { pay = o.pay; tip = Math.round(o.pay * C.economy.tipFrac * (rank(q) - rank(o.minQ)) * (o.trait === "picky" ? T.picky.tip : 1)); }
     else pay = Math.round(o.pay * (o.trait === "generous" ? T.generous.under : C.economy.underFrac));
-    if (!gemBad) lines.push([ok ? (o.gemReq ? `Platba (gem ×${C.gemOrders.payMult})` : "Platba") : "Nesplnené minimum (časť platby)", "🪙 " + pay]);
-    if (tip) lines.push(["Sprepitné za kvalitu", "🪙 " + tip]);
+    if (!gemBad) lines.push([ok ? (o.gemReq ? TR("r_payGem", { m: C.gemOrders.payMult }) : TR("r_pay")) : TR("r_under"), "🪙 " + pay]);
+    if (tip) lines.push([TR("r_tip"), "🪙 " + tip]);
     let extraPay = 0;
-    if (ok && o.gemReq) { const gt = C.gems.types[o.gemReq]; lines.push([`💎 ${gt.icon} ${gt.name} osadený presne podľa želania`, "✔"]);
+    if (ok && o.gemReq) { const gt = C.gems.types[o.gemReq]; lines.push([TR("r_gemOk", { i: gt.icon, g: gt.name }), "✔"]);
       if (o.chain) { S.chain[o.chain.ph] = o.chain.step + 1; const ch = C.chains[o.chain.ph];
-        if (S.chain[o.chain.ph] >= ch.steps.length) { extraPay += C.gemOrders.chainFinalBonus; lines.push([`🏅 Misia „${ch.name}“ splnená!`, "🪙 +" + C.gemOrders.chainFinalBonus]); S.gemTroph["chain" + o.chain.ph] = { name: ch.name, item: o.item, shape: o.shape, gem: o.gemReq }; }
+        if (S.chain[o.chain.ph] >= ch.steps.length) { extraPay += C.gemOrders.chainFinalBonus; lines.push([TR("r_chainDone", { n: ch.name }), "🪙 +" + C.gemOrders.chainFinalBonus]); S.gemTroph["chain" + o.chain.ph] = { chain: o.chain.ph, item: o.item, shape: o.shape, gem: o.gemReq }; }
         else lines.push([`Misia „${ch.name}“`, `krok ${S.chain[o.chain.ph]}/${ch.steps.length}`]); }
-      if (rank(q) >= 1 && (o.chain || Math.random() < C.gemOrders.uniqueChance)) { const key = o.item + "_" + o.gemReq; if (!S.gemTroph[key]) { S.gemTroph[key] = { name: o.name, item: o.item, shape: o.shape, gem: o.gemReq }; lines.push(["🏆 Unikátna trofej", o.name]); } } }
+      if (rank(q) >= 1 && (o.chain || Math.random() < C.gemOrders.uniqueChance)) { const key = o.item + "_" + o.gemReq; if (!S.gemTroph[key]) { S.gemTroph[key] = { item: o.item, shape: o.shape, gem: o.gemReq }; lines.push([TR("r_unique"), o.name]); } } }
     if (ok && o.rewardGem && rank(q) >= 1) { S.gems[o.rewardGem]++; lines.push(["Odmena: gem", C.gems.types[o.rewardGem].icon + " " + C.gems.types[o.rewardGem].name]); }
-    const rl = repLevel(o.fac || o.phase); if (rl && ok) { const v = Math.round((pay + tip) * rl * C.rep.payPerLevel); extraPay += v; lines.push([`Reputácia ${C.factions[o.fac || o.phase]} Lv ${rl}`, "🪙 +" + v]); }
+    const rl = repLevel(o.fac || o.phase); if (rl && ok) { const v = Math.round((pay + tip) * rl * C.rep.payPerLevel); extraPay += v; lines.push([TR("r_repLv", { f: C.factions[o.fac || o.phase], l: rl }), "🪙 +" + v]); }
     const comboBonus = Math.round((pay + tip) * (mult - 1));
-    if (comboBonus) lines.push([`Combo bonus x${mult.toFixed(1)}`, "🪙 " + comboBonus]);
+    if (comboBonus) lines.push([TR("r_combo", { m: mult.toFixed(1) }), "🪙 " + comboBonus]);
     pay += tip + comboBonus + extraPay;
     xp = C.economy.xpPerOrder[o.phase] + rank(q) * C.economy.xpQualityBonus;
   }
   // reputácia frakcie
-  if (!quit) { const f = o.fac || o.phase; if (ok) { const g = (o.trait === "regular" ? T.regular.rep : 1) + (o.evRep || 0) + (o.gemReq ? C.gemOrders.rep : 0); S.rep[f] = (S.rep[f] || 0) + g; lines.push([`Reputácia: ${C.factions[f]}`, "+" + g]); } else S.rep[f] = Math.max(0, (S.rep[f] || 0) - 1); }
+  if (!quit) { const f = o.fac || o.phase; if (ok) { const g = (o.trait === "regular" ? T.regular.rep : 1) + (o.evRep || 0) + (o.gemReq ? C.gemOrders.rep : 0); S.rep[f] = (S.rep[f] || 0) + g; lines.push([TR("r_rep", { f: C.factions[f] }), "+" + g]); } else S.rep[f] = Math.max(0, (S.rep[f] || 0) - 1); }
   // doplnenie skladu gemov
   if (!quit && o.phase >= 3) { S.restock++; if (S.restock >= C.gems.restockEvery) { S.restock = 0; const ks = Object.keys(C.gems.types).filter(k => S.gemStock[k] < C.gems.stockMax); if (ks.length) S.gemStock[rnd(ks)]++; } }
   if (gemBad) { const f = o.fac || o.phase; S.rep[f] = Math.max(0, (S.rep[f] || 0) - C.gemOrders.failRep); }
-  if (o.trait === "gambler" && q !== 3) lines.push(["🎲 Hazardér doplatí za test na bambuse", "otestuj!"]);
-  lines.push(["Skúsenosti", "✦ " + xp + " XP"]);
-  lines.push(["Perfektné údery", F.perfects + " / " + F.seq.length]);
+  if (o.trait === "gambler" && q !== 3) lines.push([TR("r_gambler"), TR("r_testIt")]);
+  lines.push([TR("r_xp"), "✦ " + xp + " XP"]);
+  lines.push([TR("r_perf"), F.perfects + " / " + F.seq.length]);
   const coinsBefore = S.coins;
   S.coins += pay; S.xp += xp; S.stats.earned += pay; S.stats.perfects += F.perfects; S.stats.bestCombo = Math.max(S.stats.bestCombo, F.maxCombo);
   if (!quit) { S.stats.orders++; S.ordersInPhase[o.phase] = (S.ordersInPhase[o.phase] || 0) + 1; }
@@ -1685,9 +2013,9 @@ function finishForge(quit) {
   $("resTitle").textContent = o.cust + " – " + o.name;
   $("resQ").innerHTML = `<span class="q${q}">${QN[q]}</span>`;
   let extra = "";
-  if (newTrophy) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">🏆 Nová trofej v Sieni!</div>`;
+  if (newTrophy) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">${TR("r_newTroph")}</div>`;
   const nextU = maxPhase() + 1, req = nextU === 2 ? C.unlock : C.unlockPhase[nextU];
-  if (req && S.xp >= req.xp && S.coins >= req.coins) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">⚒ V Dielni môžeš odomknúť Fázu ${nextU} – ${PH[nextU].name}!</div>`;
+  if (req && S.xp >= req.xp && S.coins >= req.coins) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">${TR("r_canUnlock", { n: nextU, name: PH[nextU].name })}</div>`;
   RES = { o, q, lines, extra, tested: false, payBase: pay, gem: F.gemSet, t: 0, coinsShown: coinsBefore };
   $("bTest").style.display = q === 3 ? "none" : "block";
   $("bNext").classList.toggle("gold", q === 3);
@@ -1737,8 +2065,8 @@ function coinFly(from, to) {
 }
 function showEnding() {
   show("ending"); SFX.divine(); setTimeout(() => SFX.fanfare(), 900);
-  $("endStats").innerHTML = `<div class="res-line"><span>Objednávky</span><b>${S.stats.orders}</b></div><div class="res-line"><span>Legendárne</span><b class="q2">${S.stats.leg}</b></div>
-    <div class="res-line"><span>Božské</span><b class="q4">${S.stats.divine}</b></div><div class="res-line"><span>Zarobené</span><b>🪙 ${S.stats.earned}</b></div><div class="res-line"><span>Najlepšie combo</span><b>x${S.stats.bestCombo}</b></div>`;
+  $("endStats").innerHTML = `<div class="res-line"><span>${TR("st_orders")}</span><b>${S.stats.orders}</b></div><div class="res-line"><span>${TR("st_leg")}</span><b class="q2">${S.stats.leg}</b></div>
+    <div class="res-line"><span>${TR("st_div")}</span><b class="q4">${S.stats.divine}</b></div><div class="res-line"><span>${TR("st_earned2")}</span><b>🪙 ${S.stats.earned}</b></div><div class="res-line"><span>${TR("st_combo")}</span><b>x${S.stats.bestCombo}</b></div>`;
 }
 let endT = 0;
 function drawEnding(dt) {
@@ -1751,7 +2079,7 @@ function drawEnding(dt) {
 let RES = null, BT = null;
 function renderResBox() {
   $("resBox").innerHTML = RES.extra + RES.lines.map(l => `<div class="res-line"><span>${l[0]}</span><b>${l[1]}</b></div>`).join("") +
-    `<div class="res-line" style="border:0"><span>Spolu máš</span><b>🪙 ${S.coins} · ✦ ${S.xp}</b></div>`;
+    `<div class="res-line" style="border:0"><span>${TR("r_total")}</span><b>🪙 ${S.coins} · ✦ ${S.xp}</b></div>`;
 }
 function startBamboo() {
   if (!RES || RES.tested || RES.q === 3) return;
@@ -1760,15 +2088,15 @@ function startBamboo() {
   BT = { dmg: weaponDmg(RES.o.item, RES.q), poles: B.poles.slice(st, st + 3), i: 0, state: "wait", t: 0, timer: 0, cuts: 0,
     trail: [], down: false, pieces: [], parts: [], shake: 0, msg: null, stuck: null, results: [] };
   resize(); show("bamboo"); focusGame();
-  $("bHud").innerHTML = `${RES.o.name} · <span class="q${RES.q}">${QN[RES.q]}</span> · Sila zbrane: <b>${BT.dmg}</b>`;
+  $("bHud").innerHTML = `${RES.o.name} · <span class="q${RES.q}">${QN[RES.q]}</span> · ${TR("bm_wpow")}: <b>${BT.dmg}</b>`;
 }
 function endBamboo() {
   if (!BT || BT.ended) return; BT.ended = true;
   const B = CONFIG.bamboo, bonus = Math.round(Math.max(RES.payBase, RES.o.pay) * B.bonusPerCut * BT.cuts);
   S.coins += bonus; S.stats.earned += bonus; S.stats.bambooCuts = (S.stats.bambooCuts || 0) + BT.cuts; save();
-  RES.lines.splice(RES.lines.length - 2, 0, [`Test na bambuse: ${BT.cuts}/${BT.poles.length} prerezané`, "🪙 +" + bonus]);
+  RES.lines.splice(RES.lines.length - 2, 0, [TR("r_bamboo", { c: BT.cuts, n: BT.poles.length }), "🪙 +" + bonus]);
   if (RES.o.trait === "gambler") { const gb = Math.round(RES.o.pay / CONFIG.traits.gambler.pay * CONFIG.traits.gambler.perCut * BT.cuts); S.coins += gb; S.stats.earned += gb; save();
-    RES.lines = RES.lines.filter(l => !l[0].startsWith("🎲")); RES.lines.splice(RES.lines.length - 2, 0, [`🎲 Hazardér platí za ${BT.cuts} rezy`, "🪙 +" + gb]); }
+    RES.lines = RES.lines.filter(l => !l[0].startsWith("🎲")); RES.lines.splice(RES.lines.length - 2, 0, [TR("r_gamblerPay", { c: BT.cuts }), "🪙 +" + gb]); }
   renderResBox(); show("result"); if (bonus) SFX.coin();
   BT = null;
 }
@@ -1798,18 +2126,18 @@ function slashPole(y, slope, sf, dir) {
   const pole = bPole(), power = Math.round(BT.dmg * sf * 10) / 10, ok = power >= pole[1];
   BT.state = "after"; BT.t = 0;
   BT.results.push({ ok, power, h: pole[1] });
-  const msg = `Sila ${power} ${ok ? "≥" : "<"} Tvrdosť ${pole[1]}  (rýchlosť ×${sf.toFixed(2)})`;
+  const msg = TR("bm_power", { p: power, op: ok ? "≥" : "<", h: pole[1], s: sf.toFixed(2) });
   if (ok) {
     BT.cuts++;
     BT.pieces.push({ y, slope, dx: 0, dy: 0, vx: dir * 140, vy: -40, rot: 0, vr: dir * 1.6, col: pole[2], w: poleW(pole[1]) });
     for (let i = 0; i < 40; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 600, vy: (Math.random() - .8) * 400, l: 0.6 + Math.random() * 0.8, leaf: Math.random() < 0.5, c: pole[2] });
-    BT.msg = { t: "ČISTÝ REZ!", sub: msg, col: "#7dff8c", l: 1.6 };
-    if (rank(RES.q) >= 2) { BT.slow = CONFIG.bamboo.slowmo; BT.msg.t = RES.q === 4 ? "BOŽSKÝ REZ!" : "LEGENDÁRNY REZ!"; }
+    BT.msg = { t: TR("bm_clean"), sub: msg, col: "#7dff8c", l: 1.6 };
+    if (rank(RES.q) >= 2) { BT.slow = CONFIG.bamboo.slowmo; BT.msg.t = RES.q === 4 ? TR("bm_div") : TR("bm_leg"); }
     SFX.slice(); vib([20, 10, 30]); BT.shake = 6;
   } else {
     BT.stuck = { y, slope, dir }; BT.shake = 14;
     for (let i = 0; i < 14; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 300, vy: -Math.random() * 300, l: 0.5, leaf: false, c: "#ffb040" });
-    BT.msg = { t: "ZASEKLO SA!", sub: msg, col: "#ff6a50", l: 1.6 };
+    BT.msg = { t: TR("bm_stuck"), sub: msg, col: "#ff6a50", l: 1.6 };
     SFX.thunk(); vib(80);
   }
 }
@@ -1865,14 +2193,14 @@ function drawBamboo() {
     }
     // štítok
     if (MOB) { x.save(); x.translate(-432, 360); x.scale(1.0, 1.0); } x.fillStyle = "rgba(15,6,3,.9)"; x.strokeStyle = "#6a3416"; x.lineWidth = 2; x.fillRect(820, 200, 380, 150); x.strokeRect(820, 200, 380, 150);
-    x.textAlign = "left"; x.fillStyle = "#ffd6a0"; x.font = "bold 24px Georgia"; x.fillText(`Tyč ${BT.i + 1}/${BT.poles.length}: ${pole[0]}`, 836, 236);
-    x.font = "bold 22px Georgia"; x.fillStyle = "#ff9a70"; x.fillText(`Tvrdosť: ${pole[1]}`, 836, 276);
+    x.textAlign = "left"; x.fillStyle = "#ffd6a0"; x.font = "bold 24px Georgia"; x.fillText(TR("bm_pole", { i: BT.i + 1, n: BT.poles.length, name: pole[0] }), 836, 236);
+    x.font = "bold 22px Georgia"; x.fillStyle = "#ff9a70"; x.fillText(TR("bm_hard", { h: pole[1] }), 836, 276);
     x.fillStyle = BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? "#7dff8c" : "#ff6a50";
-    x.fillText(`Tvoja sila: ${BT.dmg}  (×0,6 – ×1,3 podľa rýchlosti)`, 836, 312);
-    x.font = "16px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? "Švihni rýchlo cez tyč!" : "Na túto tyč je zbraň asi slabá…", 836, 338); if (MOB) x.restore();
+    x.fillText(TR("bm_yours", { d: BT.dmg }), 836, 312);
+    x.font = "16px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? TR("bm_swing") : TR("bm_weak"), 836, 338); if (MOB) x.restore();
   }
   // výsledky
-  BT.results.forEach((r, i) => { x.fillStyle = r.ok ? "#7dff8c" : "#ff6a50"; x.font = MOB ? "bold 17px Georgia" : "bold 22px Georgia"; x.textAlign = "left"; x.fillText(`${i + 1}. ${r.ok ? "✔ prerezaná" : "✖ zaseknutá"} (${r.power} / ${r.h})`, MOB ? 385 : 70, (MOB ? 190 : 230) + i * (MOB ? 26 : 34)); });
+  BT.results.forEach((r, i) => { x.fillStyle = r.ok ? "#7dff8c" : "#ff6a50"; x.font = MOB ? "bold 17px Georgia" : "bold 22px Georgia"; x.textAlign = "left"; x.fillText(`${i + 1}. ${r.ok ? TR("bm_cut") : TR("bm_stuckL")} (${r.power} / ${r.h})`, MOB ? 385 : 70, (MOB ? 190 : 230) + i * (MOB ? 26 : 34)); });
   // častice
   BT.parts.forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.fillStyle = p.leaf ? "#6fcf4a" : p.c; if (p.leaf) { x.beginPath(); x.ellipse(p.x, p.y, 7, 3, p.x / 30, 0, 7); x.fill(); } else x.fillRect(p.x, p.y, 4, 4); });
   x.globalAlpha = 1;
@@ -1881,7 +2209,7 @@ function drawBamboo() {
   if (BT.msg) { const m = BT.msg; x.globalAlpha = Math.min(1, m.l * 2); x.textAlign = "center"; x.font = MOB ? "bold 44px Georgia" : "bold 56px Georgia"; x.lineWidth = 6; x.strokeStyle = "#200800"; x.strokeText(m.t, 640, 110); x.fillStyle = m.col; x.fillText(m.t, 640, 110);
     x.font = "bold 22px Georgia"; x.fillStyle = "#ffe6c0"; x.fillText(m.sub, 640, 120 + 40); x.globalAlpha = 1; }
   x.textAlign = "center"; x.font = "18px Georgia"; x.fillStyle = "#b88d6c";
-  x.fillText(MT(`Podrž tlačidlo myši a rýchlo švihni naprieč tyčou · Enter = preskočiť · ${Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer))} s`, `Rýchlo švihni prstom naprieč tyčou · ${Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer))} s`), 640, MOB ? 548 : 30);
+  x.fillText(MTk("bm_hint", { s: Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer)) }), 640, MOB ? 548 : 30);
   x.restore();
 }
 bcv.addEventListener("pointerdown", e => { if (e.button === 0 || e.pointerType !== "mouse") bambooDown(e); });
@@ -1907,7 +2235,7 @@ function drawLogo() {
 }
 
 /* ===================== ŠTART ===================== */
-load(); save(); resize(); drawLogo(); show("menu"); focusGame();
+load(); applyData(); S.orders.forEach(locOrder); save(); resize(); applyLang(); drawLogo(); show("menu"); focusGame();
 window.addEventListener("load", focusGame);
 $("focusOv").addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); focusGame(); audioInit(); });
 requestAnimationFrame(loop);
