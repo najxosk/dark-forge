@@ -152,6 +152,15 @@ h1,h2,.big{font-family:"Trajan Pro","Cinzel","Palatino Linotype","Book Antiqua",
 .hud span{border:1px solid #6a6e76;background:linear-gradient(#24170f,#100906);box-shadow:inset 0 1px 0 rgba(255,220,180,.15)}
 #fcard{border:2px solid #3a3d42;box-shadow:inset 0 0 0 1px #6a6e76;background:linear-gradient(rgba(36,22,14,.9),rgba(16,9,6,.9))}
 body.mob #mechBtn{border:3px solid #3a3d42;box-shadow:inset 0 0 0 1px #8a8e96,0 0 18px rgba(255,90,0,.35)}
+
+.gemreq{margin:8px 0 4px;padding:8px 10px;border-radius:8px;border:2px solid var(--gc);background:linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.1));box-shadow:0 0 12px var(--gc) inset}
+.gemreq.small{padding:5px 10px;font-size:14px}
+.gemline{display:flex;align-items:center;gap:8px;font-size:17px}
+.gemico{font-size:26px;filter:drop-shadow(0 0 6px var(--gc))}
+.gemhave{margin-left:auto;font-size:13px;font-weight:bold;background:#2a1808;color:#ffe6b0;border-radius:10px;padding:2px 8px}.gemhave.no{background:#a02010;color:#fff}
+.story{font-style:italic;font-size:14px;margin:4px 0;color:#4a2a10}
+.gemrew{font-size:13px;font-weight:bold;color:#3a5a10}.gemwarn{font-size:12px;color:#8a1a08}
+.chainh{font-size:13px;font-weight:bold;letter-spacing:1px;color:#5a1a06;text-transform:uppercase;margin-bottom:2px}
 </style>
 </head>
 <body tabindex="-1">
@@ -275,6 +284,7 @@ body.mob #mechBtn{border:3px solid #3a3d42;box-shadow:inset 0 0 0 1px #8a8e96,0 
   ① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span>).<br>
   ② <b>Stred</b> – klikni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>
   ③ <b>Načasovanie</b> – klikni, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>
+  💎 <b>Gemy (Fáza 3+)</b> – niektorí zákazníci chcú zbraň s konkrétnym gemom (napr. „Meč s Rubínom“). Na konci kovania osaď <b>presne ten gem</b>: ťukni/klikni, keď je nad objímkou, a drž kov horúci. Správne = platba ×1,6, reputácia a šanca na unikátnu trofej. Zlý alebo prasknutý gem = zákazník zbraň odmietne. Gemy získaš ako odmenu z iných objednávok alebo kúpiš v Dielni (obmedzený sklad).<br>
   <span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>
  </div>
  <button class="btn gold" id="bGuideOk">Rozumiem! <span class="kbd">Enter</span></button>
@@ -372,11 +382,33 @@ const CONFIG = {
            4: [["Rukoväť", 2], ["Stred", 2], ["Ostrie", 2], ["Mýtické Jadro", 1]] },
   core: { amp: 150, speed: 1.8, ringMult: 1.3 },  // pohyblivý terč Mýtického Jadra
   gems: {
-    types: { rubin: { name: "Rubín", icon: "🔴", col: "#ff2a48", price: 120, desc: "+40 % sila na bambuse, +10 % platba" },
-             zafir: { name: "Zafír", icon: "🔵", col: "#3a7bff", price: 100, desc: "ďalšia objednávka: kov chladne o 30 % pomalšie, +10 % platba" },
-             smaragd: { name: "Smaragd", icon: "🟢", col: "#2ee07a", price: 140, desc: "+35 % platba" } },
-    minTemp: 50, tol: 20, speed: 420, range: 250, pickTime: 9, dropChance: 0.2,
-    rubinDmg: 1.4, rubinPay: 0.10, zafirCool: 0.30, zafirPay: 0.10, smaragdPay: 0.35,
+    types: { rubin: { name: "Rubín", icon: "🔴", col: "#ff2a48", price: 220, ins: "Rubínom", desc: "ohnivý kameň odvahy" },
+             zafir: { name: "Zafír", icon: "🔵", col: "#3a7bff", price: 200, ins: "Zafírom", desc: "kameň pokoja a múdrosti" },
+             smaragd: { name: "Smaragd", icon: "🟢", col: "#2ee07a", price: 240, ins: "Smaragdom", desc: "kameň života a ochrany" } },
+    minTemp: 50, tol: 20, speed: 420, range: 250, pickTime: 12,
+    rubinDmg: 1.1, zafirCool: 0,           // drobné vedľajšie efekty (takmer žiadne)
+    stockStart: 1, stockMax: 3, restockEvery: 3, // obmedzený sklad v Dielni
+  },
+  gemOrders: {                            // objednávky so želaným gemom (Fáza 3+)
+    chance: 0.34, payMult: 1.6, rep: 2, uniqueChance: 0.4,
+    failFrac: 0.15, failRep: 2,            // zlý / chýbajúci / prasknutý gem = takmer nič + strata reputácie
+    rewardChance: 0.3,                     // niektoré bežné objednávky platia gemom
+    chainFinalBonus: 700,
+    stories: {
+      rubin: ["Syn ide prvý raz do boja – rubín mu má dodať odvahy.", "Rubín červený ako krv draka, ktorého chce premôcť.", "Rubín na pamiatku padlého brata."],
+      zafir: ["Pre sudcu mestskej rady – zafír vraj chladí hnev.", "Hvezdár chce zafír modrý ako nočné nebo.", "Zafír na pokoj duše pred dlhou plavbou."],
+      smaragd: ["Pre lesnú pani – smaragd vraj chráni pred jedom.", "Smaragd ako zásnubný dar pre nevestu.", "Liečiteľ verí, že smaragd zahojí každú ranu."],
+    },
+  },
+  chains: {                               // malé misie frakcií (3 kroky)
+    3: { name: "Prísaha Mestskej gardy", ico: "🛡", steps: [
+      { gem: "smaragd", cust: "Veliteľ stráže Ondrej", story: "Krok 1/3: Garde sa množia otrávené rany – potrebuje smaragdovú zbraň." },
+      { gem: "zafir", cust: "Kapitán gardy Matúš", story: "Krok 2/3: Kapitán chce chladnú hlavu pri obrane brány – zafír." },
+      { gem: "rubin", cust: "Purkmister mesta", story: "Krok 3/3: Slávnostná zbraň pre hrdinu mesta – rubín odvahy!" } ] },
+    4: { name: "Kráľovská klenotnica", ico: "👑", steps: [
+      { gem: "zafir", cust: "Kráľovský pokladník", story: "Krok 1/3: Do klenotnice chýba zafírová zbraň múdrosti." },
+      { gem: "rubin", cust: "Maršal kráľovstva", story: "Krok 2/3: Maršal prisahá na rubín – symbol kráľovej krvi." },
+      { gem: "smaragd", cust: "Kráľovná Ľudmila", story: "Krok 3/3: Kráľovná chce smaragd pre následníka trónu." } ] },
   },
   traits: {
     urgent:   { icon: "⏱", name: "Súrne", w: 1.2, pay: 1.4, ring: 0.8, desc: "rýchlejší krúžok, platí o 40 % viac" },
@@ -473,6 +505,8 @@ function load() {
   S.rep = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0 }, S.rep || {});
   S.gems = Object.assign({ rubin: 0, zafir: 0, smaragd: 0 }, S.gems || {});
   S.buffs = S.buffs || {}; S.stats = Object.assign({ divine: 0 }, S.stats);
+  S.gemStock = Object.assign({ rubin: CONFIG.gems.stockStart, zafir: CONFIG.gems.stockStart, smaragd: CONFIG.gems.stockStart }, S.gemStock || {});
+  S.chain = Object.assign({ 3: 0, 4: 0 }, S.chain || {}); S.gemTroph = S.gemTroph || {}; S.restock = S.restock || 0;
   if (S.phase > maxPhase()) S.phase = maxPhase();
   if (!S.chal || S.chal.length < 3) refillChal();
 }
@@ -617,13 +651,31 @@ function makeOrder(forceSimple) {
   if (ev) { payM *= ev.pay; minQ = Math.max(minQ, ev.minQ); }
   const c = ev ? [ev.name, ev.ico] : rare ? [rnd(RARE), "👑"] : rnd(CUST[ph]);
   let pay = Math.round((it.base + minQ * it.base * 0.5) * (0.9 + Math.random() * 0.25) * payM);
-  return { cust: c[0], ico: c[1], item: it.id, name: it.name, shape: it.shape, minQ, pay, rare, phase: ph, trait, ev: ev ? ev.desc : null, evRep: ev ? ev.rep : 0, fac: ph };
+  const o = { cust: c[0], ico: c[1], item: it.id, name: it.name, shape: it.shape, minQ, pay, rare, phase: ph, trait, ev: ev ? ev.desc : null, evRep: ev ? ev.rep : 0, fac: ph };
+  const GO = CONFIG.gemOrders;
+  if (!forceSimple && ph >= 3 && !ev) {
+    if (Math.random() < GO.chance) makeGemOrder(o, rnd(Object.keys(CONFIG.gems.types)));
+    else if (Math.random() < GO.rewardChance) o.rewardGem = rnd(Object.keys(CONFIG.gems.types));
+  }
+  return o;
+}
+function makeGemOrder(o, k, story) {
+  const gt = CONFIG.gems.types[k];
+  o.gemReq = k; o.baseName = o.baseName || o.name; o.name = o.baseName + " s " + gt.ins; o.story = story || rnd(CONFIG.gemOrders.stories[k]);
+  o.pay = Math.round(o.pay * CONFIG.gemOrders.payMult); return o;
+}
+function chainOrder(ph) {
+  const ch = CONFIG.chains[ph]; if (!ch) return null; const st = S.chain[ph] || 0; if (st >= ch.steps.length) return null;
+  const sp = ch.steps[st], it = ITEMS[ph][st % ITEMS[ph].length];
+  const o = { cust: sp.cust, ico: ch.ico, item: it.id, name: it.name, shape: it.shape, minQ: st >= 2 ? 1 : 0, pay: Math.round(it.base * 1.2 * payBonusAll()), rare: true, phase: ph, trait: null, ev: null, evRep: 1, fac: ph, chain: { ph, step: st } };
+  return makeGemOrder(o, sp.gem, sp.story);
 }
 function kingOrder() {
   return { cust: "Kráľ Svätopluk", ico: "👑", item: "cepel", name: "Čepeľ Hviezd", shape: "sword", minQ: 4, pay: Math.round(CONFIG.king.pay * payBonusAll()), rare: true, phase: 4, trait: "event", ev: "Kráľovská objednávka – len BOŽSKÁ zbraň!", evRep: 5, fac: 4, king: true };
 }
 function ensureOrders() {
   S.orders = (S.orders || []).filter(o => o.phase === S.phase);
+  if (S.phase >= 3 && !S.orders.some(o => o.chain) && chainOrder(S.phase) && S.orders.filter(o => !o.king).length < 3) S.orders.push(chainOrder(S.phase));
   while (S.orders.filter(o => !o.king).length < 3) S.orders.push(makeOrder(!S.tutDone && S.orders.length === 0));
   if (S.phase === 4 && !S.ending && S.ordersInPhase[4] >= CONFIG.king.afterOrders && !S.orders.some(o => o.king)) S.orders.unshift(kingOrder());
   save();
@@ -633,6 +685,14 @@ function traitTags(o) {
   if (o.trait === "event") h += `<span class="tag ev">${o.king ? "👑 KRÁĽ" : "⚡ UDALOSŤ"}</span>`;
   else if (o.trait) { const t = CONFIG.traits[o.trait]; h += `<span class="tag tr" title="${t.desc}">${t.icon} ${t.name}</span>`; }
   return h;
+}
+function gemCardHtml(o) {
+  if (o.gemReq) { const g = CONFIG.gems.types[o.gemReq], n = S.gems[o.gemReq] || 0, ch = o.chain ? CONFIG.chains[o.chain.ph] : null;
+    return `<div class="gemreq" style="--gc:${g.col}">${ch ? `<div class="chainh">${ch.ico} Misia: ${ch.name}</div>` : ""}<div class="gemline"><span class="gemico">${g.icon}</span><b>Chce gem: ${g.name}</b><span class="gemhave ${n ? "" : "no"}">máš ${n}</span></div>
+      <div class="story">„${o.story}“</div><div class="gemrew">Odmena: platba ×${CONFIG.gemOrders.payMult} · +${CONFIG.gemOrders.rep} reputácia · šanca na unikátnu trofej${o.chain && o.chain.step === CONFIG.chains[o.chain.ph].steps.length - 1 ? ` · 🏅 +🪙${CONFIG.gemOrders.chainFinalBonus}` : ""}</div>
+      <div class="gemwarn">Zlý alebo prasknutý gem = zákazník odmietne zbraň!</div></div>`; }
+  if (o.rewardGem) { const g = CONFIG.gems.types[o.rewardGem]; return `<div class="gemreq small" style="--gc:${g.col}"><div class="gemline"><span class="gemico">${g.icon}</span>Odmenou pridá gem: <b>${g.name}</b> (aspoň Kvalitná)</div></div>`; }
+  return "";
 }
 function traitDesc(o) { return o.trait === "event" ? o.ev : o.trait ? CONFIG.traits[o.trait].desc : ""; }
 function renderOrders() {
@@ -646,8 +706,8 @@ function renderOrders() {
      <div>Chce: <b>${o.name}</b></div>
      <div class="muted">Minimum: <b class="q${o.minQ}">${QN[o.minQ]}</b> · Platí: <b>🪙 ${o.pay}</b></div>
      ${traitDesc(o) ? `<div class="muted" style="font-style:italic">${traitDesc(o)}</div>` : ""}
-    </div></div>
-    <button class="btn gold" data-o="${i}" style="min-height:48px">Prijať a kovať</button>
+    </div></div>${gemCardHtml(o)}
+    <button class="btn gold" data-o="${i}" style="min-height:48px" ${o.gemReq && !S.gems[o.gemReq] ? "disabled" : ""}>${o.gemReq && !S.gems[o.gemReq] ? `Chýba ti ${CONFIG.gems.types[o.gemReq].icon} ${CONFIG.gems.types[o.gemReq].name}` : "Prijať a kovať"}</button>
    </div>`).join("");
   $("ordList").querySelectorAll("[data-o]").forEach(b => b.onclick = () => { audioInit(); SFX.click(); startForge(+b.dataset.o); });
   const rc = CONFIG.refreshCost[S.phase]; $("bRefresh").textContent = `🔄 Iní zákazníci (🪙 ${rc})`; $("bRefresh").disabled = S.coins < rc;
@@ -700,8 +760,8 @@ function shopCard(k) {
 }
 function gemCards() {
   return Object.entries(CONFIG.gems.types).map(([k, g]) => `<div class="panel shopitem"><div class="icon" style="box-shadow:0 0 14px ${g.col}">${g.icon}</div><div class="grow">
-   <div class="name" style="font-weight:bold;color:#ffd6a0">${g.name} <span class="tag">máš ${S.gems[k] || 0}</span></div><div class="muted">${g.desc}. Osadí sa po kovaní (Fáza 3+).</div></div>
-   <button class="btn small ${S.coins >= g.price ? "gold" : ""}" data-gem="${k}" ${S.coins >= g.price ? "" : "disabled"}>🪙 ${g.price}</button></div>`).join("");
+   <div class="name" style="font-weight:bold;color:#ffd6a0">${g.name} <span class="tag">máš ${S.gems[k] || 0}</span> <span class="tag tr">sklad ${S.gemStock[k] || 0}</span></div><div class="muted">${g.desc}. Treba ho na objednávky „…s ${g.ins}“. Sklad sa dopĺňa každé ${CONFIG.gems.restockEvery} objednávky.</div></div>
+   <button class="btn small ${S.coins >= g.price && S.gemStock[k] > 0 ? "gold" : ""}" data-gem="${k}" ${S.coins >= g.price && S.gemStock[k] > 0 ? "" : "disabled"}>${S.gemStock[k] > 0 ? "🪙 " + g.price : "vypredané"}</button></div>`).join("");
 }
 function renderShop() {
   $("shopHud").innerHTML = hudHtml();
@@ -716,7 +776,7 @@ function renderShop() {
   }
   $("shopList").innerHTML = h;
   $("shopList").querySelectorAll("[data-b]").forEach(b => b.onclick = () => buy(b.dataset.b));
-  $("shopList").querySelectorAll("[data-gem]").forEach(b => b.onclick = () => { const g = CONFIG.gems.types[b.dataset.gem]; if (S.coins < g.price) return; S.coins -= g.price; S.gems[b.dataset.gem]++; save(); SFX.coin(); toast("Kúpený gem: " + g.icon + " " + g.name); renderShop(); });
+  $("shopList").querySelectorAll("[data-gem]").forEach(b => b.onclick = () => { const g = CONFIG.gems.types[b.dataset.gem]; if (S.coins < g.price || !(S.gemStock[b.dataset.gem] > 0)) return; S.coins -= g.price; S.gemStock[b.dataset.gem]--; S.gems[b.dataset.gem]++; save(); SFX.coin(); toast("Kúpený gem: " + g.icon + " " + g.name); renderShop(); });
   $("shopList").querySelectorAll("[data-ph]").forEach(b => b.onclick = () => { S.phase = +b.dataset.ph; save(); SFX.click(); toast(`Fáza ${S.phase}: ${PH[S.phase].name}`); show("shop"); });
 }
 function buy(k) {
@@ -737,7 +797,8 @@ function buy(k) {
 function renderTroph() {
   const all = [...ITEMS[1], ...ITEMS[2], ...ITEMS[3], ...ITEMS[4]];
   $("tropList").innerHTML = all.map(it => { const n = S.trophies[it.id] || 0; return `<div class="trophy ${n ? "" : "off"}"><canvas width="80" height="60" data-s="${it.shape}" data-id="${it.id}"></canvas><div>${it.name}</div><div class="q2">${n ? "×" + n : "?"}</div></div>`; }).join("");
-  $("tropList").querySelectorAll("canvas").forEach(c => { const x = c.getContext("2d"); x.translate(40, 30); x.rotate(-0.6); x.scale(0.5, 0.5); drawWeapon(x, c.dataset.s, 0, 0, 120, 60, (S.divine || {})[c.dataset.id] ? 4 : 2, null, itemPhase(c.dataset.id), c.dataset.id); });
+  const ut = Object.values(S.gemTroph || {}); if (ut.length) $("tropList").innerHTML += ut.map(u => `<div class="trophy" style="border-color:${CONFIG.gems.types[u.gem].col};box-shadow:0 0 12px ${CONFIG.gems.types[u.gem].col}"><canvas width="80" height="60" data-s="${u.shape}" data-id="${u.item}" data-gem="${u.gem}"></canvas><div>${u.name}</div><div class="q2">💎 unikát</div></div>`).join("");
+  $("tropList").querySelectorAll("canvas").forEach(c => { const x = c.getContext("2d"); x.translate(40, 30); x.rotate(-0.6); x.scale(0.5, 0.5); drawWeapon(x, c.dataset.s, 0, 0, 120, 60, (S.divine || {})[c.dataset.id] ? 4 : 2, null, itemPhase(c.dataset.id), c.dataset.id); if (c.dataset.gem) { x.fillStyle = CONFIG.gems.types[c.dataset.gem].col; x.beginPath(); x.arc(-44, 0, 9, 0, 7); x.fill(); } });
   const s = S.stats;
   $("statBox").innerHTML = `<div class="res-line"><span>Objednávky</span><b>${s.orders}</b></div><div class="res-line"><span>Legendárne</span><b class="q2">${s.leg}</b></div><div class="res-line"><span>Božské</span><b class="q4">${s.divine || 0}</b></div><div class="res-line"><span>Gemy</span><b>🔴${S.gems.rubin} 🔵${S.gems.zafir} 🟢${S.gems.smaragd}</b></div>
    <div class="res-line"><span>Perfektné údery</span><b>${s.perfects}</b></div><div class="res-line"><span>Najlepšie combo</span><b>x${s.bestCombo}</b></div>
@@ -1072,6 +1133,7 @@ bind("bGuideOk", () => guideClose());
 function startForge(idx) {
   if (!S.guideSeen) { guideOpen(() => startForge(idx)); return; }
   const o = S.orders[idx]; if (!o) return;
+  if (o.gemReq && !S.gems[o.gemReq]) { toast(`Chýba ti ${CONFIG.gems.types[o.gemReq].icon} ${CONFIG.gems.types[o.gemReq].name} – kúp ho v Dielni alebo získaj ako odmenu.`); return; }
   S.orders.splice(idx, 1); save();
   resize();
   const zones = CONFIG.zones[o.phase];
@@ -1252,19 +1314,19 @@ function registerHit(center, timing, x, y, miss, green, when) {
   const nz = F.seq[F.idx];
   if (nz && F.seq[F.idx - 1] && nz.zi !== F.seq[F.idx - 1].zi) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 330 : 190, txt: "ZÓNA: " + nz.zone.toUpperCase(), col: "#ffb060", life: 1.6, big: true }); F.wait = 1.0; }
   updFHud();
-  if (F.idx >= F.seq.length) { if (F.phase >= 3) startGem(); else { F.done = true; setTimeout(() => finishForge(false), 900); } }
+  if (F.idx >= F.seq.length) { if (F.o.gemReq) startGem(); else { F.done = true; setTimeout(() => finishForge(false), 900); } }
 }
 /* ---------- Osadenie gemu (Fáza 3+) ---------- */
 function startGem() {
   const opts = Object.keys(CONFIG.gems.types).filter(k => S.gems[k] > 0);
-  if (!opts.length) { F.popups.push({ x: VW / 2, y: 200, txt: "Bez gemu (kúp v Dielni)", col: "#ccc", life: 1.4, small: true }); F.done = true; setTimeout(() => finishForge(false), 1000); return; }
+  if (!opts.length) { F.gemFail = "chýba gem"; F.popups.push({ x: VW / 2, y: 300, txt: "Nemáš žiadny gem!", col: "#ff7a60", life: 1.4, small: true }); F.done = true; setTimeout(() => finishForge(false), 1000); return; }
   F.gem = { stage: "pick", opts, t: 0, x: 0, dir: 1, sel: null };
-  tutMsg(MT("💎 <b>Osadenie gemu</b>: vyber gem (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>, <span class='kbd'>0</span> = bez gemu)", "💎 <b>Osadenie gemu</b>: ťukni na gem (alebo „Bez gemu“)"));
+  tutMsg(MT(`💎 <b>Osaď ${CONFIG.gems.types[F.o.gemReq].icon} ${CONFIG.gems.types[F.o.gemReq].name}</b> – zákazník chce práve tento! (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>)`, `💎 <b>Osaď ${CONFIG.gems.types[F.o.gemReq].icon} ${CONFIG.gems.types[F.o.gemReq].name}</b> – zákazník chce práve tento!`));
 }
 function gemBoxes() { const ks = Object.keys(CONFIG.gems.types); return [...ks, "none"].map((k, i) => MOB ? ({ k, x: 300 + (i % 2) * 208, y: geo().cy - geo().bladeL / 2 + Math.floor(i / 2) * 105, w: 200, h: 92 }) : ({ k, x: 300 + i * 190, y: 150, w: 170, h: 70 })); }
 function gemPick(k) {
   const G = F.gem; if (!G || G.stage !== "pick") return;
-  if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
+  if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; F.gemFail = "bez gemu"; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
   G.sel = k; G.stage = "slide"; G.t = 0; G.x = -CONFIG.gems.range; G.dir = 1;
   tutMsg(MT(`Klikni, keď je ${CONFIG.gems.types[k].icon} nad objímkou · drž kov horúci (≥ ${CONFIG.gems.minTemp}°) medzerníkom!`, `Ťukni vpravo, keď je ${CONFIG.gems.types[k].icon} nad objímkou · MECHOM drž kov ≥ ${CONFIG.gems.minTemp}°!`));
 }
@@ -1274,7 +1336,7 @@ function gemClick(x, y) {
   if (G.stage !== "slide") return;
   const tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol), al = Math.abs(G.x) <= tol, hot = F.temp >= CONFIG.gems.minTemp;
   const gt = CONFIG.gems.types[G.sel]; S.gems[G.sel]--; save();
-  G.stage = "done"; G.ok = al && hot; tutMsg("");
+  G.stage = "done"; G.ok = al && hot; tutMsg(""); if (!G.ok) F.gemFail = !hot ? "gem praskol (studený kov)" : "gem praskol (nezarovnaný)"; else if (G.sel !== F.o.gemReq) F.gemFail = "zlý gem – chcel " + CONFIG.gems.types[F.o.gemReq].name;
   const g = geo();
   if (G.ok) { F.gemSet = G.sel; SFX.perfect(); SFX.clang(1); F.flash = 1; for (let i = 0; i < 60; i++) sparkAt(...bp(g, g.bladeX + G.x, g.bladeY), true);
     F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: `${gt.icon} ${gt.name.toUpperCase()} OSADENÝ!`, col: gt.col, life: 1.8, big: true }); }
@@ -1567,19 +1629,24 @@ function finishForge(quit) {
     F.avg = avg;
   }
   if (window.DF && DF.forceQ != null && !quit) { q = DF.forceQ; DF.forceQ = null; }
-  const ok = q !== 3 && rank(q) >= rank(o.minQ);
+  const gemBad = !quit && q !== 3 && o.gemReq && (F.gemFail || F.gemSet !== o.gemReq);
+  const ok = q !== 3 && rank(q) >= rank(o.minQ) && !gemBad;
   const mult = 1 + Math.min(C.combo.max - 1, F.maxCombo * C.combo.step);
   let pay = 0, tip = 0, xp = 0, lines = [];
   if (q === 3) { lines.push(["Zákazník odchádza naštvaný", "🪙 0"]); xp = 3; }
   else {
-    if (ok) { pay = o.pay; tip = Math.round(o.pay * C.economy.tipFrac * (rank(q) - rank(o.minQ)) * (o.trait === "picky" ? T.picky.tip : 1)); }
+    if (gemBad) { pay = Math.round(o.pay * C.gemOrders.failFrac); lines.push([`💎 Zákazník odmieta: ${F.gemFail || "chýba gem"}`, "🪙 " + pay]); }
+    else if (ok) { pay = o.pay; tip = Math.round(o.pay * C.economy.tipFrac * (rank(q) - rank(o.minQ)) * (o.trait === "picky" ? T.picky.tip : 1)); }
     else pay = Math.round(o.pay * (o.trait === "generous" ? T.generous.under : C.economy.underFrac));
-    lines.push([ok ? "Platba" : "Nesplnené minimum (časť platby)", "🪙 " + pay]);
+    if (!gemBad) lines.push([ok ? (o.gemReq ? `Platba (gem ×${C.gemOrders.payMult})` : "Platba") : "Nesplnené minimum (časť platby)", "🪙 " + pay]);
     if (tip) lines.push(["Sprepitné za kvalitu", "🪙 " + tip]);
     let extraPay = 0;
-    if (F.gemSet) { const gp = { rubin: C.gems.rubinPay, zafir: C.gems.zafirPay, smaragd: C.gems.smaragdPay }[F.gemSet], v = Math.round(o.pay * gp); extraPay += v;
-      lines.push([`Gem ${C.gems.types[F.gemSet].icon} ${C.gems.types[F.gemSet].name}` + (F.gemSet === "zafir" ? " (ďalšia objednávka chladne pomalšie)" : F.gemSet === "rubin" ? " (+40 % sila na bambuse)" : ""), "🪙 +" + v]);
-      if (F.gemSet === "zafir") S.buffs.zafir = 1; }
+    if (ok && o.gemReq) { const gt = C.gems.types[o.gemReq]; lines.push([`💎 ${gt.icon} ${gt.name} osadený presne podľa želania`, "✔"]);
+      if (o.chain) { S.chain[o.chain.ph] = o.chain.step + 1; const ch = C.chains[o.chain.ph];
+        if (S.chain[o.chain.ph] >= ch.steps.length) { extraPay += C.gemOrders.chainFinalBonus; lines.push([`🏅 Misia „${ch.name}“ splnená!`, "🪙 +" + C.gemOrders.chainFinalBonus]); S.gemTroph["chain" + o.chain.ph] = { name: ch.name, item: o.item, shape: o.shape, gem: o.gemReq }; }
+        else lines.push([`Misia „${ch.name}“`, `krok ${S.chain[o.chain.ph]}/${ch.steps.length}`]); }
+      if (rank(q) >= 1 && (o.chain || Math.random() < C.gemOrders.uniqueChance)) { const key = o.item + "_" + o.gemReq; if (!S.gemTroph[key]) { S.gemTroph[key] = { name: o.name, item: o.item, shape: o.shape, gem: o.gemReq }; lines.push(["🏆 Unikátna trofej", o.name]); } } }
+    if (ok && o.rewardGem && rank(q) >= 1) { S.gems[o.rewardGem]++; lines.push(["Odmena: gem", C.gems.types[o.rewardGem].icon + " " + C.gems.types[o.rewardGem].name]); }
     const rl = repLevel(o.fac || o.phase); if (rl && ok) { const v = Math.round((pay + tip) * rl * C.rep.payPerLevel); extraPay += v; lines.push([`Reputácia ${C.factions[o.fac || o.phase]} Lv ${rl}`, "🪙 +" + v]); }
     const comboBonus = Math.round((pay + tip) * (mult - 1));
     if (comboBonus) lines.push([`Combo bonus x${mult.toFixed(1)}`, "🪙 " + comboBonus]);
@@ -1587,9 +1654,10 @@ function finishForge(quit) {
     xp = C.economy.xpPerOrder[o.phase] + rank(q) * C.economy.xpQualityBonus;
   }
   // reputácia frakcie
-  if (!quit) { const f = o.fac || o.phase; if (ok) { const g = (o.trait === "regular" ? T.regular.rep : 1) + (o.evRep || 0); S.rep[f] = (S.rep[f] || 0) + g; lines.push([`Reputácia: ${C.factions[f]}`, "+" + g]); } else S.rep[f] = Math.max(0, (S.rep[f] || 0) - 1); }
-  // nájdený gem
-  if (!quit && o.phase >= 3 && rank(q) >= 1 && Math.random() < C.gems.dropChance) { const gk = rnd(Object.keys(C.gems.types)); S.gems[gk]++; lines.push(["Nájdený gem", C.gems.types[gk].icon + " " + C.gems.types[gk].name]); }
+  if (!quit) { const f = o.fac || o.phase; if (ok) { const g = (o.trait === "regular" ? T.regular.rep : 1) + (o.evRep || 0) + (o.gemReq ? C.gemOrders.rep : 0); S.rep[f] = (S.rep[f] || 0) + g; lines.push([`Reputácia: ${C.factions[f]}`, "+" + g]); } else S.rep[f] = Math.max(0, (S.rep[f] || 0) - 1); }
+  // doplnenie skladu gemov
+  if (!quit && o.phase >= 3) { S.restock++; if (S.restock >= C.gems.restockEvery) { S.restock = 0; const ks = Object.keys(C.gems.types).filter(k => S.gemStock[k] < C.gems.stockMax); if (ks.length) S.gemStock[rnd(ks)]++; } }
+  if (gemBad) { const f = o.fac || o.phase; S.rep[f] = Math.max(0, (S.rep[f] || 0) - C.gemOrders.failRep); }
   if (o.trait === "gambler" && q !== 3) lines.push(["🎲 Hazardér doplatí za test na bambuse", "otestuj!"]);
   lines.push(["Skúsenosti", "✦ " + xp + " XP"]);
   lines.push(["Perfektné údery", F.perfects + " / " + F.seq.length]);
