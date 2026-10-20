@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0605">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Dark Forge: Blood &amp; Iron</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html,body{height:100%;overflow:hidden;background:#050302;overscroll-behavior:none;touch-action:none;font-family:Georgia,"Times New Roman",serif;color:#f3dcc0}
+#app{position:relative;margin:0 auto;height:100vh;height:100dvh;width:100vw;overflow:hidden;
+ background:radial-gradient(ellipse at 50% 85%,#3a1406 0%,#170805 45%,#070303 100%)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 12px)}
+.screen.on{display:flex}
+h1{font-size:clamp(30px,10vw,46px);text-align:center;letter-spacing:2px;color:#ffb35c;text-shadow:0 0 12px #ff5a00,0 0 30px #a02000,0 3px 0 #300;line-height:1.05}
+h1 small{display:block;font-size:.45em;color:#d9a27a;letter-spacing:6px;text-shadow:0 0 8px #800}
+h2{font-size:24px;text-align:center;color:#ffbf70;text-shadow:0 0 10px #f50;margin:6px 0 10px}
+.btn{display:block;width:100%;min-height:56px;margin:8px 0;border:2px solid #8a4a20;border-radius:12px;font:bold 20px Georgia,serif;color:#ffe2b8;
+ background:linear-gradient(#5a2a12,#2a1208);box-shadow:inset 0 1px 0 #b0602a,0 4px 0 #120603,0 0 18px rgba(255,90,0,.25);cursor:pointer;touch-action:manipulation}
+.btn:active{transform:translateY(3px);box-shadow:inset 0 1px 0 #b0602a,0 1px 0 #120603}
+.btn.gold{border-color:#e0a030;background:linear-gradient(#b86a10,#5a2a04);color:#fff4d0}
+.btn.small{min-height:44px;font-size:16px;width:auto;display:inline-block;padding:0 14px;margin:4px}
+.btn:disabled{opacity:.4;filter:grayscale(.7)}
+.panel{background:linear-gradient(#24120a,#140906);border:2px solid #6a3416;border-radius:14px;padding:12px;margin:6px 0;box-shadow:inset 0 0 20px #000,0 0 12px rgba(255,80,0,.15)}
+.row{display:flex;align-items:center;gap:8px}
+.grow{flex:1}
+.hud{display:flex;gap:6px;justify-content:space-between;align-items:center;font-size:15px;font-weight:bold}
+.hud span{background:#1a0b06;border:1px solid #5a2c12;border-radius:20px;padding:5px 10px;white-space:nowrap}
+.scroll{overflow-y:auto;flex:1;touch-action:pan-y;-webkit-overflow-scrolling:touch;margin:4px 0}
+.muted{color:#b88d6c;font-size:14px}
+.q0{color:#c9c2b8}.q1{color:#6fd36f}.q2{color:#ffcf3a;text-shadow:0 0 8px #f90}.q3{color:#ff5040}
+.card .name{font-size:19px;font-weight:bold;color:#ffd6a0}
+.rare{border-color:#e0b040!important;box-shadow:0 0 20px rgba(255,190,40,.5),inset 0 0 20px #000!important}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:10px;background:#e0a020;color:#2a1000;font-weight:bold;margin-left:4px}
+#forge{padding:0}
+#fhead{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 6px) 10px 6px;z-index:2;pointer-events:none}
+#fhead .btn{pointer-events:auto}
+#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#fcard{display:flex;align-items:center;gap:8px;background:rgba(20,9,5,.85);border:1px solid #6a3416;border-radius:12px;padding:6px 10px;margin-top:6px;font-size:14px}
+#fcard b{color:#ffd6a0}
+#pauseBtn{min-height:44px;min-width:48px;font-size:20px;padding:0;width:48px}
+.overlay{position:absolute;inset:0;background:rgba(5,2,1,.82);display:none;flex-direction:column;justify-content:center;padding:24px;z-index:10}
+.overlay.on{display:flex}
+#tut{position:absolute;left:50%;transform:translateX(-50%);width:min(88%,640px);top:16%;z-index:5;pointer-events:none;text-align:center;font-size:20px;font-weight:bold;background:rgba(15,6,3,.85);
+ border:2px solid #e09030;border-radius:14px;padding:12px;color:#ffe6b0;box-shadow:0 0 24px rgba(255,140,0,.4);display:none}
+.big{font-size:44px;text-align:center;font-weight:bold;margin:10px 0}
+.res-line{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #4a2410;font-size:17px}
+.shopitem{display:flex;gap:10px;align-items:center}
+.icon{width:54px;height:54px;flex:none;border-radius:10px;background:#0d0604;border:1px solid #5a2c12;display:flex;align-items:center;justify-content:center;font-size:30px}
+.trophies{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trophy{aspect-ratio:1;border-radius:10px;border:1px solid #6a3416;background:radial-gradient(#3a1a08,#0d0604);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;text-align:center;padding:4px}
+.trophy canvas{width:80%;height:60%}
+.trophy.off{opacity:.25;filter:grayscale(1)}
+.chal{display:flex;justify-content:space-between;font-size:15px;padding:5px 0;border-bottom:1px dashed #4a2410}
+.bar{height:8px;background:#1a0a05;border-radius:4px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a00,#ffd040)}
+#toast{position:absolute;left:50%;top:18%;transform:translateX(-50%);z-index:20;background:#3a1a06;border:2px solid #ffb040;border-radius:12px;padding:10px 16px;font-weight:bold;
+ color:#fff0c0;box-shadow:0 0 20px #f80;display:none;text-align:center;max-width:85%}
+#embers{position:absolute;inset:0;pointer-events:none}
+#result .btn{min-height:48px;margin:5px 0} #result .big{margin:4px 0;font-size:40px} #result .res-line{font-size:15px;padding:2px 0} #result h2{margin:2px 0}
+.q4{color:#dff4ff;text-shadow:0 0 10px #7fd0ff,0 0 22px #b0a0ff}
+.tag.ev{background:#c0301a;color:#fff}.tag.tr{background:#3a2410;color:#ffd9a0;border:1px solid #a06030}
+.evcard{border-color:#ff5a30!important;box-shadow:0 0 22px rgba(255,80,30,.45),inset 0 0 20px #000!important}
+.unlockitem{border-color:#e0a030}
+#fCombo.fire{color:#fff2c0;background:linear-gradient(0deg,#a01800,#ff6a00,#ffcc40);background-size:100% 200%;animation:fire .35s infinite alternate;border-color:#ffb040;box-shadow:0 0 14px #ff6a00}
+#fCombo.fire2{box-shadow:0 0 26px #ffcc40,0 -6px 20px #ff3a00;transform:scale(1.08)}
+@keyframes fire{from{background-position:0 0}to{background-position:0 100%}}
+.hudcoin{position:absolute;right:16px;top:calc(env(safe-area-inset-top) + 10px);width:auto!important;font-size:20px;font-weight:bold;background:#1a0b06;border:1px solid #a06030;border-radius:20px;padding:6px 14px;z-index:3;transition:transform .1s}
+.hudcoin.bump{transform:scale(1.25);color:#ffe070}
+.flycoin{position:absolute;z-index:30;font-size:26px;pointer-events:none;transition:left .65s cubic-bezier(.5,-0.3,.7,1),top .65s cubic-bezier(.5,-0.3,.7,1),transform .65s;width:auto!important}
+.divineh{color:#fff6d8;text-shadow:0 0 14px #ffd060,0 0 34px #7fb0ff}
+#app.env2{background:radial-gradient(ellipse at 50% 85%,#4a1a0a 0%,#1c0a06 45%,#080303 100%)}
+#app.env3{background:radial-gradient(ellipse at 50% 85%,#2a2e3a 0%,#12141a 50%,#060709 100%)}
+#app.env4{background:radial-gradient(ellipse at 50% 30%,#3a2a5a 0%,#160c2a 50%,#07040e 100%)}
+#mechInd{position:absolute;left:32%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:3;pointer-events:none;padding:8px 14px;border-radius:12px;
+ border:2px solid #5a2c12;background:rgba(20,8,4,.85);color:#8a6a50;text-align:center;transition:all .08s}
+#mechInd b{display:block;font-size:24px;letter-spacing:2px} #mechInd small{font-size:12px}
+#mechInd.on{border-color:#ffb040;color:#fff0c0;background:rgba(160,60,0,.9);box-shadow:0 0 24px #ff7000,inset 0 0 12px #ffcc60}
+#focusOv{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;display:none;padding:22px 30px;border-radius:16px;font-size:26px;font-weight:bold;
+ background:rgba(30,10,4,.95);border:3px solid #ffb040;color:#fff0c0;box-shadow:0 0 40px #f60;cursor:pointer;text-align:center}
+.screen:not(#forge){align-items:center}
+.screen:not(#forge)>*{width:min(100%,640px)}
+#app #orders>*{width:min(100%,1000px)}
+#ordList{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;align-content:start}
+#ordList .panel{margin:0}
+#shopList{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;align-content:start}
+.shophead{grid-column:1/-1;font-size:20px;font-weight:bold;color:#ffbf70;border-bottom:1px solid #6a3416;padding:8px 0 4px;display:flex;align-items:center;gap:10px}
+.lockedph{grid-column:1/-1;opacity:.45;filter:grayscale(1);text-align:center}
+#app #shop>*{width:min(100%,900px)} #shopList .panel{margin:0}
+.trophies{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+#fhead{display:flex;gap:12px;align-items:flex-start}
+#fhead .hud{font-size:18px} #fcard{margin-top:0;margin-left:auto;font-size:17px;max-width:520px}
+.btn{cursor:pointer} #cv{cursor:crosshair} #cv.hov{cursor:pointer}
+.kbd{display:inline-block;border:1px solid #a06030;border-radius:5px;padding:0 6px;background:#2a1208;font-size:.85em}
+@media (min-width:900px){ h1{font-size:64px} .btn{font-size:22px} }
+@media (min-height:900px) and (min-width:1400px){ .screen:not(#forge){zoom:1.3} }
+#mechBtn,#tapHint,.mobonly,#rotOv{display:none}
+body.mob .pconly,body.mob .kbd,body.mob #mechInd,body.mob #focusOv{display:none!important}
+body.mob .mobonly{display:inline-block}
+body.mob #mechBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;left:calc(env(safe-area-inset-left) + 12px);bottom:calc(env(safe-area-inset-bottom) + 14px);
+ width:42vw;height:min(19dvh,150px);z-index:4;border-radius:22px;border:3px solid #8a4a20;background:radial-gradient(#5a2a12,#1a0a04);color:#ffd9a0;touch-action:none;box-shadow:0 0 18px rgba(255,90,0,.35)}
+body.mob #mechBtn b{font-size:30px;letter-spacing:2px} body.mob #mechBtn small{font-size:14px;color:#c8946a}
+body.mob #mechBtn.on{border-color:#ffd070;background:radial-gradient(#ff9a30,#a03a00);color:#fff;box-shadow:0 0 34px #ff7000,inset 0 0 20px #ffcc60}
+body.mob #tapHint{display:block;position:absolute;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 14px);width:42vw;height:min(19dvh,150px);z-index:3;pointer-events:none;
+ border:2px dashed rgba(255,200,140,.35);border-radius:22px;display:flex;align-items:center;justify-content:center;color:rgba(255,220,180,.7);font-weight:bold;font-size:17px;text-align:center}
+body.mob .screen{padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 10px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 10px)}
+body.mob #forge{padding:0}
+body.mob #fhead{flex-direction:column;gap:4px;padding:calc(env(safe-area-inset-top) + 6px) 8px 4px}
+body.mob #fhead .hud{font-size:13px;flex-wrap:wrap;justify-content:flex-start;gap:4px} body.mob #fhead .hud span{padding:4px 8px}
+body.mob #fcard{margin:0;font-size:13px;max-width:none;width:100%}
+body.mob #fGuideBtn{position:absolute;right:8px;top:calc(env(safe-area-inset-top) + 6px);min-height:44px;min-width:44px;padding:0 10px;margin:0;pointer-events:auto}
+body.mob #fhead .hud{padding-right:52px}
+body.mob #result h2{font-size:17px;padding-right:90px;text-align:left}
+body.mob #pauseBtn{margin:0}
+body.mob #tut{top:auto;bottom:calc(env(safe-area-inset-bottom) + min(19dvh,150px) + 24px);font-size:15px;width:94%;padding:8px}
+body.mob h2{font-size:21px;margin:4px 0 6px}
+body.mob .btn{font-size:18px;min-height:52px;margin:6px 0} body.mob .btn.small{min-height:46px;font-size:15px}
+body.mob #ordList,body.mob #shopList{grid-template-columns:1fr}
+body.mob #orders.on{display:block;overflow-y:auto;touch-action:pan-y} body.mob #orders #ordList{overflow:visible} body.mob #orders>*{width:100%} body.mob #bRefresh{display:block;margin:8px auto}
+body.mob #result>div{justify-content:flex-start;overflow-y:auto;touch-action:pan-y;padding-top:40px}
+body.mob #result .big{font-size:32px} body.mob #resCv{height:min(20dvh,170px)!important}
+body.mob #result .btn{min-height:48px;margin:4px 0}
+body.mob #ending>div{justify-content:flex-start;overflow-y:auto;touch-action:pan-y}
+body.mob .trophies{grid-template-columns:repeat(3,1fr)}
+body.mob #guideOv{padding:12px;justify-content:flex-start;touch-action:pan-y} body.mob #guideOv .panel{font-size:15px!important}
+body.mob .overlay{padding:16px}
+body.mob .hudcoin{font-size:16px;right:10px}
+body.mob #menu h1{font-size:40px}
+#bBSkip{z-index:3}
+body.rot #rotOv{display:flex;position:fixed;inset:0;z-index:99;background:#080302;color:#ffd6a0;font:bold 26px Georgia,serif;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px}
+</style>
+</head>
+<body tabindex="-1">
+<div id="app" tabindex="0" style="outline:none">
+<canvas id="embers"></canvas>
+
+<!-- MENU -->
+<div class="screen on" id="menu">
+ <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+  <h1>DARK FORGE<small>BLOOD &amp; IRON</small></h1>
+  <canvas id="logoCv" width="300" height="160" style="width:70%;margin:10px auto;display:block"></canvas>
+  <div class="hud" id="menuHud" style="justify-content:center"></div>
+  <button class="btn gold" id="bPlay">⚒ KOVAŤ</button>
+  <button class="btn" id="bShop">🏚 Dielňa</button>
+  <button class="btn" id="bTroph">🏆 Sieň trofejí</button>
+  <button class="btn" id="bGuide">❓ Ako dať PERFEKTNÝ úder <span class="kbd">H</span></button>
+  <button class="btn" id="bSet">⚙ Nastavenia</button>
+ </div>
+ <div class="muted pconly" style="text-align:center"><span class="kbd">MEDZERNÍK</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / pravé tl. myši = mech (drž) · <span class="kbd">MYŠ</span> = kladivo (klikaj na terč) · <span class="kbd">Enter</span> pokračovať · <span class="kbd">P</span>/<span class="kbd">Esc</span> pauza</div>
+</div>
+
+<!-- ORDERS -->
+<div class="screen" id="orders">
+ <div class="hud" id="ordHud"></div>
+ <h2>Zákazníci čakajú</h2><div class="muted pconly" style="text-align:center">Klávesy <span class="kbd">1</span>–<span class="kbd">4</span> alebo <span class="kbd">Enter</span> = prijať</div>
+ <div class="hud" id="repBar" style="justify-content:center;flex-wrap:wrap;font-size:13px"></div>
+ <div class="scroll" id="ordList"></div>
+ <button class="btn small" id="bRefresh" style="align-self:center;width:auto"></button>
+ <div class="panel"><div style="font-weight:bold;color:#ffbf70">Denné výzvy</div><div id="chalList"></div></div>
+ <button class="btn" id="bOrdBack">← Späť</button>
+</div>
+
+<!-- FORGE -->
+<div class="screen" id="forge">
+ <canvas id="cv"></canvas>
+ <div id="fhead">
+  <div class="hud"><button class="btn small" id="pauseBtn">❚❚</button><span id="fPhase"></span><span id="fCombo">Combo x1</span><span id="fHits"></span><button class="btn small mobonly" id="fGuideBtn">❓</button></div>
+  <div id="fcard"></div>
+ </div>
+ <div id="tut"></div>
+ <div id="mechInd"><b>🔥 MECH</b><small>medzerník · F · Shift · pravé tlačidlo myši</small></div>
+ <div id="mechBtn" class="mobonly"><b>🔥 MECH</b><small>drž prst</small></div>
+ <div id="tapHint" class="mobonly">👆 ťukaj na terč</div>
+ <div id="focusOv">🖱 Klikni do hry, aby fungoval medzerník</div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+ <div id="resCoins" class="hudcoin">🪙 0</div>
+ <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+  <h2 id="resTitle">Výsledok</h2>
+  <canvas id="resCv" width="600" height="240" style="height:min(26vh,240px);max-width:90%;margin:0 auto;display:block;object-fit:contain"></canvas>
+  <div class="big" id="resQ"></div>
+  <div class="panel" id="resBox"></div>
+  <button class="btn gold" id="bNext">Ďalšia objednávka</button>
+  <button class="btn gold" id="bTest">🎋 Otestovať zbraň na bambuse <span class="kbd">T</span></button>
+  <div class="row"><button class="btn grow" id="bResShop">🏚 Dielňa</button><button class="btn grow" id="bResMenu">Menu</button></div>
+ </div>
+</div>
+
+<!-- ENDING -->
+<div class="screen" id="ending">
+ <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+  <h1 class="divineh">BOŽSKÝ KOVÁČ<small>Kráľ Svätopluk ti ďakuje</small></h1>
+  <canvas id="endCv" width="700" height="300" style="width:min(90%,700px);margin:0 auto;display:block"></canvas>
+  <div class="panel" style="text-align:center;font-size:18px">Ukoval si <b class="q4">Božskú</b> Čepeľ Hviezd pre Kráľa. Tvoje meno bude žiariť v kronikách kráľovstva naveky.<br><span class="muted">Hra pokračuje v nekonečnom režime – kuj ďalej, zbieraj božské zbrane a trofeje.</span></div>
+  <div class="panel" id="endStats"></div>
+  <button class="btn gold" id="bEndCont">⚒ Pokračovať – nekonečný režim</button>
+ </div>
+</div>
+
+<!-- BAMBOO -->
+<div class="screen" id="bamboo" style="padding:0">
+ <canvas id="bcv" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair"></canvas>
+ <div class="hud" style="position:absolute;top:calc(env(safe-area-inset-top) + 44px);left:0;right:0;justify-content:center;pointer-events:none"><span id="bHud"></span></div>
+ <button class="btn small" id="bBSkip" style="position:absolute;right:12px;bottom:12px">Preskočiť ⏎</button>
+</div>
+
+<!-- SHOP -->
+<div class="screen" id="shop">
+ <div class="hud" id="shopHud"></div>
+ <h2>Dielňa</h2>
+ <div class="scroll" id="shopList"></div>
+ <button class="btn gold" id="bShopPlay">⚒ Kovať</button>
+ <button class="btn" id="bShopBack">← Menu</button>
+</div>
+
+<!-- TROPHIES -->
+<div class="screen" id="troph">
+ <h2>Sieň legendárnych zbraní</h2>
+ <div class="scroll"><div class="trophies" id="tropList"></div><div class="panel" id="statBox" style="margin-top:12px"></div></div>
+ <button class="btn" id="bTropBack">← Späť</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="settings">
+ <h2>Nastavenia</h2>
+ <div class="panel">
+  <button class="btn" id="bSound"></button>
+  <button class="btn" id="bVib"></button>
+  <button class="btn" id="bTutAgain">Zopakovať návod</button>
+ </div>
+ <div class="panel"><div class="muted">Vymaže všetok postup, mince, vylepšenia aj trofeje.</div>
+  <button class="btn" id="bReset" style="border-color:#c03020;background:linear-gradient(#601810,#2a0805)">🗑 Resetovať postup</button></div>
+ <div style="flex:1"></div>
+ <button class="btn" id="bSetBack">← Späť</button>
+</div>
+
+<div class="overlay" id="pauseOv">
+ <h2>Pauza</h2>
+ <button class="btn gold" id="bResume">▶ Pokračovať</button>
+ <button class="btn" id="bPGuide">❓ Ako dať PERFEKTNÝ úder (H)</button>
+ <div class="muted pconly" style="text-align:center">P / Esc = pokračovať</div><button class="btn" id="bQuit">Vzdať objednávku</button>
+</div>
+<div class="overlay" id="guideOv" style="z-index:12;overflow:auto">
+ <div style="width:min(100%,760px);margin:auto">
+ <h2>Ako dať PERFEKTNÝ úder</h2>
+ <canvas id="guideCv" width="720" height="300" style="width:100%;display:block"></canvas>
+ <div class="panel" style="font-size:18px;line-height:1.5">
+  Úder je <b class="q2">PERFEKTNÝ</b>, len keď svietia <b class="q1">všetky 3 svetlá</b>:<br>
+  ① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span>).<br>
+  ② <b>Stred</b> – klikni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>
+  ③ <b>Načasovanie</b> – klikni, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>
+  <span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>
+ </div>
+ <button class="btn gold" id="bGuideOk">Rozumiem! <span class="kbd">Enter</span></button>
+ <div class="muted pconly" style="text-align:center">Návod otvoríš kedykoľvek klávesom <span class="kbd">H</span></div>
+ </div>
+</div>
+<div class="overlay" id="confirmOv">
+ <h2 id="confTxt">Naozaj?</h2>
+ <button class="btn" id="bConfYes" style="border-color:#c03020">Áno</button>
+ <button class="btn gold" id="bConfNo">Nie</button>
+</div>
+<div id="toast"></div>
+<div id="rotOv"><div style="font-size:64px">📱↻</div>Otoč telefón na výšku</div>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   CONFIG – všetky ladiace čísla na jednom mieste
+   ===================================================================== */
+const CONFIG = {
+  mobile: { maxSide: 600, worldW: 720, targetMult: 1.25, greenMult: 1.15, centerBonus: 0.04 }, // telefón (na výšku)
+  temp: {
+    max: 100,
+    pumpRate: 26,          // °/s pri držaní mechu
+    bellowsUpgradeMult: 1.4, // Kožený Mech – silnejšie fúkanie
+    coolRate: 11,          // °/s chladnutie pri pustení
+    startTemp: 22,
+    coldBelow: 40,         // pod týmto = studený kov (max Obyčajná)
+    overheatAbove: 86,     // nad týmto = prehriaty
+    burnTime: 1.5,         // s v prehriatí => Zhorený nepodarok
+    gold: { 1: [62, 74], 2: [65, 72], 3: [65, 72], 4: [66, 72] }, // zlaté pásmo podľa fázy
+    oilWiden: 3,           // Sud s Kaleným Olejom: +- stupne
+    hitCool: 7,            // koľko schladí jeden úder
+    heavyHammerHitCool: 4.5,
+  },
+  hammer: {
+    ringStart: 2.6,        // počiatočný polomer krúžku (násobok terča)
+    ringTime: { 1: 1.55, 2: 1.35, 3: 1.25, 4: 1.15 }, // s, za ktoré sa krúžok stiahne na 0
+    minRingTime: 0.85,
+    difficultyStep: 0.04,  // o koľko rýchlejšie za každú objednávku vo fáze
+    targetR: 44,           // polomer terča v px (logických)
+    greenTol: 0.22,        // tolerancia zelenej zóny (podiel polomeru)
+    firstGrace: 1.2,       // s pauza pred prvým úderom
+    betweenHits: 0.35,     // s medzi terčmi
+    heavyPower: 1.35,      // Ťažké kladivo +35% sila
+    perfectCenter: 0.6,    // presnosť stredu na „perfektný“
+  },
+  quality: {
+    bandMult: { cold: 0.3, work: 0.72, gold: 1.0, hot: 0.55 },
+    coldCap: 0.3,
+    legendaryAvg: 0.82, legendaryPointsFrac: 0.6,
+    goodAvg: 0.5,
+    divineAvg: 0.86,       // Božská: Legendárna + perfektné Mýtické Jadro + priemer
+  },
+  combo: { step: 0.1, max: 2.0 },       // +10 % odmeny za každý perfekt v rade
+  economy: {
+    tipFrac: 0.35,          // sprepitné za prekonanie požiadavky (za stupeň)
+    underFrac: 0.4,         // ak nesplní minimum – zaplatí len časť
+    rareChance: 0.12, rareMult: 2.2,
+    xpPerOrder: { 1: 22, 2: 34, 3: 52, 4: 75 }, xpQualityBonus: 8,
+  },
+  unlock: { coins: 350, xp: 220 }, // Fáza 2: Dvojzónová Kovadlina (350) + 220 XP
+  shop: {
+    hammer:  { name: "Ťažké Kováčske Kladivo", price: 140, icon: "🔨", desc: "+35 % sila úderu, údery menej chladia kov." },
+    bellows: { name: "Kožený Mech", price: 100, icon: "🌬", desc: "Silnejšie fúkanie – kov sa ohrieva rýchlejšie." },
+    anvil:   { name: "Dvojzónová Kovadlina", price: 350, icon: "⚒", desc: "Odomkne Fázu 2 a kovanie mečov (treba 220 XP)." },
+    oil:     { name: "Sud s Kaleným Olejom", price: 180, icon: "🛢", desc: "Širšie zlaté pásmo teploty." },
+    // ---- Fáza 2 (zobrazí sa po kúpe Kovadliny); prices = ceny jednotlivých úrovní ----
+    brus:   { phase: 2, name: "Brus", icon: "🪨", prices: [300, 550, 900], desc: "+15 % sila pri teste na bambuse za úroveň." },
+    vyhna:  { phase: 2, name: "Lepšia Vyhňa", icon: "🔥", prices: [400, 800], desc: "Kov chladne o 15 % pomalšie za úroveň." },
+    presne: { phase: 2, name: "Presné Kladivo", icon: "🎯", prices: [450, 900], desc: "Väčší krúžok perfektného stredu." },
+    mech2:  { phase: 2, name: "Majstrovský Mech", icon: "💨", prices: [600], desc: "Jemné ohrievanie pri zlatom pásme, +0,5 s kým kov zhorí." },
+    stit:   { phase: 2, name: "Kováčsky Štít (Reputácia)", icon: "🛡", prices: [500, 1000], desc: "+10 % platby a častejšie vzácne objednávky za úroveň." },
+    ingoty: { phase: 2, name: "Oceľové Ingoty", icon: "🧱", prices: [700, 1200], desc: "+20 % základná sila zbraní za úroveň." },
+    cech:   { phase: 2, unlock: 3, name: "Majstrovský List Cechu", price: 1500, icon: "📜", desc: "Odomkne Fázu 3 – Majster Mesta (treba 900 XP)." },
+    // ---- Fáza 3 ----
+    kvyhna: { phase: 3, name: "Kamenná Vyhňa", icon: "🏛", prices: [1000, 1800], desc: "Kov chladne o ďalších 10 % pomalšie za úroveň." },
+    lupa:   { phase: 3, name: "Zlatnícka Lupa", icon: "🔍", prices: [900], desc: "O 50 % ľahšie osadenie gemu." },
+    runove: { phase: 3, name: "Runové Kladivo", icon: "ᚱ", prices: [1200, 2000], desc: "Zelená zóna krúžku o 20 % širšia za úroveň." },
+    pecat:  { phase: 3, name: "Cechová Pečať", icon: "🔏", prices: [1500], desc: "+12 % platba za všetky objednávky." },
+    damask: { phase: 3, name: "Damascénska Oceľ", icon: "🌊", prices: [1400, 2200], desc: "+25 % sila pri teste na bambuse za úroveň." },
+    erb:    { phase: 3, unlock: 4, name: "Kráľovský Erb", price: 4000, icon: "👑", desc: "Odomkne Fázu 4 – Kráľovstvo (treba 2500 XP)." },
+    // ---- Fáza 4 ----
+    drakmech: { phase: 4, name: "Dračí Mech", icon: "🐲", prices: [2500], desc: "Fúka o 25 % silnejšie, +0,5 s kým kov zhorí." },
+    hviezdna: { phase: 4, name: "Hviezdna Kovadlina", icon: "✨", prices: [3000], desc: "Mýtické Jadro sa hýbe o 35 % pomalšie." },
+    priazen:  { phase: 4, name: "Kráľovská Priazeň", icon: "🎖", prices: [3500], desc: "+15 % platba a častejšie vzácne objednávky." },
+    iskra:    { phase: 4, name: "Božská Iskra", icon: "🌟", prices: [4000], desc: "Ešte väčší krúžok perfektného stredu." },
+    mytbrus:  { phase: 4, name: "Mýtický Brus", icon: "💠", prices: [3000], desc: "+40 % sila pri teste na bambuse." },
+  },
+  up3: { kvyhnaCool: 0.10, lupaTol: 0.5, runoveGreen: 0.20, pecatPay: 0.12, damaskDmg: 0.25 },
+  up4: { drakPump: 1.25, drakBurn: 0.5, hviezdnaSlow: 0.35, priazenPay: 0.15, priazenRare: 0.05, iskraCenter: 0.06, mytbrusDmg: 0.40 },
+  unlockPhase: { 3: { coins: 1500, xp: 900 }, 4: { coins: 4000, xp: 2500 } },
+  zones: { 1: [["", 5]], 2: [["Základňa", 3], ["Ostrie", 3]], 3: [["Rukoväť", 2], ["Stred", 2], ["Špička", 2]],
+           4: [["Rukoväť", 2], ["Stred", 2], ["Ostrie", 2], ["Mýtické Jadro", 1]] },
+  core: { amp: 150, speed: 1.8, ringMult: 1.3 },  // pohyblivý terč Mýtického Jadra
+  gems: {
+    types: { rubin: { name: "Rubín", icon: "🔴", col: "#ff2a48", price: 120, desc: "+40 % sila na bambuse, +10 % platba" },
+             zafir: { name: "Zafír", icon: "🔵", col: "#3a7bff", price: 100, desc: "ďalšia objednávka: kov chladne o 30 % pomalšie, +10 % platba" },
+             smaragd: { name: "Smaragd", icon: "🟢", col: "#2ee07a", price: 140, desc: "+35 % platba" } },
+    minTemp: 50, tol: 20, speed: 420, range: 250, pickTime: 9, dropChance: 0.2,
+    rubinDmg: 1.4, rubinPay: 0.10, zafirCool: 0.30, zafirPay: 0.10, smaragdPay: 0.35,
+  },
+  traits: {
+    urgent:   { icon: "⏱", name: "Súrne", w: 1.2, pay: 1.4, ring: 0.8, desc: "rýchlejší krúžok, platí o 40 % viac" },
+    picky:    { icon: "🧐", name: "Náročný", w: 1.1, tip: 2, desc: "vyššia minimálna kvalita, dvojnásobné sprepitné" },
+    generous: { icon: "😊", name: "Štedrý", w: 1.2, pay: 1.1, under: 0.85, desc: "bez rizika – zaplatí skoro všetko" },
+    gambler:  { icon: "🎲", name: "Hazardér", w: 0.9, pay: 0.55, perCut: 0.45, desc: "platí málo, ale +45 % za každú prerezanú tyč bambusu" },
+    material: { icon: "💎", name: "Vlastný kov", w: 0.8, pay: 1.8, burn: 0.55, desc: "vzácny kov – zhorí rýchlejšie, platí o 80 % viac" },
+    regular:  { icon: "⭐", name: "Stály zákazník", w: 1.0, rep: 2, desc: "dvojnásobná reputácia" },
+  },
+  traitNone: 3.5,                 // váha objednávky bez vlastnosti
+  events: [
+    { name: "Drak v okolí!", ico: "🐉", pay: 2.5, minQ: 2, rep: 3, desc: "Treba silnú zbraň proti drakovi" },
+    { name: "Turnaj v meste", ico: "🏆", pay: 2.0, minQ: 1, rep: 2, desc: "Šampión chce zbraň na turnaj" },
+    { name: "Obliehanie hradu", ico: "🏰", pay: 2.2, minQ: 1, rep: 2, desc: "Posádka potrebuje zbrane hneď" },
+    { name: "Krvavý mesiac", ico: "🌕", pay: 2.4, minQ: 2, rep: 3, desc: "Beštie vychádzajú z lesov" },
+  ],
+  eventChance: 0.07,
+  factions: { 1: "Dedinčania", 2: "Žoldnieri", 3: "Mesto", 4: "Kráľ" },
+  rep: { perLevel: 10, maxLevel: 5, payPerLevel: 0.03 },
+  refreshCost: { 1: 5, 2: 12, 3: 25, 4: 50 },
+  king: { afterOrders: 4, pay: 1800 },
+  fx: { hitStop: 0.05, hitStopPerfect: 0.09, maxParticles: 400 },
+  up2: { brusDmg: 0.15, vyhnaCool: 0.15, presneCenter: 0.08, mech2NearGold: 6, mech2PumpMult: 0.55, mech2BurnBonus: 0.5,
+         stitPay: 0.10, stitRare: 0.05, ingotyDmg: 0.20 },
+  futurePhases: [],
+  bamboo: {
+    weaponDmg: { tesak: 10, sekera: 14, mec: 22, dyka: 16, halapartna: 26, dlhymec: 28, gardovy: 34, bojsekera: 38, kopija: 32, rapir: 30, kralmec: 55, drakobijca: 62, jurkopija: 52, cepel: 70 },
+    qualityMult: [1, 1.5, 2.5, 0, 4],   // Obyčajná, Kvalitná, Legendárna, (zhorená), Božská
+    hammerBonus: 1.15,           // Ťažké kladivo
+    poles: [["Tenký zelený bambus", 10, "#5fae3a"], ["Hrubý bambus", 20, "#3f8a2a"], ["Suchý tvrdý bambus", 35, "#b8a35a"], ["Čierny železný bambus", 60, "#2a2a30"], ["Kamenný bambus", 100, "#8a8a92"], ["Dračí bambus", 160, "#a02818"]],
+    startPole: { 1: 0, 2: 1, 3: 2, 4: 3 },   // fáza 2 začína od hrubého
+    speedRef: 1600,              // px/s (logických) pre faktor 1.0
+    speedMin: 0.6, speedMax: 1.3,
+    bonusPerCut: 0.05, slowmo: 0.8, slowFactor: 0.3,   // spomalenie pri legendárnej/božskej           // +5 % z platby za každý prerezaný
+    maxTime: 20,                 // s
+  },
+  hitsPhase1: 5, zonesPhase2: [["Základňa", 3], ["Ostrie", 3]],
+  challengeReward: [40, 70],
+};
+
+/* ===================== DÁTA ===================== */
+const QN = ["Obyčajná", "Kvalitná", "Legendárna", "Zhorený nepodarok", "Božská"];
+function rank(q) { return q === 3 ? -1 : q === 4 ? 3 : q; }   // poradie kvality (4 = Božská je najvyššia)
+const PH = { 1: { name: "Dedinský Učeň", env: "Dedina" }, 2: { name: "Kováčsky Tovariš", env: "Tovariš" }, 3: { name: "Majster Mesta", env: "Mesto" }, 4: { name: "Božský Kováč", env: "Kráľovstvo" } };
+const ITEMS = {
+  1: [{ id: "tesak", name: "Obyčajný Tesák", base: 26, shape: "knife" },
+      { id: "sekera", name: "Drevorubačská Sekera", base: 32, shape: "axe" }],
+  2: [{ id: "mec", name: "Rytiersky Meč", base: 60, shape: "sword" },
+      { id: "dyka", name: "Žoldnierska Dýka", base: 50, shape: "knife" },
+      { id: "halapartna", name: "Lovecká Halapartňa", base: 70, shape: "axe" },
+      { id: "dlhymec", name: "Strieborný Dlhý Meč", base: 80, shape: "sword" }],
+  3: [{ id: "gardovy", name: "Gardový Meč", base: 150, shape: "sword" },
+      { id: "bojsekera", name: "Bojová Sekera", base: 140, shape: "axe" },
+      { id: "kopija", name: "Kopija", base: 130, shape: "spear" },
+      { id: "rapir", name: "Mestský Rapír", base: 165, shape: "sword" }],
+  4: [{ id: "kralmec", name: "Kráľovský Meč Úsvitu", base: 320, shape: "sword" },
+      { id: "drakobijca", name: "Drakobijca", base: 360, shape: "axe" },
+      { id: "jurkopija", name: "Kopija Svätého Juraja", base: 340, shape: "spear" },
+      { id: "cepel", name: "Čepeľ Hviezd", base: 400, shape: "sword" }],
+};
+function itemPhase(id) { for (const k in ITEMS) if (ITEMS[k].some(i => i.id === id)) return +k; return 1; }
+const CUST = {
+  1: [["Dedinčan Ondrej", "🧑‍🌾"], ["Drevorubač Juro", "🪓"], ["Lovec Matej", "🏹"], ["Nočný strážnik Pavol", "🏮"],
+      ["Babka Zuzana", "👵"], ["Drevorubač Imro", "🌲"], ["Lovkyňa Katka", "🦌"], ["Strážnik Fero", "🛡"]],
+  2: [["Žoldnier Gregor", "⚔"], ["Lovec monštier Vlk", "🐺"], ["Žoldnierka Hela", "🗡"], ["Lovec upírov Dušan", "🧛"],
+      ["Kapitán Radomír", "🎖"], ["Lovkyňa beštií Mira", "🐉"]],
+  3: [["Mestský radca Bohuš", "🏛"], ["Kapitán stráže Ladislav", "💂"], ["Cechmajster Ignác", "⚖"], ["Šľachtičná Alžbeta", "👸"], ["Lovec drakov Svätoslav", "🐲"]],
+  4: [["Kráľovský rytier Ctibor", "🛡"], ["Šampión turnajov Marek", "🏆"], ["Hrdina Jánošík", "🪶"], ["Paladínka Ľudmila", "⚜"], ["Gardistka Vlasta", "🗡"]],
+};
+const RARE = ["Grófsky posol", "Tajomný pútnik", "Rytier Čierneho rádu", "Mníška z kláštora"];
+const CHAL_POOL = [
+  { t: "leg", n: 2, txt: "Ukovaj 2 legendárne" },
+  { t: "perf", n: 10, txt: "Daj 10 perfektných úderov" },
+  { t: "orders", n: 3, txt: "Splň 3 objednávky" },
+  { t: "combo", n: 4, txt: "Dosiahni combo x4" },
+  { t: "good", n: 3, txt: "Ukovaj 3× aspoň Kvalitnú" },
+  { t: "noburn", n: 4, txt: "4 objednávky bez zhorenia" },
+  { t: "tip", n: 2, txt: "Získaj 2× sprepitné" },
+  { t: "rare", n: 1, txt: "Splň vzácnu objednávku" },
+  { t: "trait", n: 2, txt: "Splň 2 objednávky so špeciálnou vlastnosťou" },
+];
+
+/* ===================== ULOŽENIE ===================== */
+const SAVE_KEY = "darkforge_save_v1";
+function freshSave() {
+  return { coins: 0, xp: 0, phase: 1, up: {}, tutDone: false, sound: true, vib: true,
+    ordersInPhase: { 1: 0, 2: 0 }, trophies: {}, stats: { orders: 0, leg: 0, burned: 0, perfects: 0, bestCombo: 0, earned: 0 },
+    chal: [], orders: [] };
+}
+let S = freshSave(); S.rep = { 1: 0, 2: 0, 3: 0, 4: 0 }; S.gems = { rubin: 0, zafir: 0, smaragd: 0 }; S.buffs = {};
+function load() {
+  try { const d = JSON.parse(localStorage.getItem(SAVE_KEY)); if (d) S = Object.assign(freshSave(), d); } catch (e) { }
+  S.ordersInPhase = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0 }, S.ordersInPhase);
+  S.rep = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0 }, S.rep || {});
+  S.gems = Object.assign({ rubin: 0, zafir: 0, smaragd: 0 }, S.gems || {});
+  S.buffs = S.buffs || {}; S.stats = Object.assign({ divine: 0 }, S.stats);
+  if (S.phase > maxPhase()) S.phase = maxPhase();
+  if (!S.chal || S.chal.length < 3) refillChal();
+}
+function maxPhase() { return S.up && S.up.erb ? 4 : S.up && S.up.cech ? 3 : S.up && S.up.anvil ? 2 : 1; }
+function repLevel(f) { return Math.min(CONFIG.rep.maxLevel, Math.floor((S.rep[f] || 0) / CONFIG.rep.perLevel)); }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { } }
+function refillChal() {
+  S.chal = S.chal || [];
+  while (S.chal.length < 3) {
+    const pool = CHAL_POOL.filter(c => !S.chal.some(x => x.t === c.t));
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    S.chal.push({ t: c.t, n: c.n, txt: c.txt, p: 0, r: Math.round(CONFIG.challengeReward[0] + Math.random() * (CONFIG.challengeReward[1] - CONFIG.challengeReward[0])) });
+  }
+}
+
+/* ===================== AUDIO ===================== */
+let AC = null, master = null, bellowsGain = null, bellowsSrc = null, hum = null, humGain = null;
+function audioInit() {
+  if (AC) { if (AC.state === "suspended") AC.resume(); return; }
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createGain(); master.gain.value = 0.6; master.connect(AC.destination);
+    const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    noiseBuf = buf;
+    bellowsSrc = AC.createBufferSource(); bellowsSrc.buffer = buf; bellowsSrc.loop = true;
+    const f = AC.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 500; f.Q.value = 0.7;
+    bellowsGain = AC.createGain(); bellowsGain.gain.value = 0;
+    bellowsSrc.connect(f); f.connect(bellowsGain); bellowsGain.connect(master); bellowsSrc.start();
+    hum = AC.createOscillator(); hum.type = "triangle"; hum.frequency.value = 80;
+    humGain = AC.createGain(); humGain.gain.value = 0; hum.connect(humGain); humGain.connect(master); hum.start();
+  } catch (e) { AC = null; }
+}
+let noiseBuf = null;
+function tone(freq, dur, type = "sine", vol = 0.3, delay = 0, slide = 0) {
+  if (!AC || !S.sound) return;
+  const t = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, freq + slide), t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur, vol = 0.3, freq = 2000, type = "highpass", delay = 0) {
+  if (!AC || !S.sound || !noiseBuf) return;
+  const t = AC.currentTime + delay, s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+  s.buffer = noiseBuf; f.type = type; f.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t + dur + 0.02);
+}
+const SFX = {
+  clang(q) { if (q >= 0.6) SFX.boom(); const b = 380 + q * 260; tone(b, 0.5, "square", 0.08); tone(b * 2.71, 0.6, "sine", 0.18); tone(b * 4.1, 0.35, "sine", 0.1); noise(0.12, 0.35, 3000); },
+  miss() { tone(140, 0.25, "sawtooth", 0.15, 0, -60); noise(0.08, 0.2, 800, "lowpass"); },
+  perfect() { tone(880, 0.15, "sine", 0.18); tone(1320, 0.3, "sine", 0.15, 0.08); },
+  gold() { tone(1046, 0.12, "sine", 0.1); tone(1568, 0.2, "sine", 0.08, 0.06); },
+  warn() { tone(1200, 0.08, "square", 0.08); },
+  burn() { noise(1.2, 0.5, 600, "lowpass"); tone(90, 1, "sawtooth", 0.2, 0, -50); },
+  sizzle() { noise(0.9, 0.25, 4000); },
+  coin() { [0, 0.07, 0.14].forEach((d, i) => tone(1300 + i * 300, 0.2, "triangle", 0.12, d)); },
+  slice() { noise(0.18, 0.45, 5000); tone(2400, 0.25, "sine", 0.12, 0, -1600); tone(900, 0.15, "triangle", 0.08, 0.03); },
+  thunk() { tone(110, 0.35, "sine", 0.35, 0, -50); noise(0.15, 0.4, 500, "lowpass"); tone(240, 0.1, "square", 0.08); },
+  steam() { noise(0.7, 0.18, 6000); noise(0.4, 0.1, 3000, "bandpass", 0.1); },
+  divine() { [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => { tone(f, 1.6, "sine", 0.09, i * 0.09); tone(f * 1.003, 1.6, "triangle", 0.04, i * 0.09); }); },
+  boom() { tone(70, 0.4, "sine", 0.3, 0, -30); noise(0.2, 0.25, 400, "lowpass"); },
+  click() { tone(600, 0.05, "square", 0.05); },
+  fanfare() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.4, "triangle", 0.14, i * 0.12)); },
+};
+function vib(p) { if (S.vib && navigator.vibrate) try { navigator.vibrate(p); } catch (e) { } }
+
+/* ===================== UI POMOCNÍCI ===================== */
+const $ = id => document.getElementById(id);
+let clickGuard = 0;
+document.addEventListener("click", e => { if (performance.now() < clickGuard) { e.stopPropagation(); e.preventDefault(); } }, true);
+function show(id) { if (id !== "forge") { const po = document.getElementById("pauseOv"); if (po) po.classList.remove("on"); }
+  if ((cur === "forge" || cur === "bamboo") && id !== cur) clickGuard = performance.now() + 700;
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  cur = id; $("app").className = "env" + (F ? F.phase : S.phase);
+  if (id === "menu") renderMenu(); if (id === "orders") renderOrders(); if (id === "shop") renderShop();
+  if (id === "troph") renderTroph(); if (id === "settings") renderSettings();
+}
+let cur = "menu";
+function hudHtml() {
+  return `<span id="hudCoins">🪙 ${S.coins}</span><span>✦ ${S.xp} XP</span><span>Fáza ${S.phase}: ${PH[S.phase].name}${S.ending ? " ∞" : ""}</span>`;
+}
+let toastT = 0;
+function toast(t, ms = 2200) { const e = $("toast"); e.innerHTML = t; e.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => e.style.display = "none", ms); }
+function confirmBox(txt, yes) { $("confTxt").textContent = txt; $("confirmOv").classList.add("on"); $("bConfYes").onclick = () => { $("confirmOv").classList.remove("on"); yes(); }; }
+$("bConfNo").onclick = () => $("confirmOv").classList.remove("on");
+
+document.addEventListener("mousedown", e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });
+function bind(id, fn) { $(id).addEventListener("click", e => { audioInit(); SFX.click(); fn(e); }); }
+bind("bPlay", () => show("orders")); bind("bShop", () => show("shop")); bind("bTroph", () => show("troph")); bind("bSet", () => show("settings"));
+bind("bOrdBack", () => show("menu")); bind("bRefresh", refreshOrders); bind("bShopBack", () => show("menu")); bind("bShopPlay", () => show("orders"));
+bind("bTropBack", () => show("menu")); bind("bSetBack", () => show("menu"));
+bind("bNext", () => show("orders")); bind("bEndCont", () => show("orders")); bind("bResShop", () => show("shop")); bind("bResMenu", () => show("menu"));
+bind("bSound", () => { S.sound = !S.sound; save(); renderSettings(); });
+bind("bVib", () => { S.vib = !S.vib; save(); renderSettings(); vib(40); });
+bind("bTutAgain", () => { S.tutDone = false; save(); toast("Návod sa spustí pri ďalšej objednávke"); });
+bind("bReset", () => confirmBox("Naozaj vymazať celý postup?", () => { localStorage.removeItem(SAVE_KEY); S = freshSave(); refillChal(); save(); toast("Postup vymazaný"); show("menu"); }));
+bind("pauseBtn", () => pause(true)); bind("fGuideBtn", () => { if (F && !F.done) { if (F.paused) { $("pauseOv").classList.remove("on"); F.paused = false; } guideOpen(); } });
+(function () {
+  const mb = $("mechBtn");
+  mb.addEventListener("pointerdown", e => { e.preventDefault(); audioInit(); if (!F || F.done || F.paused) return; F.bellows.add(e.pointerId); try { mb.setPointerCapture(e.pointerId); } catch (_) { } vib(10); });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(n => mb.addEventListener(n, e => { if (F) F.bellows.delete(e.pointerId); }));
+  mb.addEventListener("contextmenu", e => e.preventDefault());
+  const unlock = () => audioInit();
+  ["pointerdown", "touchend", "click"].forEach(n => window.addEventListener(n, unlock, { capture: true, passive: true }));
+  document.addEventListener("touchmove", e => { if (!(e.target.closest && e.target.closest(".scroll,#orders,#result>div,#ending>div,#guideOv,.overlay"))) e.preventDefault(); }, { passive: false });
+})();
+function updMobTexts() {
+  const sk = $("bBSkip"); if (sk) sk.textContent = MOB ? "Preskočiť ▶" : "Preskočiť ⏎";
+} bind("bResume", () => pause(false));
+bind("bQuit", () => { $("pauseOv").classList.remove("on"); F.paused = false; finishForge(true); });
+
+function renderMenu() { $("menuHud").innerHTML = hudHtml(); }
+function renderSettings() { $("bSound").textContent = "Zvuk: " + (S.sound ? "ZAP" : "VYP"); $("bVib").textContent = "Vibrácie: " + (S.vib ? "ZAP" : "VYP"); }
+
+/* ===================== OBJEDNÁVKY ===================== */
+function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+function pickTrait() {
+  const T = CONFIG.traits; let tot = CONFIG.traitNone; for (const k in T) tot += T[k].w;
+  let r = Math.random() * tot; if ((r -= CONFIG.traitNone) < 0) return null;
+  for (const k in T) { if ((r -= T[k].w) < 0) return k; } return null;
+}
+function makeOrder(forceSimple) {
+  const ph = S.phase, it = rnd(ITEMS[ph]), T = CONFIG.traits;
+  const n = S.ordersInPhase[ph] || 0;
+  const rare = !forceSimple && n >= 2 && Math.random() < CONFIG.economy.rareChance + lvl("stit") * CONFIG.up2.stitRare + lvl("priazen") * CONFIG.up4.priazenRare;
+  let minQ = 0;
+  if (!forceSimple) { const r = Math.random(); const lv = Math.min(1, n / 10); minQ = r < 0.15 + lv * 0.35 ? 1 : 0; if (rare) minQ = Math.random() < 0.5 ? 1 : 2; }
+  let trait = forceSimple ? null : pickTrait(), ev = null;
+  if (!forceSimple && n >= 1 && Math.random() < CONFIG.eventChance) { ev = rnd(CONFIG.events); trait = "event"; }
+  let payM = (rare ? CONFIG.economy.rareMult : 1) * payBonusAll();
+  if (trait === "picky") minQ = Math.min(2, minQ + 1);
+  if (trait === "generous") minQ = 0;
+  if (trait && T[trait] && T[trait].pay) payM *= T[trait].pay;
+  if (ev) { payM *= ev.pay; minQ = Math.max(minQ, ev.minQ); }
+  const c = ev ? [ev.name, ev.ico] : rare ? [rnd(RARE), "👑"] : rnd(CUST[ph]);
+  let pay = Math.round((it.base + minQ * it.base * 0.5) * (0.9 + Math.random() * 0.25) * payM);
+  return { cust: c[0], ico: c[1], item: it.id, name: it.name, shape: it.shape, minQ, pay, rare, phase: ph, trait, ev: ev ? ev.desc : null, evRep: ev ? ev.rep : 0, fac: ph };
+}
+function kingOrder() {
+  return { cust: "Kráľ Svätopluk", ico: "👑", item: "cepel", name: "Čepeľ Hviezd", shape: "sword", minQ: 4, pay: Math.round(CONFIG.king.pay * payBonusAll()), rare: true, phase: 4, trait: "event", ev: "Kráľovská objednávka – len BOŽSKÁ zbraň!", evRep: 5, fac: 4, king: true };
+}
+function ensureOrders() {
+  S.orders = (S.orders || []).filter(o => o.phase === S.phase);
+  while (S.orders.filter(o => !o.king).length < 3) S.orders.push(makeOrder(!S.tutDone && S.orders.length === 0));
+  if (S.phase === 4 && !S.ending && S.ordersInPhase[4] >= CONFIG.king.afterOrders && !S.orders.some(o => o.king)) S.orders.unshift(kingOrder());
+  save();
+}
+function traitTags(o) {
+  let h = o.rare && !o.king ? '<span class="tag">VZÁCNA</span>' : "";
+  if (o.trait === "event") h += `<span class="tag ev">${o.king ? "👑 KRÁĽ" : "⚡ UDALOSŤ"}</span>`;
+  else if (o.trait) { const t = CONFIG.traits[o.trait]; h += `<span class="tag tr" title="${t.desc}">${t.icon} ${t.name}</span>`; }
+  return h;
+}
+function traitDesc(o) { return o.trait === "event" ? o.ev : o.trait ? CONFIG.traits[o.trait].desc : ""; }
+function renderOrders() {
+  ensureOrders();
+  $("ordHud").innerHTML = hudHtml();
+  $("repBar").innerHTML = Object.entries(CONFIG.factions).map(([f, n]) => `<span title="${S.rep[f]} bodov">${n}: Lv ${repLevel(f)}${repLevel(f) ? ` (+${Math.round(repLevel(f) * CONFIG.rep.payPerLevel * 100)} %)` : ""}</span>`).join("");
+  $("ordList").innerHTML = S.orders.map((o, i) => `
+   <div class="panel card ${o.rare ? "rare" : ""} ${o.trait === "event" ? "evcard" : ""}">
+    <div class="row"><div class="icon">${o.ico}</div><div class="grow">
+     <div class="name">${i + 1}. ${o.cust}</div><div>${traitTags(o)}</div>
+     <div>Chce: <b>${o.name}</b></div>
+     <div class="muted">Minimum: <b class="q${o.minQ}">${QN[o.minQ]}</b> · Platí: <b>🪙 ${o.pay}</b></div>
+     ${traitDesc(o) ? `<div class="muted" style="font-style:italic">${traitDesc(o)}</div>` : ""}
+    </div></div>
+    <button class="btn gold" data-o="${i}" style="min-height:48px">Prijať a kovať</button>
+   </div>`).join("");
+  $("ordList").querySelectorAll("[data-o]").forEach(b => b.onclick = () => { audioInit(); SFX.click(); startForge(+b.dataset.o); });
+  const rc = CONFIG.refreshCost[S.phase]; $("bRefresh").textContent = `🔄 Iní zákazníci (🪙 ${rc})`; $("bRefresh").disabled = S.coins < rc;
+  renderChal();
+}
+function refreshOrders() {
+  const rc = CONFIG.refreshCost[S.phase]; if (S.coins < rc) return;
+  S.coins -= rc; S.orders = S.orders.filter(o => o.king); save(); renderOrders(); SFX.coin();
+}
+function renderChal() {
+  $("chalList").innerHTML = S.chal.map(c => `<div class="chal"><div class="grow">${c.txt}<div class="bar"><i style="width:${Math.min(100, c.p / c.n * 100)}%"></i></div></div><div style="margin-left:10px">${c.p}/${c.n} · 🪙${c.r}</div></div>`).join("");
+}
+function chalProgress(t, amt = 1, setMax) {
+  const done = [];
+  S.chal.forEach(c => {
+    if (c.t !== t) return;
+    c.p = setMax ? Math.max(c.p, amt) : c.p + amt;
+    if (c.p >= c.n) done.push(c);
+  });
+  done.forEach(c => { S.coins += c.r; S.chal.splice(S.chal.indexOf(c), 1); toast(`✔ Výzva splnená: ${c.txt}<br>+🪙 ${c.r}`, 2600); SFX.fanfare(); });
+  if (done.length) refillChal();
+  return done;
+}
+
+/* ===================== SHOP ===================== */
+function lvl(k) { const v = S.up[k]; return v === true ? 1 : (v | 0); }
+function maxLvl(k) { const it = CONFIG.shop[k]; return it.prices ? it.prices.length : 1; }
+function priceOf(k) { const it = CONFIG.shop[k]; return it.prices ? it.prices[lvl(k)] : it.price; }
+function perfC() { return CONFIG.hammer.perfectCenter - (MOB ? CONFIG.mobile.centerBonus : 0) - lvl("presne") * CONFIG.up2.presneCenter - lvl("iskra") * CONFIG.up4.iskraCenter; }
+function gTol() { return CONFIG.hammer.greenTol * (1 + lvl("runove") * CONFIG.up3.runoveGreen) * (MOB ? CONFIG.mobile.greenMult : 1); }
+function payBonusAll() { return (1 + lvl("stit") * CONFIG.up2.stitPay) * (1 + lvl("pecat") * CONFIG.up3.pecatPay) * (1 + lvl("priazen") * CONFIG.up4.priazenPay); }
+function weaponDmg(item, q) {
+  const B = CONFIG.bamboo; let d = (B.weaponDmg[item] || 15) * B.qualityMult[q];
+  if (lvl("hammer")) d *= B.hammerBonus;
+  d *= 1 + lvl("brus") * CONFIG.up2.brusDmg; d *= 1 + lvl("ingoty") * CONFIG.up2.ingotyDmg;
+  d *= 1 + lvl("damask") * CONFIG.up3.damaskDmg; d *= 1 + lvl("mytbrus") * CONFIG.up4.mytbrusDmg;
+  if (RES && RES.gem === "rubin") d *= CONFIG.gems.rubinDmg;
+  return Math.round(d * 10) / 10;
+}
+function unlockReq(k) { const it = CONFIG.shop[k]; if (k === "anvil") return CONFIG.unlock; if (it.unlock) return CONFIG.unlockPhase[it.unlock]; return null; }
+function shopCard(k) {
+  const it = CONFIG.shop[k], L = lvl(k), M = maxLvl(k), own = L >= M; let lock = "";
+  const req = unlockReq(k);
+  if (req && !own && S.xp < req.xp) lock = `Treba ${req.xp} XP (máš ${S.xp})`;
+  const pr = own ? 0 : priceOf(k), can = !own && !lock && S.coins >= pr;
+  const lv = M > 1 ? ` <span class="tag">${["", "I", "II", "III"][L] || "–"} / ${["", "I", "II", "III"][M]}</span>` : "";
+  return `<div class="panel shopitem ${it.unlock || k === "anvil" ? "unlockitem" : ""}"><div class="icon">${it.icon}</div><div class="grow"><div class="name" style="font-weight:bold;color:#ffd6a0">${it.name}${lv}</div>
+   <div class="muted">${it.desc}</div>${lock ? `<div class="q3" style="font-size:13px">${lock}</div>` : ""}</div>
+   <button class="btn small ${can ? "gold" : ""}" data-b="${k}" ${own || !can ? "disabled" : ""}>${own ? "✔ Máš" : (M > 1 && L ? "↑ " : "") + "🪙 " + pr}</button></div>`;
+}
+function gemCards() {
+  return Object.entries(CONFIG.gems.types).map(([k, g]) => `<div class="panel shopitem"><div class="icon" style="box-shadow:0 0 14px ${g.col}">${g.icon}</div><div class="grow">
+   <div class="name" style="font-weight:bold;color:#ffd6a0">${g.name} <span class="tag">máš ${S.gems[k] || 0}</span></div><div class="muted">${g.desc}. Osadí sa po kovaní (Fáza 3+).</div></div>
+   <button class="btn small ${S.coins >= g.price ? "gold" : ""}" data-gem="${k}" ${S.coins >= g.price ? "" : "disabled"}>🪙 ${g.price}</button></div>`).join("");
+}
+function renderShop() {
+  $("shopHud").innerHTML = hudHtml();
+  const keys = Object.keys(CONFIG.shop), mp = maxPhase();
+  const head = (ph) => `<div class="shophead">Fáza ${ph} – ${PH[ph].name}${ph <= mp ? (S.phase === ph ? ' <span class="tag">HRÁŠ TU</span>' : ` <button class="btn small" data-ph="${ph}">Hrať túto fázu</button>`) : ""}</div>`;
+  let h = "";
+  for (let ph = 1; ph <= 4; ph++) {
+    const list = keys.filter(k => (CONFIG.shop[k].phase || 1) === ph);
+    h += head(ph);
+    if (ph <= mp) { h += list.map(shopCard).join(""); if (ph === 3) h += `<div class="shophead" style="font-size:16px">💎 Gemy</div>` + gemCards(); }
+    else { const req = CONFIG.unlockPhase[ph] || CONFIG.unlock; h += `<div class="panel muted lockedph">🔒 ${PH[ph].env} – odomkneš v predchádzajúcej fáze (🪙 ${req.coins} + ${req.xp} XP) · ${list.length} vylepšení</div>`; }
+  }
+  $("shopList").innerHTML = h;
+  $("shopList").querySelectorAll("[data-b]").forEach(b => b.onclick = () => buy(b.dataset.b));
+  $("shopList").querySelectorAll("[data-gem]").forEach(b => b.onclick = () => { const g = CONFIG.gems.types[b.dataset.gem]; if (S.coins < g.price) return; S.coins -= g.price; S.gems[b.dataset.gem]++; save(); SFX.coin(); toast("Kúpený gem: " + g.icon + " " + g.name); renderShop(); });
+  $("shopList").querySelectorAll("[data-ph]").forEach(b => b.onclick = () => { S.phase = +b.dataset.ph; save(); SFX.click(); toast(`Fáza ${S.phase}: ${PH[S.phase].name}`); show("shop"); });
+}
+function buy(k) {
+  audioInit();
+  const it = CONFIG.shop[k], L = lvl(k);
+  if (L >= maxLvl(k)) return;
+  if ((it.phase || 1) > maxPhase()) return;
+  const pr = priceOf(k); if (S.coins < pr) return;
+  const req = unlockReq(k); if (req && S.xp < req.xp) return;
+  S.coins -= pr; S.up[k] = it.prices ? L + 1 : true;
+  const unl = k === "anvil" ? 2 : it.unlock;
+  if (unl) { S.phase = unl; toast(`⚒ Fáza ${unl} odomknutá!<br>${PH[unl].name} – ${PH[unl].env}`, 3000); SFX.fanfare(); }
+  else { toast("Kúpené: " + it.name + (it.prices && maxLvl(k) > 1 ? " " + ["", "I", "II", "III"][L + 1] : "")); SFX.coin(); }
+  save(); show("shop");
+}
+
+/* ===================== TROFEJE ===================== */
+function renderTroph() {
+  const all = [...ITEMS[1], ...ITEMS[2], ...ITEMS[3], ...ITEMS[4]];
+  $("tropList").innerHTML = all.map(it => { const n = S.trophies[it.id] || 0; return `<div class="trophy ${n ? "" : "off"}"><canvas width="80" height="60" data-s="${it.shape}" data-id="${it.id}"></canvas><div>${it.name}</div><div class="q2">${n ? "×" + n : "?"}</div></div>`; }).join("");
+  $("tropList").querySelectorAll("canvas").forEach(c => { const x = c.getContext("2d"); x.translate(40, 30); x.rotate(-0.6); x.scale(0.5, 0.5); drawWeapon(x, c.dataset.s, 0, 0, 120, 60, (S.divine || {})[c.dataset.id] ? 4 : 2, null, itemPhase(c.dataset.id)); });
+  const s = S.stats;
+  $("statBox").innerHTML = `<div class="res-line"><span>Objednávky</span><b>${s.orders}</b></div><div class="res-line"><span>Legendárne</span><b class="q2">${s.leg}</b></div><div class="res-line"><span>Božské</span><b class="q4">${s.divine || 0}</b></div><div class="res-line"><span>Gemy</span><b>🔴${S.gems.rubin} 🔵${S.gems.zafir} 🟢${S.gems.smaragd}</b></div>
+   <div class="res-line"><span>Perfektné údery</span><b>${s.perfects}</b></div><div class="res-line"><span>Najlepšie combo</span><b>x${s.bestCombo}</b></div>
+   <div class="res-line"><span>Zhorené</span><b class="q3">${s.burned}</b></div><div class="res-line"><span>Zarobené spolu</span><b>🪙 ${s.earned}</b></div>`;
+}
+
+/* ===================== KRESLENIE ZBRANE ===================== */
+// glow: 0..1 teplota (0 studená, 1 biela)
+function metalColor(t) {
+  // t = 0..100
+  const stops = [[0, [90, 95, 105]], [35, [110, 70, 60]], [50, [190, 40, 10]], [65, [255, 120, 10]], [75, [255, 200, 60]], [88, [255, 245, 220]], [100, [255, 255, 255]]];
+  for (let i = 1; i < stops.length; i++) if (t <= stops[i][0]) {
+    const a = stops[i - 1], b = stops[i], k = (t - a[0]) / (b[0] - a[0]);
+    return a[1].map((v, j) => Math.round(v + (b[1][j] - v) * k));
+  }
+  return [255, 255, 255];
+}
+function drawWeapon(x, shape, cx, cy, L, W, q, temp, tier = 1) {
+  const col = temp == null ? (q === 4 ? [235, 245, 255] : q === 2 ? [255, 215, 120] : q === 3 ? [40, 30, 28] : q === 1 ? [200, 210, 225] : [150, 150, 155]) : metalColor(temp);
+  const c = `rgb(${col})`, glow = temp == null ? (q === 4 ? 30 : q === 2 ? 20 : 0) : Math.max(0, (temp - 40) / 60) * 46;
+  x.save(); x.translate(cx, cy);
+  x.shadowColor = temp == null ? (q === 4 ? "#9fd8ff" : "#ffcc40") : `rgb(${col})`; x.shadowBlur = glow;
+  const g = x.createLinearGradient(0, -W / 2, 0, W / 2);
+  g.addColorStop(0, `rgba(255,255,255,0.9)`); g.addColorStop(0.15, c); g.addColorStop(0.7, c); g.addColorStop(1, `rgba(0,0,0,0.6)`);
+  x.fillStyle = g; x.strokeStyle = "rgba(0,0,0,.6)"; x.lineWidth = 2;
+  x.beginPath();
+  if (shape === "sword") {
+    x.moveTo(-L / 2, -W * 0.22); x.lineTo(L / 2 - W * 0.6, -W * 0.22); x.lineTo(L / 2, 0); x.lineTo(L / 2 - W * 0.6, W * 0.22); x.lineTo(-L / 2, W * 0.22);
+  } else if (shape === "axe") {
+    x.moveTo(-L / 2, -W * 0.12); x.lineTo(L * 0.15, -W * 0.12); x.quadraticCurveTo(L * 0.3, -W * 0.7, L / 2, -W * 0.75);
+    x.quadraticCurveTo(L * 0.42, 0, L / 2, W * 0.75); x.quadraticCurveTo(L * 0.3, W * 0.6, L * 0.15, W * 0.12); x.lineTo(-L / 2, W * 0.12);
+  } else if (shape === "spear") {
+    x.moveTo(-L / 2, -W * 0.1); x.lineTo(L * 0.12, -W * 0.1); x.quadraticCurveTo(L * 0.25, -W * 0.45, L / 2, 0);
+    x.quadraticCurveTo(L * 0.25, W * 0.45, L * 0.12, W * 0.1); x.lineTo(-L / 2, W * 0.1);
+  } else {
+    x.moveTo(-L / 2, -W * 0.25); x.lineTo(L * 0.25, -W * 0.3); x.quadraticCurveTo(L * 0.45, -W * 0.25, L / 2, W * 0.1); x.lineTo(-L / 2, W * 0.25);
+  }
+  x.closePath(); x.fill(); x.stroke();
+  x.shadowBlur = 0;
+  // ozdoby podľa fázy
+  if (tier >= 2 && shape !== "axe") { x.strokeStyle = "rgba(0,0,0,.35)"; x.lineWidth = Math.max(1, W * 0.05); x.beginPath(); x.moveTo(-L / 2 + 8, 0); x.lineTo(L * 0.3, 0); x.stroke(); }
+  if (tier >= 3) { x.strokeStyle = tier >= 4 ? "rgba(140,220,255,.85)" : "rgba(255,210,120,.7)"; x.lineWidth = 1.5; x.shadowColor = x.strokeStyle; x.shadowBlur = tier >= 4 ? 10 : 0;
+    for (let i = 0; i < 5; i++) { const px = -L / 2 + L * (0.1 + i * 0.12); x.beginPath(); x.moveTo(px, -W * 0.08); x.lineTo(px + W * 0.12, 0); x.lineTo(px, W * 0.08); x.stroke(); } x.shadowBlur = 0; }
+  // rúčka
+  x.fillStyle = tier >= 3 ? "#2a1608" : "#3a2010"; x.fillRect(-L / 2 - L * 0.25, -W * 0.12, L * 0.25, W * 0.24);
+  if (tier >= 2) { x.strokeStyle = tier >= 3 ? "#c9a040" : "#5a3a20"; x.lineWidth = 1.5; for (let i = 1; i < 6; i++) { const px = -L / 2 - L * 0.25 * i / 6; x.beginPath(); x.moveTo(px, -W * 0.12); x.lineTo(px - 4, W * 0.12); x.stroke(); } }
+  const guard = tier >= 3 ? (tier >= 4 ? "#ffe9a0" : "#d4a840") : "#555";
+  const gh = shape === "sword" ? 0.55 + (tier - 1) * 0.08 : 0.3;
+  x.fillStyle = guard; x.shadowColor = guard; x.shadowBlur = tier >= 4 ? 14 : 0; x.fillRect(-L / 2 - 6, -W * gh, 8 + (tier >= 3 ? 4 : 0), W * gh * 2); x.shadowBlur = 0;
+  x.fillStyle = guard; x.beginPath(); x.arc(-L / 2 - L * 0.25 - 4, 0, W * (tier >= 3 ? 0.16 : 0.12), 0, 7); x.fill();
+  if (tier >= 4) { x.fillStyle = "#7fd0ff"; x.shadowColor = "#7fd0ff"; x.shadowBlur = 16; x.beginPath(); x.arc(-L / 2 - 1, 0, W * 0.1, 0, 7); x.fill(); x.shadowBlur = 0; }
+  x.restore();
+}
+
+/* ===================== PROSTREDIA ===================== */
+const ENV = {};
+function drawEnv(x, ph, W, H) { const c = envCanvas(ph); if (W === 1280 && H === 720) { x.drawImage(c, 0, 0); return; } const k = Math.max(W / 1280, H / 720), sw = W / k, sh = H / k; x.drawImage(c, (1280 - sw) / 2, (720 - sh) / 2, sw, sh, 0, 0, W, H); }
+function envCanvas(ph) {
+  if (ENV[ph]) return ENV[ph];
+  const c = document.createElement("canvas"); c.width = 1280; c.height = 720; const x = c.getContext("2d");
+  const R = (a, b) => a + Math.random() * (b - a);
+  if (ph === 1) { // drevená dedinská dielňa
+    for (let i = 0; i < 32; i++) { const v = R(28, 46); x.fillStyle = `rgb(${v + 10},${v * 0.55},${v * 0.25})`; x.fillRect(i * 40, 0, 39, 720); x.fillStyle = "rgba(0,0,0,.25)"; x.fillRect(i * 40 + 38, 0, 2, 720); }
+    x.fillStyle = "#1e0f06"; x.fillRect(0, 70, 1280, 26); x.fillRect(0, 590, 1280, 130);
+    x.fillStyle = "#0a1428"; x.fillRect(560, 120, 150, 110); x.strokeStyle = "#3a2410"; x.lineWidth = 8; x.strokeRect(560, 120, 150, 110); x.beginPath(); x.moveTo(635, 120); x.lineTo(635, 230); x.moveTo(560, 175); x.lineTo(710, 175); x.stroke();
+    x.fillStyle = "#cfd8ff"; x.beginPath(); x.arc(670, 150, 12, 0, 7); x.fill();
+    x.fillStyle = "rgba(0,0,0,.6)"; x.fillRect(330, 150, 8, 70); x.fillRect(318, 140, 32, 16); x.fillRect(820, 140, 6, 90); x.fillRect(840, 140, 6, 90);
+  } else if (ph === 2) { // tehlová kováčska dielňa
+    x.fillStyle = "#1c0c07"; x.fillRect(0, 0, 1280, 720);
+    for (let r = 0; r < 24; r++) for (let i = -1; i < 22; i++) { const v = R(40, 62); x.fillStyle = `rgb(${v + 20},${v * 0.45},${v * 0.3})`; x.fillRect(i * 64 + (r % 2) * 32, r * 30, 60, 26); }
+    x.fillStyle = "#120806"; x.beginPath(); x.moveTo(960, 0); x.lineTo(1280, 0); x.lineTo(1280, 420); x.lineTo(1000, 420); x.closePath(); x.fill();
+    x.fillStyle = "#1a0d06"; x.fillRect(0, 600, 1280, 120);
+    x.strokeStyle = "#333"; x.lineWidth = 5; for (let i = 0; i < 3; i++) { x.beginPath(); x.moveTo(380 + i * 30, 0); x.lineTo(380 + i * 30, 110 + i * 20); x.stroke(); }
+    x.fillStyle = "#4a3020"; x.beginPath(); x.arc(820, 170, 40, 0, 7); x.fill(); x.strokeStyle = "#999"; x.lineWidth = 4; x.stroke();
+  } else if (ph === 3) { // kamenná mestská vyhňa
+    x.fillStyle = "#14161c"; x.fillRect(0, 0, 1280, 720);
+    for (let r = 0; r < 14; r++) for (let i = -1; i < 12; i++) { const v = R(48, 70); x.fillStyle = `rgb(${v},${v + 4},${v + 12})`; x.fillRect(i * 120 + (r % 2) * 60, r * 52, 116, 48); }
+    x.fillStyle = "rgba(0,0,0,.55)"; [[260, 60], [640, 60]].forEach(([ax, ay]) => { x.beginPath(); x.moveTo(ax, 330); x.lineTo(ax, ay + 80); x.arc(ax + 90, ay + 80, 90, Math.PI, 0); x.lineTo(ax + 180, 330); x.fill(); });
+    [[200, "#8a1010"], [1040, "#8a1010"]].forEach(([bx, cc]) => { x.fillStyle = cc; x.beginPath(); x.moveTo(bx, 40); x.lineTo(bx + 70, 40); x.lineTo(bx + 70, 230); x.lineTo(bx + 35, 200); x.lineTo(bx, 230); x.fill(); x.fillStyle = "#e0b040"; x.beginPath(); x.arc(bx + 35, 110, 16, 0, 7); x.fill(); });
+    x.fillStyle = "#101216"; x.fillRect(0, 600, 1280, 120);
+  } else { // kráľovská / božská vyhňa
+    const g = x.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, "#0b0a24"); g.addColorStop(0.6, "#231236"); g.addColorStop(1, "#120a18"); x.fillStyle = g; x.fillRect(0, 0, 1280, 720);
+    for (let i = 0; i < 160; i++) { x.fillStyle = `rgba(255,255,${R(200, 255)},${R(0.3, 1)})`; x.fillRect(R(0, 1280), R(0, 420), R(1, 2.5), R(1, 2.5)); }
+    [120, 380, 900, 1160].forEach(px => { const pg = x.createLinearGradient(px - 30, 0, px + 30, 0); pg.addColorStop(0, "#6a4a10"); pg.addColorStop(0.5, "#f0d070"); pg.addColorStop(1, "#6a4a10"); x.fillStyle = pg; x.fillRect(px - 26, 40, 52, 560); x.fillRect(px - 38, 30, 76, 20); x.fillRect(px - 38, 590, 76, 20); });
+    const cg = x.createRadialGradient(640, 120, 10, 640, 120, 380); cg.addColorStop(0, "rgba(255,240,180,.45)"); cg.addColorStop(1, "rgba(255,240,180,0)"); x.fillStyle = cg; x.fillRect(0, 0, 1280, 720);
+    x.fillStyle = "#e8e2f0"; x.fillRect(0, 600, 1280, 120); x.fillStyle = "rgba(120,90,160,.35)"; for (let i = 0; i < 16; i++) x.fillRect(i * 80, 600, 2, 120);
+  }
+  // vyhňa (pec) vpravo dole
+  x.fillStyle = ph === 4 ? "#bfae80" : ph === 3 ? "#3a3d46" : "#3a2418"; x.fillRect(1090, 470, 180, 230);
+  x.fillStyle = "#050202"; x.beginPath(); x.moveTo(1120, 640); x.lineTo(1120, 560); x.arc(1180, 560, 60, Math.PI, 0); x.lineTo(1240, 640); x.fill();
+  ENV[ph] = c; return c;
+}
+
+/* ===================== FORGE ===================== */
+const cv = $("cv"), ctx = cv.getContext("2d");
+let VW = 1280, VH = 720; let DPR = 1, SC = 1, OX = 0, OY = 0, RW = 1280, RH = 720, BSC = 1, BOX = 0, BOY = 0;
+const TOUCH = (window.matchMedia && matchMedia("(pointer:coarse)").matches) || (navigator.maxTouchPoints || 0) > 0;
+let MOB = false;
+function phoneLike() { return TOUCH && Math.min(window.innerWidth, window.innerHeight) <= CONFIG.mobile.maxSide; }
+function MT(pc, mob) { return MOB ? mob : pc; }
+function resize() {
+  const r = $("app").getBoundingClientRect(); DPR = Math.min(2.5, window.devicePixelRatio || 1);
+  RW = r.width; RH = r.height;
+  const ph = phoneLike(); MOB = ph && RH >= RW;
+  document.body.classList.toggle("mob", MOB); document.body.classList.toggle("rot", ph && RW > RH);
+  if (MOB) { VW = CONFIG.mobile.worldW; VH = Math.max(960, Math.min(1700, Math.round(VW * RH / RW))); } else { VW = 1280; VH = 720; }
+  SC = Math.min(RW / VW, RH / VH); OX = (RW - VW * SC) / 2; OY = (RH - VH * SC) / 2;
+  if (MOB) { BSC = Math.min(RH / 720 * 0.9, RW / 520); } else BSC = Math.min(RW / 1280, RH / 720);
+  BOX = (RW - 1280 * BSC) / 2; BOY = (RH - 720 * BSC) / 2;
+  if (typeof updMobTexts === "function") updMobTexts();
+  cv.width = RW * DPR; cv.height = RH * DPR; if (typeof bcv !== "undefined") { bcv.width = RW * DPR; bcv.height = RH * DPR; }
+  const e = $("embers"); e.width = RW; e.height = RH;
+}
+const bcv = document.getElementById("bcv"), bctx = bcv.getContext("2d");
+function toWorldB(e) { const r = bcv.getBoundingClientRect(); return [(e.clientX - r.left - BOX) / BSC, (e.clientY - r.top - BOY) / BSC]; }
+function toWorld(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - OX) / SC, (e.clientY - r.top - OY) / SC]; }
+window.addEventListener("resize", resize);
+
+let F = null; // stav kovania
+function goldBand() {
+  // (zlaté pásmo podľa fázy)
+  const g = CONFIG.temp.gold[F ? F.phase : S.phase].slice(); const w = S.up.oil ? CONFIG.temp.oilWiden : 0;
+  return [g[0] - w, g[1] + w];
+}
+function band(t) {
+  const g = goldBand();
+  if (t < CONFIG.temp.coldBelow) return "cold"; if (t > CONFIG.temp.overheatAbove) return "hot";
+  if (t >= g[0] && t <= g[1]) return "gold"; return "work";
+}
+let guideCb = null;
+function guideOpen(cb) {
+  if (F && !F.done && !F.paused) { F.paused = true; F.guidePaused = true; }
+  guideCb = cb || null; $("guideOv").classList.add("on"); drawGuide();
+}
+function guideClose() {
+  if (!$("guideOv").classList.contains("on")) return;
+  $("guideOv").classList.remove("on"); S.guideSeen = true; save();
+  if (F && F.guidePaused) { F.guidePaused = false; F.paused = false; last = performance.now(); }
+  const cb = guideCb; guideCb = null; if (cb) cb(); focusGame();
+}
+function drawGuide() {
+  const c = $("guideCv"), x = c.getContext("2d"); x.clearRect(0, 0, 720, 300);
+  // teplomer
+  const T = 30, B = 270, X = 60, y = v => B - v / 100 * (B - T);
+  [[0, 40, "#2050c0"], [40, 62, "#d06010"], [62, 74, "#ffd030"], [74, 86, "#d06010"], [86, 100, "#ff3030"]].forEach(([a, b, col]) => { x.fillStyle = col; x.globalAlpha = .55; x.fillRect(X - 15, y(b), 30, y(a) - y(b)); });
+  x.globalAlpha = 1; x.strokeStyle = "#ffe080"; x.lineWidth = 3; x.strokeRect(X - 15, y(74), 30, y(62) - y(74));
+  x.fillStyle = "#fff"; x.fillRect(X - 22, y(68) - 2, 44, 4);
+  x.fillStyle = "#ffd030"; x.font = "bold 18px Georgia"; x.textAlign = "left"; x.fillText("← ① ZLATÉ pásmo", X + 26, y(68) + 6);
+  // terč
+  const cx = 470, cy = 150, r = 70;
+  x.lineWidth = r * 0.44; x.strokeStyle = "rgba(80,255,100,.6)"; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.stroke();
+  [[1, "#7a1a10"], [0.66, "#e8d8c0"], [0.33, "#c02010"]].forEach(([k, col]) => { x.fillStyle = col; x.beginPath(); x.arc(cx, cy, r * k * 0.8, 0, 7); x.fill(); });
+  x.strokeStyle = "#ffd75a"; x.lineWidth = 2; x.setLineDash([5, 4]); x.beginPath(); x.arc(cx, cy, r * 0.64, 0, 7); x.stroke(); x.setLineDash([]);
+  x.strokeStyle = "#40ff60"; x.lineWidth = 4; x.beginPath(); x.arc(cx, cy, r * 1.02, 0, 7); x.stroke();
+  x.fillStyle = "#40ff60"; x.beginPath(); x.arc(cx + 8, cy - 6, 6, 0, 7); x.fill();
+  x.fillStyle = "#ffd75a"; x.font = "bold 17px Georgia"; x.textAlign = "right"; x.fillText("② klikni do stredu →", cx - r * 1.3, cy + 6);
+  x.fillStyle = "#7dff8c"; x.textAlign = "left"; x.fillText("③ biely krúžok v zelenom", cx + r * 0.5, cy - r * 1.35);
+  x.fillText("= KLIKNI TERAZ!", cx + r * 0.5, cy - r * 1.35 + 20);
+  drawLights(x, cx - 30, 280, true, true, true, 1, false);
+}
+bind("bGuide", () => guideOpen()); bind("bPGuide", () => { $("pauseOv").classList.remove("on"); F.paused = false; guideOpen(() => pause(true)); });
+bind("bGuideOk", () => guideClose());
+function startForge(idx) {
+  if (!S.guideSeen) { guideOpen(() => startForge(idx)); return; }
+  const o = S.orders[idx]; if (!o) return;
+  S.orders.splice(idx, 1); save();
+  resize();
+  const zones = CONFIG.zones[o.phase];
+  const seq = []; zones.forEach(([z, n], zi) => { for (let i = 0; i < n; i++) seq.push({ zone: z, zi }); });
+  const diff = S.ordersInPhase[o.phase];
+  F = { o, phase: o.phase, temp: CONFIG.temp.startTemp, seq, idx: 0, hits: [], target: null, wait: CONFIG.hammer.firstGrace + 0.6, first: true,
+    ringTime: Math.max(CONFIG.hammer.minRingTime, CONFIG.hammer.ringTime[o.phase] - diff * CONFIG.hammer.difficultyStep) * (o.trait === "urgent" ? CONFIG.traits.urgent.ring : 1),
+    burnMult: o.trait === "material" ? CONFIG.traits.material.burn : 1, coolMult: S.buffs.zafir ? 1 - CONFIG.gems.zafirCool : 1,
+    waves: [], steam: [], embers: [], hitStop: 0, wasPumping: false, corePerfect: false, gem: null, gemSet: null,
+    hot: 0, bellows: new Set(), combo: 0, maxCombo: 0, perfects: 0, legPts: 0, popups: [], sparks: [], shake: 0, done: false, paused: false,
+    t: 0, lastBand: "cold", warnT: 0, tut: !S.tutDone ? 0 : -1, tutT: 0, goldHold: 0, flash: 0, hammerAnim: 0 };
+  if (S.buffs.zafir) { S.buffs.zafir = 0; save(); }
+  $("fPhase").textContent = `Fáza ${o.phase} · ${PH[o.phase].env}`;
+  $("fcard").innerHTML = `<span style="font-size:22px">${o.ico}</span><div class="grow"><b>${o.cust}</b>${traitTags(o)}${F.coolMult < 1 ? '<span class="tag">🔵 Zafír</span>' : ""}<br>${o.name} · min. <span class="q${o.minQ}">${QN[o.minQ]}</span> · 🪙${o.pay}</div>`;
+  show("forge"); focusGame();
+  if (F.tut === 0) tutMsg(MT("Drž <span class='kbd'>MEDZERNÍK</span> (alebo <span class='kbd'>F</span>, <span class='kbd'>Shift</span>, pravé tlačidlo myši) – to je MECH. Pusti = kov chladne.<br>", "Drž prst na tlačidle <b>🔥 MECH</b> (vľavo dole) alebo na ľavej polovici. Pusti = kov chladne.<br>") + "Rozpáľ kov do <span class='q2'>ZLATÉHO</span> pásma teplomera.");
+  else tutMsg("");
+  updFHud();
+  last = performance.now();
+}
+function tutMsg(t) { const e = $("tut"); e.innerHTML = t; e.style.display = t ? "block" : "none"; }
+function updFHud() {
+  if (!F) return;
+  $("fCombo").textContent = (F.combo >= 2 ? "🔥 " : "") + "Combo x" + (1 + Math.min(CONFIG.combo.max - 1, F.combo * CONFIG.combo.step)).toFixed(1);
+  $("fCombo").className = F.combo >= 4 ? "fire fire2" : F.combo >= 2 ? "fire" : "";
+  const z = F.seq[F.idx]; $("fHits").textContent = `Úder ${Math.min(F.idx + 1, F.seq.length)}/${F.seq.length}${z && z.zone ? " · " + z.zone : ""}`;
+}
+function pause(on) { if (!F || F.done) return; F.paused = on; $("pauseOv").classList.toggle("on", on); if (on) F.bellows.clear(); }
+document.addEventListener("visibilitychange", () => { if (document.hidden && cur === "forge") pause(true); });
+
+// layout geometry
+function geo() {
+  if (MOB) { const anvilY = Math.round(VH * 0.5); return { thermX: 50, thermTop: 330, thermBot: VH - 330, anvilY, bladeY: anvilY - 30, bladeL: 500, bladeX: 372, furnX: VW - 70, furnY: 300, mob: true }; }
+  const anvilY = 470;
+  return { thermX: 70, thermTop: 120, thermBot: VH - 40, anvilY, bladeY: anvilY - 30, bladeL: 680, bladeX: 680, furnX: 1180, furnY: 600 };
+}
+function zoneRange(zi, nz) { return nz === 1 ? [0.12, 0.9] : [0.08 + zi / nz * 0.84, 0.08 + (zi + 1) / nz * 0.84 - 0.04]; }
+function spawnTarget() {
+  const g = geo(), s = F.seq[F.idx];
+  const nz = CONFIG.zones[F.phase].length, zr = zoneRange(s.zi, nz);
+  const core = s.zone === "Mýtické Jadro";
+  const fx = core ? 0.6 : zr[0] + Math.random() * (zr[1] - zr[0]);
+  const x = g.bladeX - g.bladeL / 2 + g.bladeL * fx;
+  const y = g.bladeY + (core ? 0 : (Math.random() - 0.5) * 30);
+  F.target = { x, y, baseX: x, core, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
+  if (core) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 380 : 235, txt: "MÝTICKÉ JADRO – musí byť PERFEKTNÉ!", col: "#9fe0ff", life: 2, small: true }); }
+  F.first = false;
+}
+
+// input
+const HELD = { keys: new Set(), rmb: false };
+function bellowsKey(e) {
+  if (e.code === "Space" || e.key === " " || e.key === "Spacebar" || e.keyCode === 32 || e.which === 32) return "space";
+  if (e.code === "KeyF" || e.key === "f" || e.key === "F" || e.keyCode === 70) return "f";
+  if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.keyCode === 16) return "shift";
+  return null;
+}
+function bellowsOn() { return (F && F.bellows.size > 0) || HELD.keys.size > 0 || HELD.rmb; }
+function focusGame() { try { window.focus(); const ae = document.activeElement; if (!ae || ae === document.body || ae.tagName === "BUTTON" || ae === cv) $("app").focus({ preventScroll: true }); } catch (e) { } }
+function onDown(e) {
+  if (!F || F.done || F.paused) return;
+  audioInit(); e.preventDefault();
+  const [x, y] = toWorld(e);
+  if (e.pointerType === "mouse") { focusGame(); if (e.button === 0) hammerTap(x, y); return; }
+  // dotyk (záloha): ľavá polovica = mech, pravá = kladivo
+  if (F.gem && F.gem.stage === "pick") { hammerTap(x, y); return; }
+  const tg = F.target, onT = tg && Math.hypot(x - tg.x, y - tg.y) < tg.r * 1.6;
+  if (x < VW / 2 && !onT) { F.bellows.add(e.pointerId); vib(10); }
+  else hammerTap(x, y);
+}
+let mouseW = [-999, -999];
+cv.addEventListener("pointermove", e => { if (e.pointerType === "mouse") mouseW = toWorld(e); });
+function kbd(e) {
+  if (e._df) return; e._df = true; // window + document capture -> spracuj raz
+  const k = e.key, bk = bellowsKey(e);
+  if (bk) {
+    e.preventDefault(); e.stopPropagation();
+    const ae = document.activeElement; if (ae && ae.tagName === "BUTTON") ae.blur();
+    if (e.type === "keydown") { audioInit(); HELD.keys.add(bk); } else HELD.keys.delete(bk);
+    return;
+  }
+  if (e.type !== "keydown" || e.repeat) return;
+  if ($("confirmOv").classList.contains("on")) { if (k === "Escape") $("confirmOv").classList.remove("on"); return; }
+  if ($("guideOv").classList.contains("on") && k !== "h" && k !== "H" && k !== "Enter" && k !== "Escape") return;
+  if ((k === "p" || k === "P" || k === "Escape") && !$("guideOv").classList.contains("on")) {
+    if (cur === "forge" && F && !F.done) { e.preventDefault(); pause(!F.paused); return; }
+    if (k === "Escape" && cur === "bamboo") { endBamboo(); return; }
+    if (k === "Escape" && cur !== "menu" && cur !== "forge") { show("menu"); return; }
+  }
+  if (k === "h" || k === "H") { e.preventDefault(); if ($("guideOv").classList.contains("on")) guideClose(); else if (!(F && F.paused && !F.guidePaused && $("pauseOv").classList.contains("on"))) guideOpen(); else { $("pauseOv").classList.remove("on"); F.paused = false; guideOpen(() => pause(true)); } return; }
+  if ($("guideOv").classList.contains("on")) { if (k === "Enter" || k === "Escape") { e.preventDefault(); guideClose(); } return; }
+  if (k === "Enter") {
+    e.preventDefault(); audioInit();
+    if (performance.now() < clickGuard) return;
+    if (cur === "forge" && F && F.paused) pause(false);
+    else if (cur === "ending") show("orders");
+    else if (cur === "menu") show("orders");
+    else if (cur === "result") show("orders");
+    else if (cur === "bamboo") endBamboo();
+    else if (cur === "orders") startForge(0);
+    else if (cur === "shop") show("orders");
+  }
+  if (cur === "forge" && F && F.gem && F.gem.stage === "pick" && ["0", "1", "2", "3"].includes(k)) { gemPick(k === "0" ? "none" : Object.keys(CONFIG.gems.types)[+k - 1]); return; }
+  if (cur === "orders" && ["1", "2", "3", "4"].includes(k)) startForge(+k - 1);
+  if (cur === "orders" && (k === "r" || k === "R")) refreshOrders();
+  if (cur === "result" && (k === "t" || k === "T")) startBamboo();
+}
+[window, document].forEach(t => { t.addEventListener("keydown", kbd, { capture: true }); t.addEventListener("keyup", kbd, { capture: true }); });
+window.addEventListener("blur", () => { HELD.keys.clear(); HELD.rmb = false; });
+// pravé tlačidlo myši = mech (sledujeme e.buttons, funguje aj pri súčasnom ľavom kliku)
+function rmbTrack(e) { if (e.pointerType === "mouse" || e.pointerType === undefined) HELD.rmb = !!(e.buttons & 2); }
+["pointerdown", "pointermove", "pointerup"].forEach(n => window.addEventListener(n, rmbTrack, { capture: true }));
+window.addEventListener("mousedown", e => { if (e.button === 2) HELD.rmb = true; focusGame(); }, { capture: true });
+window.addEventListener("mouseup", e => { if (e.button === 2) HELD.rmb = false; }, { capture: true });
+function onUp(e) { if (F) F.bellows.delete(e.pointerId); }
+cv.addEventListener("pointerdown", onDown);
+window.addEventListener("pointerup", onUp); window.addEventListener("pointercancel", onUp);
+cv.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("gesturestart", e => e.preventDefault());
+document.addEventListener("dblclick", e => e.preventDefault());
+
+function ringT(t) { return F.ringTime * (t.core ? CONFIG.core.ringMult : 1); }
+function ringR(t) { const tt = Math.max(0, t.life - t.delay); return t.r * CONFIG.hammer.ringStart * Math.max(0, 1 - tt / ringT(t)); }
+function hammerTap(x, y) {
+  if (F.tut === 0) { tutMsg(MT("Najprv rozpáľ kov MECHOM – drž <span class='kbd'>MEDZERNÍK</span>", "Najprv rozpáľ kov – drž <b>🔥 MECH</b> vľavo dole")); return; }
+  if (F.gem) { gemClick(x, y); return; }
+  const t = F.target; if (!t) return;
+  F.hammerAnim = 1;
+  const d = Math.hypot(x - t.x, y - t.y);
+  const hitR = t.r * 1.6;
+  if (d > hitR) { registerHit(0, 0, x, y, true, false, 0); return; }
+  if (t.life < t.delay) { /* počas pauzy – úder sa ráta ako presný v čase */ }
+  const rr = t.life < t.delay ? t.r * CONFIG.hammer.ringStart : ringR(t);
+  const timing = Math.max(0, 1 - Math.abs(rr - t.r) / (t.r * gTol() * 2.5));
+  const green = Math.abs(rr - t.r) <= t.r * gTol();
+  const center = Math.max(0, 1 - d / hitR);
+  registerHit(center, green ? Math.max(timing, 0.85) : timing * 0.7, t.x, t.y, false, green, rr > t.r ? -1 : 1);
+}
+function registerHit(center, timing, x, y, miss, green, when) {
+  const C = CONFIG, b = band(F.temp);
+  let acc = miss ? 0 : (center * 0.45 + timing * 0.55);
+  if (S.up.hammer) acc = Math.min(1, acc * (1 + (C.hammer.heavyPower - 1) * 0.4));
+  let sc = acc * C.quality.bandMult[b];
+  if (b === "cold") sc = Math.min(sc, C.quality.coldCap);
+  const perfect = !miss && green && b === "gold" && center >= perfC();
+  const wasCore = F.target && F.target.core; if (wasCore) F.corePerfect = perfect;
+  if (!miss) { F.hitStop = perfect ? CONFIG.fx.hitStopPerfect : CONFIG.fx.hitStop; F.waves.push({ x, y, r: 12, life: 0.45, gold: perfect }); }
+  if (perfect) { F.legPts++; F.combo++; F.perfects++; F.maxCombo = Math.max(F.maxCombo, F.combo); }
+  else F.combo = 0;
+  F.hits.push({ sc, perfect, b, center, timing, miss });
+  F.temp = Math.max(0, F.temp - (S.up.hammer ? C.temp.heavyHammerHitCool : C.temp.hitCool));
+  // feedback
+  let txt, col;
+  const okT = b === "gold", okC = !miss && center >= perfC(), okG = !miss && !!green;
+  F.judge = { t: okT, c: okC, g: okG, x, y, life: 1.6 };
+  const why = [];
+  if (!okT) why.push(b === "cold" ? "Studený kov" : b === "hot" ? "Prehriaty kov" : "Teplota mimo zlatej");
+  if (!miss && !okC) why.push("Mimo stredu");
+  if (!miss && !okG) why.push(when < 0 ? "Príliš skoro" : "Príliš neskoro");
+  if (miss) why.push(when === 0 && F.target && x === F.target.x ? "Neskoro – nestihol si" : "Mimo terča");
+  if (!perfect && why.length) F.popups.push({ x, y: y + 34, txt: why.join(" · "), col: "#ffb0a0", life: 1.8, small: true });
+  if (miss) { txt = "VEDĽA!"; col = "#ff6040"; SFX.miss(); vib(25); }
+  else if (perfect) { txt = F.combo >= 3 ? `PERFEKTNÉ! x${F.combo}` : "PERFEKTNÉ!"; col = "#ffd040"; SFX.clang(1); SFX.perfect(); vib([30, 20, 40]); F.shake = 12; F.flash = 1; }
+  else if (b === "cold") { txt = "STUDENÝ KOV!"; col = "#80b0ff"; SFX.clang(0); vib(30); F.shake = 5; }
+  else if (sc > 0.6) { txt = "DOBRÉ!"; col = "#80ff80"; SFX.clang(0.6); vib(30); F.shake = 7; }
+  else { txt = "SLABÉ"; col = "#ddd"; SFX.clang(0.3); vib(20); F.shake = 4; }
+  F.popups.push({ x, y: y - 30, txt, col, life: 1.1, big: perfect });
+  if (!miss) { const n = Math.round(perfect ? 80 : 10 + sc * 50); for (let i = 0; i < n; i++) sparkAt(x, y, perfect); }
+  if (wasCore) F.popups.push({ x, y: y - 80, txt: perfect ? "✦ JADRO ZAŽIARILO ✦" : "Jadro nezažiarilo…", col: perfect ? "#9fe0ff" : "#aaa", life: 1.8, big: perfect });
+  if (F.combo >= 2) chalProgress("combo", F.combo, true);
+  F.target = null; F.idx++; F.wait = C.hammer.betweenHits;
+  if (F.tut === 1 && F.idx >= 2) { F.tut = 2; tutMsg(MT("🔥 Teraz OBOJE naraz:<br>medzerníkom drž teplotu v zlatom, myšou udieraj!", "🔥 Teraz OBOJE naraz:<br>ľavým palcom MECH, pravým ťukaj na terč!")); F.tutT = 3.5; }
+  // fázová zmena zóny
+  const nz = F.seq[F.idx];
+  if (nz && F.seq[F.idx - 1] && nz.zi !== F.seq[F.idx - 1].zi) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 330 : 190, txt: "ZÓNA: " + nz.zone.toUpperCase(), col: "#ffb060", life: 1.6, big: true }); F.wait = 1.0; }
+  updFHud();
+  if (F.idx >= F.seq.length) { if (F.phase >= 3) startGem(); else { F.done = true; setTimeout(() => finishForge(false), 900); } }
+}
+/* ---------- Osadenie gemu (Fáza 3+) ---------- */
+function startGem() {
+  const opts = Object.keys(CONFIG.gems.types).filter(k => S.gems[k] > 0);
+  if (!opts.length) { F.popups.push({ x: VW / 2, y: 200, txt: "Bez gemu (kúp v Dielni)", col: "#ccc", life: 1.4, small: true }); F.done = true; setTimeout(() => finishForge(false), 1000); return; }
+  F.gem = { stage: "pick", opts, t: 0, x: 0, dir: 1, sel: null };
+  tutMsg(MT("💎 <b>Osadenie gemu</b>: vyber gem (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>, <span class='kbd'>0</span> = bez gemu)", "💎 <b>Osadenie gemu</b>: ťukni na gem (alebo „Bez gemu“)"));
+}
+function gemBoxes() { const ks = Object.keys(CONFIG.gems.types); return [...ks, "none"].map((k, i) => MOB ? ({ k, x: 70 + (i % 2) * 300, y: geo().bladeY - 300 + Math.floor(i / 2) * 100, w: 280, h: 85 }) : ({ k, x: 300 + i * 190, y: 150, w: 170, h: 70 })); }
+function gemPick(k) {
+  const G = F.gem; if (!G || G.stage !== "pick") return;
+  if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
+  G.sel = k; G.stage = "slide"; G.t = 0; G.x = -CONFIG.gems.range; G.dir = 1;
+  tutMsg(MT(`Klikni, keď je ${CONFIG.gems.types[k].icon} nad objímkou · drž kov horúci (≥ ${CONFIG.gems.minTemp}°) medzerníkom!`, `Ťukni vpravo, keď je ${CONFIG.gems.types[k].icon} nad objímkou · MECHOM drž kov ≥ ${CONFIG.gems.minTemp}°!`));
+}
+function gemClick(x, y) {
+  const G = F.gem;
+  if (G.stage === "pick") { const b = gemBoxes().find(b => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); if (b) gemPick(b.k); return; }
+  if (G.stage !== "slide") return;
+  const tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol), al = Math.abs(G.x) <= tol, hot = F.temp >= CONFIG.gems.minTemp;
+  const gt = CONFIG.gems.types[G.sel]; S.gems[G.sel]--; save();
+  G.stage = "done"; G.ok = al && hot; tutMsg("");
+  const g = geo();
+  if (G.ok) { F.gemSet = G.sel; SFX.perfect(); SFX.clang(1); F.flash = 1; for (let i = 0; i < 60; i++) sparkAt(g.bladeX + G.x, g.bladeY, true);
+    F.popups.push({ x: g.bladeX, y: g.bladeY - 90, txt: `${gt.icon} ${gt.name.toUpperCase()} OSADENÝ!`, col: gt.col, life: 1.8, big: true }); }
+  else { SFX.miss(); F.shake = 10;
+    F.popups.push({ x: g.bladeX, y: g.bladeY - 90, txt: `${gt.name} praskol – ${!hot ? "kov vychladol" : "nezarovnané"}`, col: "#ff7a60", life: 1.8 }); }
+  F.done = true; setTimeout(() => finishForge(false), 1300);
+}
+function updateGem(dt) {
+  const G = F.gem; if (!G) return; G.t += dt;
+  if (G.stage === "pick" && G.t > CONFIG.gems.pickTime) gemPick("none");
+  if (G.stage === "slide") { G.x += G.dir * CONFIG.gems.speed * dt; if (Math.abs(G.x) > CONFIG.gems.range) { G.dir *= -1; G.x = Math.sign(G.x) * CONFIG.gems.range; } }
+}
+function drawGem(x) {
+  const G = F.gem; if (!G) return; const g = geo();
+  // objímka
+  x.fillStyle = "#1a1008"; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(g.bladeX, g.bladeY, 16, 0, 7); x.fill(); x.stroke();
+  if (G.stage === "pick") {
+    gemBoxes().forEach((b, i) => { const gt = CONFIG.gems.types[b.k], n = gt ? S.gems[b.k] : 1;
+      x.globalAlpha = n ? 1 : 0.35; x.fillStyle = "rgba(20,8,4,.92)"; x.strokeStyle = gt ? gt.col : "#888"; x.lineWidth = 3; x.fillRect(b.x, b.y, b.w, b.h); x.strokeRect(b.x, b.y, b.w, b.h);
+      x.fillStyle = "#ffe6c0"; x.font = "bold 20px Georgia"; x.textAlign = "center"; x.fillText(`${i < 3 ? i + 1 : 0}. ${gt ? gt.icon + " " + gt.name : "Bez gemu"}`, b.x + b.w / 2, b.y + 30);
+      x.font = "15px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(gt ? `máš ${n}` : "pokračovať", b.x + b.w / 2, b.y + 54); x.globalAlpha = 1; });
+  } else if (G.stage === "slide" || G.stage === "done") {
+    const gt = CONFIG.gems.types[G.sel], tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol);
+    x.fillStyle = "rgba(80,255,100,.18)"; x.fillRect(g.bladeX - tol, g.bladeY - 120, tol * 2, 110);
+    const gy = G.stage === "done" && G.ok ? g.bladeY : g.bladeY - 80;
+    x.fillStyle = gt.col; x.shadowColor = gt.col; x.shadowBlur = 20; x.beginPath();
+    const gx = g.bladeX + G.x; x.moveTo(gx, gy - 16); x.lineTo(gx + 14, gy); x.lineTo(gx, gy + 16); x.lineTo(gx - 14, gy); x.closePath(); x.fill(); x.shadowBlur = 0;
+    x.strokeStyle = "#fff"; x.lineWidth = 1.5; x.stroke();
+    const hot = F.temp >= CONFIG.gems.minTemp, al = Math.abs(G.x) <= tol;
+    x.font = "bold 18px Georgia"; x.textAlign = "center";
+    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(al ? "● Zarovnané" : "○ Zarovnanie", g.bladeX - 110, g.bladeY - 140);
+    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(hot ? "● Kov horúci" : "○ Kov chladne!", g.bladeX + 110, g.bladeY - 140);
+  }
+}
+function sparkAt(x, y, gold) {
+  const a = Math.random() * Math.PI * 2, s = 120 + Math.random() * (gold ? 520 : 330);
+  F.sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 150, life: 0.4 + Math.random() * 0.6, gold });
+}
+function burn() {
+  F.done = true; F.burned = true; SFX.burn(); vib([100, 50, 200]); F.shake = 20;
+  for (let i = 0; i < 80; i++) sparkAt(geo().bladeX, geo().bladeY, false);
+  F.popups.push({ x: VW / 2, y: geo().bladeY - 60, txt: "ZHORENÉ!", col: "#ff3020", life: 1.6, big: true });
+  setTimeout(() => finishForge(false), 1300);
+}
+
+function burnLimit() { return CONFIG.temp.burnTime * (F ? F.burnMult : 1) + lvl("mech2") * CONFIG.up2.mech2BurnBonus + lvl("drakmech") * CONFIG.up4.drakBurn; }
+function update(dt) {
+  const C = CONFIG.temp;
+  if (F.hitStop > 0) { F.hitStop -= dt; dt *= 0.05; }
+  F.t += dt;
+  const pumping = bellowsOn();
+  if (F.tut === 1) { // teplota uzamknutá v zlatom pre nácvik kladiva
+    const g = goldBand(); F.temp += ((g[0] + g[1]) / 2 - F.temp) * Math.min(1, dt * 3);
+  } else if (!F.done) {
+    if (pumping) F.temp += C.pumpRate * (S.up.bellows ? C.bellowsUpgradeMult : 1) * (lvl("drakmech") ? CONFIG.up4.drakPump : 1) * (lvl("mech2") && Math.abs(F.temp - (goldBand()[0] + goldBand()[1]) / 2) < CONFIG.up2.mech2NearGold ? CONFIG.up2.mech2PumpMult : 1) * dt * (1 + 0.15 * Math.sin(F.t * 12));
+    else F.temp -= C.coolRate * (1 - lvl("vyhna") * CONFIG.up2.vyhnaCool) * (1 - lvl("kvyhna") * CONFIG.up3.kvyhnaCool) * F.coolMult * dt * (0.6 + F.temp / 100);
+    F.temp = Math.max(0, Math.min(F.tut === 0 ? goldBand()[1] - 1 : C.max, F.temp));
+  }
+  if (bellowsGain && AC) { bellowsGain.gain.setTargetAtTime(pumping && S.sound && !F.done ? 0.25 : 0, AC.currentTime, 0.05); }
+  if (humGain && AC) { humGain.gain.setTargetAtTime(S.sound && !F.done ? Math.max(0, (F.temp - 30) / 70) * 0.06 : 0, AC.currentTime, 0.1); hum.frequency.setTargetAtTime(60 + F.temp * 3, AC.currentTime, 0.1); }
+  const b = band(F.temp);
+  if (b !== F.lastBand) { if (b === "gold") { SFX.gold(); vib(15); } F.lastBand = b; }
+  if (!F.done && b === "hot") {
+    F.hot += dt; F.warnT -= dt;
+    if (F.warnT <= 0) { SFX.warn(); vib(40); F.warnT = 0.25; }
+    if (F.hot > burnLimit()) burn();
+  } else F.hot = Math.max(0, F.hot - dt * 2);
+  // tutorial
+  if (F.tut === 0) {
+    if (b === "gold") F.goldHold += dt; else F.goldHold = Math.max(0, F.goldHold - dt * 0.5);
+    if (F.goldHold > 0.6) { F.tut = 1; tutMsg(MT("🖱 Výborne! Teraz KLADIVO: klikni MYŠOU na terč,<br>", "👆 Výborne! Teraz KLADIVO: ťukni prstom na terč,<br>") + "keď je krúžok v <span class='q1'>ZELENOM</span> kruhu. (Teplotu ti teraz podržím.)"); }
+  }
+  if (F.tut === 2) { F.tutT -= dt; if (F.tutT <= 0) { F.tut = 3; tutMsg(""); } }
+  // targets
+  if (!F.done && F.tut !== 0) {
+    if (!F.target) { F.wait -= dt; if (F.wait <= 0 && F.idx < F.seq.length) spawnTarget(); }
+    else {
+      F.target.life += dt;
+      if (F.target.core) F.target.x = F.target.baseX + Math.sin(F.t * CONFIG.core.speed * (1 - lvl("hviezdna") * CONFIG.up4.hviezdnaSlow)) * CONFIG.core.amp;
+      if (F.target.life - F.target.delay > ringT(F.target)) registerHit(0, 0, F.target.x, F.target.y, true, false, 0);
+    }
+  }
+  updateGem(dt);
+  // para pri chladnutí
+  const g0 = geo();
+  if (pumping) F.pumpHeld = (F.pumpHeld || 0) + dt; F.steamCd = Math.max(0, (F.steamCd || 0) - dt);
+  if (F.wasPumping && !pumping && F.temp > 55 && !F.done && F.pumpHeld > 0.4 && F.steamCd <= 0) { F.steamCd = 1.2; SFX.steam(); for (let i = 0; i < 6; i++) F.steam.push({ x: g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, y: g0.bladeY - 10, vy: -40 - Math.random() * 40, r: 8 + Math.random() * 10, life: 1.2 }); }
+  if (!pumping) F.pumpHeld = 0; F.wasPumping = pumping;
+  if (!pumping && F.temp > 50 && Math.random() < dt * 2.5 && F.steam.length < 25) F.steam.push({ x: g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, y: g0.bladeY - 10, vy: -30 - Math.random() * 30, r: 6 + Math.random() * 8, life: 1 });
+  F.steam.forEach(p => { p.y += p.vy * dt; p.r += 14 * dt; p.life -= dt; }); F.steam = F.steam.filter(p => p.life > 0);
+  // žeravé iskry z vyhne
+  if (Math.random() < dt * (pumping ? 40 : 12) && F.embers.length < 120) F.embers.push({ x: 1180 + (Math.random() - .5) * 90, y: 570, vx: (Math.random() - .5) * 40, vy: -60 - Math.random() * (pumping ? 160 : 70), life: 1.5 + Math.random() });
+  F.embers.forEach(e => { e.x += e.vx * dt + Math.sin(e.y / 25) * 0.4; e.y += e.vy * dt; e.life -= dt; }); F.embers = F.embers.filter(e => e.life > 0);
+  F.waves.forEach(w => { w.r += 520 * dt; w.life -= dt; }); F.waves = F.waves.filter(w => w.life > 0);
+  if (F.sparks.length > CONFIG.fx.maxParticles) F.sparks.splice(0, F.sparks.length - CONFIG.fx.maxParticles);
+  // particles
+  F.sparks.forEach(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 900 * dt; s.life -= dt; });
+  F.sparks = F.sparks.filter(s => s.life > 0);
+  if (pumping && F.temp > 45 && Math.random() < dt * 20) { const g = geo(); F.sparks.push({ x: g.bladeX + (Math.random() - .5) * g.bladeL, y: g.bladeY, vx: (Math.random() - .5) * 60, vy: -80 - Math.random() * 120, life: 0.8, gold: false }); }
+  F.popups.forEach(p => { p.life -= dt; p.y -= 40 * dt; });
+  F.popups = F.popups.filter(p => p.life > 0);
+  F.shake *= Math.pow(0.002, dt); F.flash = Math.max(0, F.flash - dt * 3); F.hammerAnim = Math.max(0, F.hammerAnim - dt * 5); if (F.judge) { F.judge.life -= dt; if (F.judge.life <= 0) F.judge = null; }
+}
+
+function pumping0() { return bellowsOn(); }
+function draw() {
+  const x = ctx, g = geo();
+  x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  x.clearRect(0, 0, RW, RH);
+  const bgg = x.createRadialGradient(RW / 2, RH * 0.7, 10, RW / 2, RH * 0.7, Math.max(RW, RH));
+  bgg.addColorStop(0, `rgba(90,30,8,${0.4 + F.temp / 250})`); bgg.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = bgg; x.fillRect(0, 0, RW, RH);
+  x.setTransform(DPR * SC, 0, 0, DPR * SC, DPR * OX, DPR * OY);
+  x.save();
+  if (F.shake > 0.3) x.translate((Math.random() - .5) * F.shake, (Math.random() - .5) * F.shake);
+  drawEnv(x, F.phase, VW, VH);
+  x.fillStyle = "rgba(0,0,0,.35)"; x.fillRect(0, 0, VW, VH);
+  // oheň vo vyhni
+  const fl = 0.7 + 0.3 * Math.sin(F.t * 17) * Math.sin(F.t * 7.3) + (pumping0() ? 0.4 : 0);
+  const ff = x.createRadialGradient(g.furnX, g.furnY, 5, g.furnX, g.furnY, 130 * fl); ff.addColorStop(0, "rgba(255,240,170,.95)"); ff.addColorStop(0.3, "rgba(255,140,20,.8)"); ff.addColorStop(1, "rgba(255,40,0,0)");
+  x.fillStyle = ff; x.beginPath(); x.arc(g.furnX, g.furnY, 140, 0, 7); x.fill();
+  x.globalCompositeOperation = "lighter"; F.embers.forEach(e => { x.fillStyle = `rgba(255,${140 + (e.life * 50 | 0)},40,${Math.min(1, e.life)})`; x.fillRect(e.x, e.y, 2.5, 2.5); }); x.globalCompositeOperation = "source-over";
+  // forge glow pozadie
+  const fg = x.createRadialGradient(VW * 0.5, g.anvilY + 40, 10, VW * 0.5, g.anvilY + 40, VW);
+  const heat = F.temp / 100;
+  fg.addColorStop(0, `rgba(255,${80 + heat * 100},0,${0.15 + heat * 0.35})`); fg.addColorStop(1, "rgba(0,0,0,0)");
+  x.fillStyle = fg; x.fillRect(0, 0, VW, VH);
+  // zóny ovládania
+  const pumping = bellowsOn();
+  // mech (ilustrácia)
+  const by = VH - 80, bs = pumping ? 0.75 + 0.15 * Math.sin(F.t * 18) : 1;
+  if (!MOB) {
+  x.save(); x.translate(200, by); x.scale(1.3, 1.3);
+  x.fillStyle = "#4a2a14"; x.strokeStyle = "#1a0a04"; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(-50, 0); x.lineTo(30, -6 * bs); x.lineTo(40, 0); x.lineTo(30, 6 * bs + 2); x.closePath();
+  x.beginPath(); x.ellipse(-10, 0, 45, 26 * bs, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+  x.fillStyle = "#777"; x.fillRect(35, -4, 22, 8);
+  x.restore();
+  x.fillStyle = pumping ? "#ffb060" : "rgba(255,200,150,.6)"; x.font = "bold 20px Georgia"; x.textAlign = "center";
+  x.fillText("Klikni MYŠOU na terč = kladivo", 900, VH - 20);
+  }
+  // kovadlina
+  x.save(); x.translate(g.bladeX - 20, g.anvilY); const AW = 1150;
+  const ag = x.createLinearGradient(0, -20, 0, 60); ag.addColorStop(0, "#5a5f68"); ag.addColorStop(0.3, "#2c2f35"); ag.addColorStop(1, "#111");
+  x.fillStyle = ag; x.beginPath();
+  x.moveTo(-AW * 0.38, -18); x.lineTo(AW * 0.30, -18); x.quadraticCurveTo(AW * 0.42, -14, AW * 0.44, -4); x.lineTo(AW * 0.28, 8);
+  x.lineTo(AW * 0.12, 14); x.lineTo(AW * 0.16, 70); x.lineTo(-AW * 0.2, 70); x.lineTo(-AW * 0.14, 14); x.lineTo(-AW * 0.38, 4); x.closePath(); x.fill();
+  x.fillStyle = "rgba(255,255,255,.12)"; x.fillRect(-AW * 0.38, -18, AW * 0.68, 3);
+  if (F.phase === 2) { x.fillStyle = "rgba(255,170,60,.15)"; x.fillRect(-AW * 0.38, -18, AW * 0.3, 3); x.fillStyle = "rgba(255,255,255,.08)"; }
+  x.restore();
+  // čepeľ
+  drawWeapon(x, F.o.shape, g.bladeX, g.bladeY, g.bladeL, 64, 0, F.burned ? 5 : F.temp, F.phase);
+  if (F.gemSet) { const gc = CONFIG.gems.types[F.gemSet].col; x.fillStyle = gc; x.shadowColor = gc; x.shadowBlur = 18; x.beginPath(); x.arc(g.bladeX, g.bladeY, 11, 0, 7); x.fill(); x.shadowBlur = 0; }
+  drawGem(x);
+  // horúci opar nad čepeľou
+  if (F.temp > 50) { x.strokeStyle = `rgba(255,${120 + F.temp},60,${(F.temp - 50) / 200})`; x.lineWidth = 2; for (let i = 0; i < 4; i++) { x.beginPath(); for (let k = 0; k <= 20; k++) { const px = g.bladeX - g.bladeL * 0.4 + k * g.bladeL * 0.04; const py = g.bladeY - 45 - i * 14 + Math.sin(k * 0.8 + F.t * 6 + i) * 4; k ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); } }
+  const nzz = CONFIG.zones[F.phase].length;
+  if (nzz > 1 && !F.done && !F.gem) {
+    const z = F.seq[F.idx]; if (z) { const zr = zoneRange(z.zi, nzz), x0 = g.bladeX - g.bladeL / 2; x.fillStyle = z.zone === "Mýtické Jadro" ? "rgba(140,220,255,.12)" : "rgba(255,220,120,.10)";
+      x.fillRect(x0 + g.bladeL * zr[0] - 20, g.bladeY - 40, g.bladeL * (zr[1] - zr[0]) + 40, 80); x.fillStyle = "rgba(255,220,150,.7)"; x.font = "bold 16px Georgia"; x.textAlign = "center"; x.fillText(z.zone, x0 + g.bladeL * (zr[0] + zr[1]) / 2, g.bladeY + 60); }
+  }
+  // terč
+  const t = F.target;
+  if (t) {
+    const rr = t.life < t.delay ? t.r * CONFIG.hammer.ringStart : ringR(t);
+    const green = Math.abs(rr - t.r) <= t.r * gTol();
+    const gt = t.r * gTol();
+    x.lineWidth = gt * 2; x.strokeStyle = green ? "rgba(80,255,100,.75)" : "rgba(40,200,70,.45)";
+    x.beginPath(); x.arc(t.x, t.y, t.r, 0, Math.PI * 2); x.stroke();
+    x.lineWidth = 2.5; x.strokeStyle = "#7dff8c"; x.shadowColor = "#3f6"; x.shadowBlur = 8;
+    [t.r - gt, t.r + gt].forEach(rad => { x.beginPath(); x.arc(t.x, t.y, rad, 0, Math.PI * 2); x.stroke(); }); x.shadowBlur = 0;
+    x.fillStyle = "#9f9"; x.font = "bold 13px Georgia"; x.textAlign = "center"; x.fillText("ZELENÁ", t.x, t.y + t.r + gt + 14);
+    [[1, "#7a1a10"], [0.66, "#e8d8c0"], [0.33, "#c02010"]].forEach(([k, c]) => { x.fillStyle = c; x.globalAlpha = 0.85; x.beginPath(); x.arc(t.x, t.y, t.r * k * 0.8, 0, Math.PI * 2); x.fill(); });
+    x.globalAlpha = 1;
+    x.lineWidth = 4; x.strokeStyle = green ? "#40ff60" : "#fff"; x.shadowColor = green ? "#40ff60" : "#fff"; x.shadowBlur = 12;
+    x.beginPath(); x.arc(t.x, t.y, Math.max(1, rr), 0, Math.PI * 2); x.stroke(); x.shadowBlur = 0;
+  } else cv.classList.remove("hov");
+  if (t) {
+    const hov = Math.hypot(mouseW[0] - t.x, mouseW[1] - t.y) < t.r * 1.6;
+    cv.classList.toggle("hov", hov);
+    if (hov) { x.strokeStyle = "rgba(255,230,150,.9)"; x.lineWidth = 3; x.setLineDash([8, 6]); x.lineDashOffset = -F.t * 40;
+      x.beginPath(); x.arc(t.x, t.y, t.r * 1.6, 0, Math.PI * 2); x.stroke(); x.setLineDash([]);
+      const d = Math.hypot(mouseW[0] - t.x, mouseW[1] - t.y) / (t.r * 1.6);
+      x.fillStyle = d < 1 - perfC() ? "#40ff60" : "#ffe080"; x.beginPath(); x.arc(mouseW[0], mouseW[1], 5, 0, 7); x.fill(); }
+    // stredová zóna (perfektný stred)
+    const rr2 = t.life < t.delay ? t.r * CONFIG.hammer.ringStart : ringR(t), green = Math.abs(rr2 - t.r) <= t.r * gTol();
+    const cz = t.r * 1.6 * (1 - perfC());
+    x.strokeStyle = "rgba(255,220,90,.9)"; x.lineWidth = 2; x.setLineDash([4, 4]); x.beginPath(); x.arc(t.x, t.y, cz, 0, Math.PI * 2); x.stroke(); x.setLineDash([]);
+    // živé svetlá
+    if (!F.judge) drawLights(x, MOB ? Math.max(205, Math.min(VW - 205, t.x)) : t.x, t.y - t.r * CONFIG.hammer.ringStart - 34, band(F.temp) === "gold",
+      Math.hypot(mouseW[0] - t.x, mouseW[1] - t.y) <= cz ? true : (mouseW[0] < -900 ? null : false), green, 1);
+    if (t.life < t.delay) { x.fillStyle = "#ffe0a0"; x.font = "bold 20px Georgia"; x.fillText("PRIPRAV SA…", t.x, t.y - t.r * 2.8); }
+  }
+  // kladivo animácia
+  if (F.hammerAnim > 0) {
+    x.save(); x.translate(MOB ? g.bladeX + g.bladeL / 2 - 30 : g.bladeX + g.bladeL / 2 + 60, MOB ? g.bladeY - 150 : g.bladeY - 60); x.scale(1.4, 1.4); x.rotate(-0.9 * F.hammerAnim + 0.2);
+    x.fillStyle = "#5a3a1a"; x.fillRect(-4, -10, 8, 90); x.fillStyle = "#666"; x.fillRect(-26, -26, 52, 26); x.restore();
+  }
+  if (F.judge && !F.gem) { const j = F.judge, on = Math.floor(j.life * 8) % 2 === 0 || j.life < 1.0;
+    drawLights(x, Math.max(MOB ? 205 : 170, Math.min(VW - (MOB ? 205 : 170), j.x)), j.y - CONFIG.hammer.targetR * CONFIG.hammer.ringStart - 34, j.t, j.c, j.g, on ? 1 : 0.35, true); }
+  // rázová vlna + para
+  F.waves.forEach(w => { x.strokeStyle = w.gold ? `rgba(255,220,100,${w.life * 2})` : `rgba(255,255,255,${w.life * 1.4})`; x.lineWidth = 4 * w.life * 2 + 1; x.beginPath(); x.arc(w.x, w.y, w.r, 0, 7); x.stroke(); });
+  F.steam.forEach(p => { x.fillStyle = `rgba(220,225,235,${p.life * 0.09})`; x.beginPath(); x.arc(p.x, p.y, p.r, 0, 7); x.fill(); });
+  // iskry
+  x.globalCompositeOperation = "lighter";
+  F.sparks.forEach(s => { x.fillStyle = s.gold ? `rgba(255,220,80,${s.life})` : `rgba(255,${120 + Math.random() * 100},20,${Math.min(1, s.life * 1.5)})`; x.fillRect(s.x, s.y, 3, 3); });
+  x.globalCompositeOperation = "source-over";
+  // teplomer
+  drawTherm(x, g);
+  // popups
+  F.popups.forEach(p => {
+    x.globalAlpha = Math.min(1, p.life * 2); x.font = `bold ${p.big ? (MOB ? 38 : 46) : p.small ? (MOB ? 24 : 22) : 32}px Georgia`; x.textAlign = "center"; if (MOB) { const w = x.measureText(p.txt).width / 2 + 10; p.x = Math.max(w, Math.min(VW - w, p.x)); }
+    x.lineWidth = 5; x.strokeStyle = "#200800"; x.strokeText(p.txt, p.x, p.y); x.fillStyle = p.col; x.fillText(p.txt, p.x, p.y);
+  });
+  x.globalAlpha = 1;
+  x.restore();
+  if (F.flash > 0) { x.fillStyle = `rgba(255,220,120,${F.flash * 0.25})`; x.fillRect(-OX / SC, -OY / SC, RW / SC, RH / SC); }
+  if (band(F.temp) === "hot" && !F.done) { x.fillStyle = `rgba(255,0,0,${0.1 + 0.15 * Math.sin(F.t * 20)})`; x.fillRect(-OX / SC, -OY / SC, RW / SC, RH / SC);
+    x.fillStyle = "#fff"; x.font = "bold 30px Georgia"; x.textAlign = "center"; x.fillText(MT("⚠ PREHRIATIE! PUSTI MEDZERNÍK!", "⚠ PREHRIATIE! PUSTI MECH!"), MOB ? VW / 2 : VW / 2 + 60, MOB ? 300 : 170); }
+}
+function drawLights(x, cx, cy, a, b, c, alpha, judged) {
+  const L = [["Teplota", a], ["Stred", b], ["Načasovanie", c]], w = 124;
+  x.save(); x.globalAlpha = alpha;
+  x.fillStyle = "rgba(15,6,3,.85)"; x.strokeStyle = judged ? "#ffd070" : "#6a3416"; x.lineWidth = 2;
+  x.beginPath(); x.roundRect ? x.roundRect(cx - w * 1.5 - 8, cy - 22, w * 3 + 16, 44, 10) : x.rect(cx - w * 1.5 - 8, cy - 22, w * 3 + 16, 44); x.fill(); x.stroke();
+  L.forEach(([n, v], i) => {
+    const lx = cx - w + i * w;
+    const col = v === true ? "#40ff60" : v === false ? (judged ? "#ff3a30" : "#7a2a20") : "#555";
+    x.fillStyle = col; x.shadowColor = col; x.shadowBlur = v === true || judged ? 14 : 0;
+    x.beginPath(); x.arc(lx - 36, cy, 9, 0, 7); x.fill(); x.shadowBlur = 0;
+    x.fillStyle = "#f3dcc0"; x.font = "bold 15px Georgia"; x.textAlign = "left"; x.fillText(n, lx - 22, cy + 5);
+  });
+  x.restore(); x.textAlign = "center";
+}
+function drawTherm(x, g) {
+  const X = g.thermX, T = g.thermTop, B = g.thermBot, H = B - T, w = 34;
+  const y = v => B - (v / 100) * H;
+  x.fillStyle = "#0b0503"; x.strokeStyle = "#7a4020"; x.lineWidth = 2;
+  x.beginPath(); x.roundRect ? x.roundRect(X - w / 2 - 3, T - 3, w + 6, H + 6, 12) : x.rect(X - w / 2 - 3, T - 3, w + 6, H + 6); x.fill(); x.stroke();
+  const gb = goldBand(), C = CONFIG.temp;
+  const seg = [[0, C.coldBelow, "#2050c0"], [C.coldBelow, gb[0], "#d06010"], [gb[0], gb[1], "#ffd030"], [gb[1], C.overheatAbove, "#d06010"], [C.overheatAbove, 100, "#ff3030"]];
+  seg.forEach(([a, b, c]) => { x.fillStyle = c; x.globalAlpha = 0.35; x.fillRect(X - w / 2, y(b), w, y(a) - y(b)); });
+  x.globalAlpha = 1;
+  x.strokeStyle = "#ffe080"; x.lineWidth = 2; x.strokeRect(X - w / 2, y(gb[1]), w, y(gb[0]) - y(gb[1]));
+  // ortuť
+  const col = metalColor(F.temp);
+  x.fillStyle = `rgb(${col})`; x.shadowColor = `rgb(${col})`; x.shadowBlur = 14;
+  x.fillRect(X - w / 2 + 4, y(F.temp), w - 8, B - y(F.temp)); x.shadowBlur = 0;
+  x.fillStyle = "#fff"; x.fillRect(X - w / 2 - 6, y(F.temp) - 2, w + 12, 4);
+  if (F.hot > 0) { x.fillStyle = "#ff3020"; x.fillRect(X + w / 2 + 6, B - H * Math.min(1, F.hot / burnLimit()), 5, H * Math.min(1, F.hot / burnLimit())); }
+  x.save(); x.translate(X + w / 2 + 26, (T + B) / 2); x.rotate(-Math.PI / 2);
+  const bn = band(F.temp), names = { cold: ["STUDENÝ", "#80a8ff"], work: ["PRACOVNÝ", "#ffa040"], gold: ["★ ZLATÝ ★", "#ffd030"], hot: ["PREHRIATY", "#ff4040"] };
+  x.font = "bold 20px Georgia"; x.textAlign = "center"; x.fillStyle = names[bn][1]; x.fillText(names[bn][0], 0, 0); x.restore();
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (cur === "forge" && F) {
+    $("mechInd").classList.toggle("on", bellowsOn() && !F.paused); $("mechBtn").classList.toggle("on", bellowsOn() && !F.paused);
+    $("focusOv").style.display = (!MOB && !TOUCH && !document.hasFocus() && !F.paused && !F.done) ? "block" : "none";
+  }
+  if (cur === "bamboo" && BT && !BT.ended) { try { updateBamboo(dt); if (BT) drawBamboo(); } catch (err) { console.error(err); } }
+  if (cur === "forge" && F && !F.paused) { try { update(dt); draw(); } catch (err) { console.error(err); } }
+  else if (bellowsGain && AC) { bellowsGain.gain.setTargetAtTime(0, AC.currentTime, 0.05); humGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
+  if (cur === "result") { try { drawResult(dt); } catch (err) { console.error(err); } }
+  if (cur === "ending") drawEnding(dt);
+  drawEmbers(dt);
+  requestAnimationFrame(loop);
+}
+
+/* ===================== VÝSLEDOK ===================== */
+function finishForge(quit) {
+  if (!F || F.finished) return; F.finished = true; F.done = true; F.bellows.clear(); F.gem = null; tutMsg("");
+  const C = CONFIG, o = F.o, T = C.traits;
+  let q;
+  if (quit || F.burned) q = 3;
+  else {
+    const avg = F.hits.reduce((a, h) => a + h.sc, 0) / F.hits.length;
+    if (avg >= C.quality.legendaryAvg && F.legPts >= Math.ceil(F.seq.length * C.quality.legendaryPointsFrac)) q = 2;
+    else if (avg >= C.quality.goodAvg) q = 1; else q = 0;
+    if (q === 2 && F.phase === 4 && F.corePerfect && avg >= C.quality.divineAvg) q = 4;
+    F.avg = avg;
+  }
+  if (window.DF && DF.forceQ != null && !quit) { q = DF.forceQ; DF.forceQ = null; }
+  const ok = q !== 3 && rank(q) >= rank(o.minQ);
+  const mult = 1 + Math.min(C.combo.max - 1, F.maxCombo * C.combo.step);
+  let pay = 0, tip = 0, xp = 0, lines = [];
+  if (q === 3) { lines.push(["Zákazník odchádza naštvaný", "🪙 0"]); xp = 3; }
+  else {
+    if (ok) { pay = o.pay; tip = Math.round(o.pay * C.economy.tipFrac * (rank(q) - rank(o.minQ)) * (o.trait === "picky" ? T.picky.tip : 1)); }
+    else pay = Math.round(o.pay * (o.trait === "generous" ? T.generous.under : C.economy.underFrac));
+    lines.push([ok ? "Platba" : "Nesplnené minimum (časť platby)", "🪙 " + pay]);
+    if (tip) lines.push(["Sprepitné za kvalitu", "🪙 " + tip]);
+    let extraPay = 0;
+    if (F.gemSet) { const gp = { rubin: C.gems.rubinPay, zafir: C.gems.zafirPay, smaragd: C.gems.smaragdPay }[F.gemSet], v = Math.round(o.pay * gp); extraPay += v;
+      lines.push([`Gem ${C.gems.types[F.gemSet].icon} ${C.gems.types[F.gemSet].name}` + (F.gemSet === "zafir" ? " (ďalšia objednávka chladne pomalšie)" : F.gemSet === "rubin" ? " (+40 % sila na bambuse)" : ""), "🪙 +" + v]);
+      if (F.gemSet === "zafir") S.buffs.zafir = 1; }
+    const rl = repLevel(o.fac || o.phase); if (rl && ok) { const v = Math.round((pay + tip) * rl * C.rep.payPerLevel); extraPay += v; lines.push([`Reputácia ${C.factions[o.fac || o.phase]} Lv ${rl}`, "🪙 +" + v]); }
+    const comboBonus = Math.round((pay + tip) * (mult - 1));
+    if (comboBonus) lines.push([`Combo bonus x${mult.toFixed(1)}`, "🪙 " + comboBonus]);
+    pay += tip + comboBonus + extraPay;
+    xp = C.economy.xpPerOrder[o.phase] + rank(q) * C.economy.xpQualityBonus;
+  }
+  // reputácia frakcie
+  if (!quit) { const f = o.fac || o.phase; if (ok) { const g = (o.trait === "regular" ? T.regular.rep : 1) + (o.evRep || 0); S.rep[f] = (S.rep[f] || 0) + g; lines.push([`Reputácia: ${C.factions[f]}`, "+" + g]); } else S.rep[f] = Math.max(0, (S.rep[f] || 0) - 1); }
+  // nájdený gem
+  if (!quit && o.phase >= 3 && rank(q) >= 1 && Math.random() < C.gems.dropChance) { const gk = rnd(Object.keys(C.gems.types)); S.gems[gk]++; lines.push(["Nájdený gem", C.gems.types[gk].icon + " " + C.gems.types[gk].name]); }
+  if (o.trait === "gambler" && q !== 3) lines.push(["🎲 Hazardér doplatí za test na bambuse", "otestuj!"]);
+  lines.push(["Skúsenosti", "✦ " + xp + " XP"]);
+  lines.push(["Perfektné údery", F.perfects + " / " + F.seq.length]);
+  const coinsBefore = S.coins;
+  S.coins += pay; S.xp += xp; S.stats.earned += pay; S.stats.perfects += F.perfects; S.stats.bestCombo = Math.max(S.stats.bestCombo, F.maxCombo);
+  if (!quit) { S.stats.orders++; S.ordersInPhase[o.phase] = (S.ordersInPhase[o.phase] || 0) + 1; }
+  if (q === 3) { S.stats.burned++; S.chal.forEach(c => { if (c.t === "noburn") c.p = 0; }); }
+  let newTrophy = false;
+  if (rank(q) >= 2) { S.stats.leg++; newTrophy = !S.trophies[o.item]; S.trophies[o.item] = (S.trophies[o.item] || 0) + 1; }
+  if (q === 4) { S.stats.divine = (S.stats.divine || 0) + 1; S.divine = S.divine || {}; S.divine[o.item] = (S.divine[o.item] || 0) + 1; }
+  if (!S.tutDone && !quit) S.tutDone = true;
+  const ending = !quit && o.king && q === 4 && !S.ending;
+  if (ending) S.ending = true;
+  if (!quit) {
+    chalProgress("perf", F.perfects);
+    if (rank(q) >= 2) chalProgress("leg");
+    if (ok) chalProgress("orders");
+    if (rank(q) >= 1) chalProgress("good");
+    if (q !== 3) chalProgress("noburn");
+    if (tip) chalProgress("tip");
+    if (o.rare && ok) chalProgress("rare");
+    if (o.trait && ok) chalProgress("trait");
+  }
+  save();
+  $("resTitle").textContent = o.cust + " – " + o.name;
+  $("resQ").innerHTML = `<span class="q${q}">${QN[q]}</span>`;
+  let extra = "";
+  if (newTrophy) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">🏆 Nová trofej v Sieni!</div>`;
+  const nextU = maxPhase() + 1, req = nextU === 2 ? C.unlock : C.unlockPhase[nextU];
+  if (req && S.xp >= req.xp && S.coins >= req.coins) extra += `<div class="q2" style="text-align:center;font-weight:bold;margin-bottom:6px">⚒ V Dielni môžeš odomknúť Fázu ${nextU} – ${PH[nextU].name}!</div>`;
+  RES = { o, q, lines, extra, tested: false, payBase: pay, gem: F.gemSet, t: 0, coinsShown: coinsBefore };
+  $("bTest").style.display = q === 3 ? "none" : "block";
+  $("bNext").classList.toggle("gold", q === 3);
+  renderResBox();
+  $("resCoins").textContent = "🪙 " + coinsBefore;
+  show("result");
+  if (q === 4) SFX.divine(); else if (q === 2) SFX.fanfare(); else if (q === 3) { } else { SFX.sizzle(); }
+  if (pay) coinFly(coinsBefore, S.coins);
+  window.lastHits = F.hits; F = null;
+  if (ending) setTimeout(showEnding, 2600);
+}
+/* ---------- odhalenie výsledku, mince, koniec ---------- */
+const wcv = document.createElement("canvas"); wcv.width = 600; wcv.height = 240;
+function drawResult(dt) {
+  if (!RES) return; RES.t = (RES.t || 0) + dt;
+  const c = $("resCv"), x = c.getContext("2d"), q = RES.q, W = 600, H = 240; x.clearRect(0, 0, W, H);
+  const special = q === 2 || q === 4;
+  if (special) { // lúče svetla
+    x.save(); x.translate(W / 2, H / 2); x.rotate(RES.t * 0.25);
+    for (let i = 0; i < 14; i++) { x.rotate(Math.PI * 2 / 14); const gr = x.createLinearGradient(0, 0, 320, 0);
+      gr.addColorStop(0, q === 4 ? "rgba(190,230,255,.55)" : "rgba(255,210,90,.5)"); gr.addColorStop(1, "rgba(255,200,80,0)");
+      x.fillStyle = gr; x.beginPath(); x.moveTo(0, 0); x.lineTo(320, -26); x.lineTo(320, 26); x.closePath(); x.fill(); }
+    x.restore();
+    const rg = x.createRadialGradient(W / 2, H / 2, 5, W / 2, H / 2, 150); rg.addColorStop(0, q === 4 ? "rgba(220,240,255,.7)" : "rgba(255,230,150,.6)"); rg.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = rg; x.fillRect(0, 0, W, H);
+  }
+  const w = wcv.getContext("2d"); w.clearRect(0, 0, W, H);
+  const sc = Math.min(1, 0.4 + RES.t * 2.5);
+  w.save(); w.translate(W / 2 + 20, H / 2); w.scale(sc, sc); drawWeapon(w, RES.o.shape, 0, 0, 380, 90, q, null, itemPhase(RES.o.item)); w.restore();
+  if (special) { // zlatý lesk preletí po čepeli
+    const sx = ((RES.t * 420) % 1100) - 250; w.globalCompositeOperation = "source-atop";
+    const sg = w.createLinearGradient(sx - 60, 0, sx + 60, 0); sg.addColorStop(0, "rgba(255,255,255,0)"); sg.addColorStop(0.5, "rgba(255,255,255,.85)"); sg.addColorStop(1, "rgba(255,255,255,0)");
+    w.fillStyle = sg; w.fillRect(0, 0, W, H); w.globalCompositeOperation = "source-over";
+  }
+  x.drawImage(wcv, 0, 0);
+  if (special && Math.random() < 0.5) { x.fillStyle = q === 4 ? "#dff4ff" : "#ffe9a0"; x.fillRect(Math.random() * W, Math.random() * H, 2, 2); }
+}
+function coinFly(from, to) {
+  const app = $("app").getBoundingClientRect(), a = $("resQ").getBoundingClientRect(), b = $("resCoins").getBoundingClientRect();
+  const n = Math.min(14, 4 + Math.round((to - from) / 40));
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement("div"); d.className = "flycoin"; d.textContent = "🪙";
+    d.style.left = (a.left - app.left + a.width / 2 + (Math.random() - .5) * 120) + "px"; d.style.top = (a.top - app.top + a.height / 2 + (Math.random() - .5) * 40) + "px";
+    $("app").appendChild(d);
+    setTimeout(() => { d.style.left = (b.left - app.left + b.width / 2) + "px"; d.style.top = (b.top - app.top + b.height / 2) + "px"; d.style.transform = "scale(.6)"; }, 60 + i * 70);
+    setTimeout(() => { d.remove(); SFX.click(); const v = Math.round(from + (to - from) * (i + 1) / n); $("resCoins").textContent = "🪙 " + v; $("resCoins").classList.add("bump"); setTimeout(() => $("resCoins").classList.remove("bump"), 120); }, 760 + i * 70);
+  }
+}
+function showEnding() {
+  show("ending"); SFX.divine(); setTimeout(() => SFX.fanfare(), 900);
+  $("endStats").innerHTML = `<div class="res-line"><span>Objednávky</span><b>${S.stats.orders}</b></div><div class="res-line"><span>Legendárne</span><b class="q2">${S.stats.leg}</b></div>
+    <div class="res-line"><span>Božské</span><b class="q4">${S.stats.divine}</b></div><div class="res-line"><span>Zarobené</span><b>🪙 ${S.stats.earned}</b></div><div class="res-line"><span>Najlepšie combo</span><b>x${S.stats.bestCombo}</b></div>`;
+}
+let endT = 0;
+function drawEnding(dt) {
+  endT += dt; const c = $("endCv"), x = c.getContext("2d"), W = c.width, H = c.height; x.clearRect(0, 0, W, H);
+  x.save(); x.translate(W / 2, H / 2); x.rotate(endT * 0.2);
+  for (let i = 0; i < 18; i++) { x.rotate(Math.PI * 2 / 18); const gr = x.createLinearGradient(0, 0, 400, 0); gr.addColorStop(0, "rgba(255,240,190,.5)"); gr.addColorStop(1, "rgba(160,200,255,0)"); x.fillStyle = gr; x.beginPath(); x.moveTo(0, 0); x.lineTo(400, -30); x.lineTo(400, 30); x.fill(); }
+  x.restore(); x.save(); x.translate(W / 2 + 20, H / 2); x.rotate(-0.25 + Math.sin(endT) * 0.03); drawWeapon(x, "sword", 0, 0, 360, 80, 4, null, 4); x.restore();
+}
+/* ===================== TEST NA BAMBUSE ===================== */
+let RES = null, BT = null;
+function renderResBox() {
+  $("resBox").innerHTML = RES.extra + RES.lines.map(l => `<div class="res-line"><span>${l[0]}</span><b>${l[1]}</b></div>`).join("") +
+    `<div class="res-line" style="border:0"><span>Spolu máš</span><b>🪙 ${S.coins} · ✦ ${S.xp}</b></div>`;
+}
+function startBamboo() {
+  if (!RES || RES.tested || RES.q === 3) return;
+  RES.tested = true; $("bTest").style.display = "none";
+  const B = CONFIG.bamboo, st = B.startPole[RES.o.phase] || 0;
+  BT = { dmg: weaponDmg(RES.o.item, RES.q), poles: B.poles.slice(st, st + 3), i: 0, state: "wait", t: 0, timer: 0, cuts: 0,
+    trail: [], down: false, pieces: [], parts: [], shake: 0, msg: null, stuck: null, results: [] };
+  resize(); show("bamboo"); focusGame();
+  $("bHud").innerHTML = `${RES.o.name} · <span class="q${RES.q}">${QN[RES.q]}</span> · Sila zbrane: <b>${BT.dmg}</b>`;
+}
+function endBamboo() {
+  if (!BT || BT.ended) return; BT.ended = true;
+  const B = CONFIG.bamboo, bonus = Math.round(Math.max(RES.payBase, RES.o.pay) * B.bonusPerCut * BT.cuts);
+  S.coins += bonus; S.stats.earned += bonus; S.stats.bambooCuts = (S.stats.bambooCuts || 0) + BT.cuts; save();
+  RES.lines.splice(RES.lines.length - 2, 0, [`Test na bambuse: ${BT.cuts}/${BT.poles.length} prerezané`, "🪙 +" + bonus]);
+  if (RES.o.trait === "gambler") { const gb = Math.round(RES.o.pay / CONFIG.traits.gambler.pay * CONFIG.traits.gambler.perCut * BT.cuts); S.coins += gb; S.stats.earned += gb; save();
+    RES.lines = RES.lines.filter(l => !l[0].startsWith("🎲")); RES.lines.splice(RES.lines.length - 2, 0, [`🎲 Hazardér platí za ${BT.cuts} rezy`, "🪙 +" + gb]); }
+  renderResBox(); show("result"); if (bonus) SFX.coin();
+  BT = null;
+}
+function bPole() { return BT.poles[BT.i]; }
+const POLE = { x: 640, top: 130, bot: 640 };
+function poleW(h) { return 34 + h * 0.5; }
+function bambooDown(e) { if (!BT || BT.ended) return; e.preventDefault(); audioInit(); BT.down = true; BT.trail = [{ p: toWorldB(e), t: performance.now() }]; }
+function bambooMove(e) {
+  if (!BT || !BT.down || BT.ended) return;
+  const p = toWorldB(e), now = performance.now(), tr = BT.trail, prev = tr[tr.length - 1];
+  tr.push({ p, t: now }); while (tr.length > 14) tr.shift();
+  if (BT.state !== "ready" || !prev) return;
+  const w = poleW(bPole()[1]) / 2, x0 = POLE.x - w, x1 = POLE.x + w;
+  // prešiel ťah cez stred tyče?
+  if ((prev.p[0] - POLE.x) * (p[0] - POLE.x) <= 0 && prev.p[0] !== p[0]) {
+    const k = (POLE.x - prev.p[0]) / (p[0] - prev.p[0]), y = prev.p[1] + (p[1] - prev.p[1]) * k;
+    if (y < POLE.top + 40 || y > POLE.bot - 30) return;
+    let a = tr[0]; for (const q of tr) if (now - q.t <= 90) { a = q; break; }
+    const dtt = Math.max(8, now - a.t), sp = Math.hypot(p[0] - a.p[0], p[1] - a.p[1]) / (dtt / 1000);
+    const B = CONFIG.bamboo, sf = Math.max(B.speedMin, Math.min(B.speedMax, sp / B.speedRef));
+    const slope = Math.max(-0.6, Math.min(0.6, (p[1] - prev.p[1]) / (p[0] - prev.p[0] || 1)));
+    slashPole(y, slope, sf, Math.sign(p[0] - prev.p[0]) || 1);
+  }
+}
+function bambooUp() { if (BT) BT.down = false; }
+function slashPole(y, slope, sf, dir) {
+  const pole = bPole(), power = Math.round(BT.dmg * sf * 10) / 10, ok = power >= pole[1];
+  BT.state = "after"; BT.t = 0;
+  BT.results.push({ ok, power, h: pole[1] });
+  const msg = `Sila ${power} ${ok ? "≥" : "<"} Tvrdosť ${pole[1]}  (rýchlosť ×${sf.toFixed(2)})`;
+  if (ok) {
+    BT.cuts++;
+    BT.pieces.push({ y, slope, dx: 0, dy: 0, vx: dir * 140, vy: -40, rot: 0, vr: dir * 1.6, col: pole[2], w: poleW(pole[1]) });
+    for (let i = 0; i < 40; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 600, vy: (Math.random() - .8) * 400, l: 0.6 + Math.random() * 0.8, leaf: Math.random() < 0.5, c: pole[2] });
+    BT.msg = { t: "ČISTÝ REZ!", sub: msg, col: "#7dff8c", l: 1.6 };
+    if (rank(RES.q) >= 2) { BT.slow = CONFIG.bamboo.slowmo; BT.msg.t = RES.q === 4 ? "BOŽSKÝ REZ!" : "LEGENDÁRNY REZ!"; }
+    SFX.slice(); vib([20, 10, 30]); BT.shake = 6;
+  } else {
+    BT.stuck = { y, slope, dir }; BT.shake = 14;
+    for (let i = 0; i < 14; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 300, vy: -Math.random() * 300, l: 0.5, leaf: false, c: "#ffb040" });
+    BT.msg = { t: "ZASEKLO SA!", sub: msg, col: "#ff6a50", l: 1.6 };
+    SFX.thunk(); vib(80);
+  }
+}
+function updateBamboo(dt) {
+  if (BT.slow > 0) { BT.slow -= dt; dt *= CONFIG.bamboo.slowFactor; }
+  BT.timer += dt; BT.t += dt;
+  if (BT.state === "wait" && BT.t > 0.5) { BT.state = "ready"; BT.t = 0; }
+  if (BT.state === "after" && BT.t > 1.5) {
+    BT.i++; BT.t = 0; BT.stuck = null; BT.pieces = [];
+    if (BT.i >= BT.poles.length) { BT.state = "end"; setTimeout(endBamboo, 300); } else BT.state = "wait";
+  }
+  if (BT.timer > CONFIG.bamboo.maxTime && BT.state !== "end") { BT.state = "end"; endBamboo(); return; }
+  BT.pieces.forEach(p => { p.vy += 900 * dt; p.dx += p.vx * dt; p.dy += p.vy * dt; p.rot += p.vr * dt; });
+  BT.parts.forEach(p => { p.vy += 700 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.l -= dt; });
+  BT.parts = BT.parts.filter(p => p.l > 0);
+  BT.shake *= Math.pow(0.003, dt); if (BT.msg) { BT.msg.l -= dt; if (BT.msg.l <= 0) BT.msg = null; }
+  const now = performance.now(); BT.trail = BT.trail.filter(q => now - q.t < 160);
+}
+function drawPoleSeg(x, w, y0, y1, col) {
+  x.fillStyle = col; x.fillRect(-w / 2, y0, w, y1 - y0);
+  const g = x.createLinearGradient(-w / 2, 0, w / 2, 0); g.addColorStop(0, "rgba(0,0,0,.35)"); g.addColorStop(0.35, "rgba(255,255,255,.25)"); g.addColorStop(1, "rgba(0,0,0,.45)");
+  x.fillStyle = g; x.fillRect(-w / 2, y0, w, y1 - y0);
+  x.fillStyle = "rgba(0,0,0,.35)"; for (let yy = POLE.top + 90; yy < POLE.bot; yy += 110) if (yy > y0 && yy < y1) x.fillRect(-w / 2 - 2, yy, w + 4, 6);
+}
+function drawBamboo() {
+  const x = bctx; x.setTransform(DPR, 0, 0, DPR, 0, 0); x.clearRect(0, 0, RW, RH);
+  x.fillStyle = "#0c0705"; x.fillRect(0, 0, RW, RH);
+  x.setTransform(DPR * BSC, 0, 0, DPR * BSC, DPR * BOX, DPR * BOY); x.save();
+  if (BT.shake > 0.3) x.translate((Math.random() - .5) * BT.shake, (Math.random() - .5) * BT.shake);
+  drawEnv(x, RES.o.phase, 1280, 720); x.fillStyle = "rgba(0,0,0,.55)"; x.fillRect(0, 0, 1280, 720);
+  if (BT.slow > 0) { x.fillStyle = `rgba(255,230,150,${BT.slow * 0.15})`; x.fillRect(0, 0, 1280, 720); }
+  x.fillStyle = "#1a0d06"; x.fillRect(0, POLE.bot, 1280, 80); x.fillStyle = "#3a2010"; x.fillRect(POLE.x - 90, POLE.bot - 10, 180, 22);
+  const pole = bPole();
+  if (pole && BT.state !== "end") {
+    const w = poleW(pole[1]);
+    x.save(); x.translate(POLE.x, 0);
+    if (BT.pieces.length) {
+      const pc = BT.pieces[0];
+      // spodok (zostáva)
+      x.save(); x.beginPath(); x.moveTo(-w, pc.y + pc.slope * -w); x.lineTo(w, pc.y + pc.slope * w); x.lineTo(w, POLE.bot); x.lineTo(-w, POLE.bot); x.closePath(); x.clip();
+      drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]); x.restore();
+      // vrch (padá)
+      x.save(); x.translate(pc.dx, pc.dy); x.translate(0, pc.y); x.rotate(pc.rot); x.translate(0, -pc.y);
+      x.beginPath(); x.moveTo(-w, POLE.top - 10); x.lineTo(w, POLE.top - 10); x.lineTo(w, pc.y + pc.slope * w); x.lineTo(-w, pc.y + pc.slope * -w); x.closePath(); x.clip();
+      drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]); x.restore();
+      x.fillStyle = "#f4f0c8"; x.beginPath(); x.ellipse(0, pc.y, w / 2, 5, Math.atan(pc.slope), 0, 7); x.fill();
+    } else drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]);
+    x.restore();
+    if (BT.stuck) { // zaseknutá čepeľ
+      x.save(); x.translate(POLE.x, BT.stuck.y); x.rotate(Math.atan(BT.stuck.slope) + (BT.stuck.dir < 0 ? Math.PI : 0));
+      drawWeapon(x, RES.o.shape, -170, 0, 300, 50, RES.q, null, itemPhase(RES.o.item)); x.restore();
+      x.strokeStyle = "#000"; x.lineWidth = 3; x.beginPath(); x.moveTo(POLE.x - 4, BT.stuck.y - 12); x.lineTo(POLE.x + 6, BT.stuck.y + 14); x.stroke();
+    }
+    // štítok
+    if (MOB) { x.save(); x.translate(-432, 360); x.scale(1.0, 1.0); } x.fillStyle = "rgba(15,6,3,.9)"; x.strokeStyle = "#6a3416"; x.lineWidth = 2; x.fillRect(820, 200, 380, 150); x.strokeRect(820, 200, 380, 150);
+    x.textAlign = "left"; x.fillStyle = "#ffd6a0"; x.font = "bold 24px Georgia"; x.fillText(`Tyč ${BT.i + 1}/${BT.poles.length}: ${pole[0]}`, 836, 236);
+    x.font = "bold 22px Georgia"; x.fillStyle = "#ff9a70"; x.fillText(`Tvrdosť: ${pole[1]}`, 836, 276);
+    x.fillStyle = BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? "#7dff8c" : "#ff6a50";
+    x.fillText(`Tvoja sila: ${BT.dmg}  (×0,6 – ×1,3 podľa rýchlosti)`, 836, 312);
+    x.font = "16px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? "Švihni rýchlo cez tyč!" : "Na túto tyč je zbraň asi slabá…", 836, 338); if (MOB) x.restore();
+  }
+  // výsledky
+  BT.results.forEach((r, i) => { x.fillStyle = r.ok ? "#7dff8c" : "#ff6a50"; x.font = MOB ? "bold 17px Georgia" : "bold 22px Georgia"; x.textAlign = "left"; x.fillText(`${i + 1}. ${r.ok ? "✔ prerezaná" : "✖ zaseknutá"} (${r.power} / ${r.h})`, MOB ? 385 : 70, (MOB ? 190 : 230) + i * (MOB ? 26 : 34)); });
+  // častice
+  BT.parts.forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.fillStyle = p.leaf ? "#6fcf4a" : p.c; if (p.leaf) { x.beginPath(); x.ellipse(p.x, p.y, 7, 3, p.x / 30, 0, 7); x.fill(); } else x.fillRect(p.x, p.y, 4, 4); });
+  x.globalAlpha = 1;
+  // stopa švihu
+  const tr = BT.trail; if (tr.length > 1) { x.lineCap = "round"; for (let i = 1; i < tr.length; i++) { x.strokeStyle = `rgba(255,240,200,${i / tr.length})`; x.lineWidth = 2 + i * 0.9; x.beginPath(); x.moveTo(tr[i - 1].p[0], tr[i - 1].p[1]); x.lineTo(tr[i].p[0], tr[i].p[1]); x.stroke(); } }
+  if (BT.msg) { const m = BT.msg; x.globalAlpha = Math.min(1, m.l * 2); x.textAlign = "center"; x.font = MOB ? "bold 44px Georgia" : "bold 56px Georgia"; x.lineWidth = 6; x.strokeStyle = "#200800"; x.strokeText(m.t, 640, 110); x.fillStyle = m.col; x.fillText(m.t, 640, 110);
+    x.font = "bold 22px Georgia"; x.fillStyle = "#ffe6c0"; x.fillText(m.sub, 640, 120 + 40); x.globalAlpha = 1; }
+  x.textAlign = "center"; x.font = "18px Georgia"; x.fillStyle = "#b88d6c";
+  x.fillText(MT(`Podrž tlačidlo myši a rýchlo švihni naprieč tyčou · Enter = preskočiť · ${Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer))} s`, `Rýchlo švihni prstom naprieč tyčou · ${Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer))} s`), 640, MOB ? 548 : 30);
+  x.restore();
+}
+bcv.addEventListener("pointerdown", e => { if (e.button === 0 || e.pointerType !== "mouse") bambooDown(e); });
+bcv.addEventListener("pointermove", bambooMove); window.addEventListener("pointerup", bambooUp);
+bind("bTest", startBamboo); bind("bBSkip", endBamboo);
+/* ===================== POZADIE – ŽERAVÉ ISKRY ===================== */
+const embers = [];
+function drawEmbers(dt) {
+  const c = $("embers"), x = c.getContext("2d");
+  x.clearRect(0, 0, c.width, c.height);
+  if (cur === "forge") return;
+  if (embers.length < 45) embers.push({ x: Math.random() * c.width, y: c.height + 10, vy: 20 + Math.random() * 50, vx: (Math.random() - .5) * 20, s: 1 + Math.random() * 2.5, l: 1 });
+  x.globalCompositeOperation = "lighter";
+  embers.forEach(e => { e.y -= e.vy * dt; e.x += e.vx * dt + Math.sin(e.y / 30) * 0.3; e.l -= dt * 0.12;
+    x.fillStyle = `rgba(255,${100 + e.s * 40},20,${Math.max(0, e.l)})`; x.beginPath(); x.arc(e.x, e.y, e.s, 0, 7); x.fill(); });
+  x.globalCompositeOperation = "source-over";
+  for (let i = embers.length - 1; i >= 0; i--) if (embers[i].y < -10 || embers[i].l <= 0) embers.splice(i, 1);
+}
+function drawLogo() {
+  const c = $("logoCv"), x = c.getContext("2d");
+  x.save(); x.translate(150, 95); x.rotate(-0.35); drawWeapon(x, "sword", 0, 0, 200, 46, 0, 72, Math.max(1, maxPhase ? 1 : 1)); x.restore();
+  x.fillStyle = "#2c2f35"; x.beginPath(); x.moveTo(40, 130); x.lineTo(260, 130); x.lineTo(230, 145); x.lineTo(190, 148); x.lineTo(200, 160); x.lineTo(100, 160); x.lineTo(110, 148); x.lineTo(70, 145); x.fill();
+}
+
+/* ===================== ŠTART ===================== */
+load(); save(); resize(); drawLogo(); show("menu"); focusGame();
+window.addEventListener("load", focusGame);
+$("focusOv").addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); focusGame(); audioInit(); });
+requestAnimationFrame(loop);
+window.DF = { get S() { return S; }, get F() { return F; }, CONFIG, save, load, band }; // pre testy
+</script>
+</body>
+</html>
