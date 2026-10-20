@@ -273,7 +273,7 @@ body.rot #rotOv{display:flex;position:fixed;inset:0;z-index:99;background:#08030
    CONFIG – všetky ladiace čísla na jednom mieste
    ===================================================================== */
 const CONFIG = {
-  mobile: { maxSide: 600, worldW: 720, targetMult: 1.25, greenMult: 1.15, centerBonus: 0.04 }, // telefón (na výšku)
+  mobile: { maxSide: 600, worldW: 720, targetMult: 1.8, greenMult: 1.3, centerBonus: 0.07, bladeCX: 0.68, bladeTop: 300, bladeBotMargin: 340 }, // telefón (na výšku)
   temp: {
     max: 100,
     pumpRate: 26,          // °/s pri držaní mechu
@@ -905,19 +905,21 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && cur
 
 // layout geometry
 function geo() {
-  if (MOB) { const anvilY = Math.round(VH * 0.5); return { thermX: 50, thermTop: 330, thermBot: VH - 330, anvilY, bladeY: anvilY - 30, bladeL: 500, bladeX: 372, furnX: VW - 70, furnY: 300, mob: true }; }
+  if (MOB) { const M = CONFIG.mobile, top = M.bladeTop, bot = VH - M.bladeBotMargin, L = bot - top - 40;
+    // virtuálne vodorovné súradnice (0,0 = stred čepele), na obrazovku sa otočia o 90° (rukoväť hore, hrot dole)
+    return { thermX: 50, thermTop: 330, thermBot: VH - 330, anvilY: 30, bladeY: 0, bladeL: L, bladeX: 0, cx: Math.round(VW * M.bladeCX), cy: Math.round((top + bot) / 2), vert: true, furnX: 110, furnY: 260, mob: true }; }
   const anvilY = 470;
   return { thermX: 70, thermTop: 120, thermBot: VH - 40, anvilY, bladeY: anvilY - 30, bladeL: 680, bladeX: 680, furnX: 1180, furnY: 600 };
 }
+function bp(g, px, py) { return g.vert ? [g.cx - py, g.cy + px] : [px, py]; }
 function zoneRange(zi, nz) { return nz === 1 ? [0.12, 0.9] : [0.08 + zi / nz * 0.84, 0.08 + (zi + 1) / nz * 0.84 - 0.04]; }
 function spawnTarget() {
   const g = geo(), s = F.seq[F.idx];
   const nz = CONFIG.zones[F.phase].length, zr = zoneRange(s.zi, nz);
   const core = s.zone === "Mýtické Jadro";
   const fx = core ? 0.6 : zr[0] + Math.random() * (zr[1] - zr[0]);
-  const x = g.bladeX - g.bladeL / 2 + g.bladeL * fx;
-  const y = g.bladeY + (core ? 0 : (Math.random() - 0.5) * 30);
-  F.target = { x, y, baseX: x, core, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
+  const [x, y] = bp(g, g.bladeX - g.bladeL / 2 + g.bladeL * fx, g.bladeY + (core ? 0 : (Math.random() - 0.5) * 30));
+  F.target = { x, y, baseX: x, baseY: y, vert: !!g.vert, core, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
   if (core) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 380 : 235, txt: "MÝTICKÉ JADRO – musí byť PERFEKTNÉ!", col: "#9fe0ff", life: 2, small: true }); }
   F.first = false;
 }
@@ -1059,7 +1061,7 @@ function startGem() {
   F.gem = { stage: "pick", opts, t: 0, x: 0, dir: 1, sel: null };
   tutMsg(MT("💎 <b>Osadenie gemu</b>: vyber gem (klik alebo <span class='kbd'>1</span>–<span class='kbd'>3</span>, <span class='kbd'>0</span> = bez gemu)", "💎 <b>Osadenie gemu</b>: ťukni na gem (alebo „Bez gemu“)"));
 }
-function gemBoxes() { const ks = Object.keys(CONFIG.gems.types); return [...ks, "none"].map((k, i) => MOB ? ({ k, x: 70 + (i % 2) * 300, y: geo().bladeY - 300 + Math.floor(i / 2) * 100, w: 280, h: 85 }) : ({ k, x: 300 + i * 190, y: 150, w: 170, h: 70 })); }
+function gemBoxes() { const ks = Object.keys(CONFIG.gems.types); return [...ks, "none"].map((k, i) => MOB ? ({ k, x: 300 + (i % 2) * 208, y: geo().cy - geo().bladeL / 2 + Math.floor(i / 2) * 105, w: 200, h: 92 }) : ({ k, x: 300 + i * 190, y: 150, w: 170, h: 70 })); }
 function gemPick(k) {
   const G = F.gem; if (!G || G.stage !== "pick") return;
   if (k === "none" || !S.gems[k]) { if (k !== "none") return; F.gem = null; tutMsg(""); F.done = true; setTimeout(() => finishForge(false), 600); return; }
@@ -1074,10 +1076,10 @@ function gemClick(x, y) {
   const gt = CONFIG.gems.types[G.sel]; S.gems[G.sel]--; save();
   G.stage = "done"; G.ok = al && hot; tutMsg("");
   const g = geo();
-  if (G.ok) { F.gemSet = G.sel; SFX.perfect(); SFX.clang(1); F.flash = 1; for (let i = 0; i < 60; i++) sparkAt(g.bladeX + G.x, g.bladeY, true);
-    F.popups.push({ x: g.bladeX, y: g.bladeY - 90, txt: `${gt.icon} ${gt.name.toUpperCase()} OSADENÝ!`, col: gt.col, life: 1.8, big: true }); }
+  if (G.ok) { F.gemSet = G.sel; SFX.perfect(); SFX.clang(1); F.flash = 1; for (let i = 0; i < 60; i++) sparkAt(...bp(g, g.bladeX + G.x, g.bladeY), true);
+    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: `${gt.icon} ${gt.name.toUpperCase()} OSADENÝ!`, col: gt.col, life: 1.8, big: true }); }
   else { SFX.miss(); F.shake = 10;
-    F.popups.push({ x: g.bladeX, y: g.bladeY - 90, txt: `${gt.name} praskol – ${!hot ? "kov vychladol" : "nezarovnané"}`, col: "#ff7a60", life: 1.8 }); }
+    F.popups.push({ x: g.vert ? VW / 2 : g.bladeX, y: g.vert ? g.cy - 200 : g.bladeY - 90, txt: `${gt.name} praskol – ${!hot ? "kov vychladol" : "nezarovnané"}`, col: "#ff7a60", life: 1.8 }); }
   F.done = true; setTimeout(() => finishForge(false), 1300);
 }
 function updateGem(dt) {
@@ -1087,8 +1089,23 @@ function updateGem(dt) {
 }
 function drawGem(x) {
   const G = F.gem; if (!G) return; const g = geo();
+  if (g.vert && G.stage !== "pick") {
+    x.save(); x.translate(g.cx, g.cy); x.rotate(Math.PI / 2); const g2 = Object.assign({}, g, { vert: false });
+    x.fillStyle = "#1a1008"; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(0, 0, 16, 0, 7); x.fill(); x.stroke();
+    const gt = CONFIG.gems.types[G.sel], tol = CONFIG.gems.tol * (1 + lvl("lupa") * CONFIG.up3.lupaTol);
+    x.fillStyle = "rgba(80,255,100,.22)"; x.fillRect(-tol, -130, tol * 2, 120);
+    const gy = G.stage === "done" && G.ok ? 0 : -80, gx = G.x;
+    x.fillStyle = gt.col; x.shadowColor = gt.col; x.shadowBlur = 20; x.beginPath(); x.moveTo(gx, gy - 20); x.lineTo(gx + 18, gy); x.lineTo(gx, gy + 20); x.lineTo(gx - 18, gy); x.closePath(); x.fill(); x.shadowBlur = 0;
+    x.strokeStyle = "#fff"; x.lineWidth = 1.5; x.stroke(); x.restore();
+    const hot = F.temp >= CONFIG.gems.minTemp, al = Math.abs(G.x) <= tol;
+    x.font = "bold 20px Georgia"; x.textAlign = "right";
+    x.fillStyle = al ? "#40ff60" : "#ff7a60"; x.fillText(al ? "● Zarovnané" : "○ Zarovnanie", g.cx - 40, g.cy - 14);
+    x.fillStyle = hot ? "#40ff60" : "#80a8ff"; x.fillText(hot ? "● Kov horúci" : "○ Kov chladne!", g.cx - 40, g.cy + 18); x.textAlign = "center";
+    return;
+  }
+  if (g.vert) { x.fillStyle = "#1a1008"; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(g.cx, g.cy, 16, 0, 7); x.fill(); x.stroke(); }
   // objímka
-  x.fillStyle = "#1a1008"; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(g.bladeX, g.bladeY, 16, 0, 7); x.fill(); x.stroke();
+  if (!g.vert) x.fillStyle = "#1a1008"; else x.globalAlpha = 0; x.strokeStyle = "#e0b040"; x.lineWidth = 3; x.beginPath(); x.arc(g.bladeX, g.bladeY, 16, 0, 7); x.fill(); x.stroke();
   if (G.stage === "pick") {
     gemBoxes().forEach((b, i) => { const gt = CONFIG.gems.types[b.k], n = gt ? S.gems[b.k] : 1;
       x.globalAlpha = n ? 1 : 0.35; x.fillStyle = "rgba(20,8,4,.92)"; x.strokeStyle = gt ? gt.col : "#888"; x.lineWidth = 3; x.fillRect(b.x, b.y, b.w, b.h); x.strokeRect(b.x, b.y, b.w, b.h);
@@ -1113,8 +1130,8 @@ function sparkAt(x, y, gold) {
 }
 function burn() {
   F.done = true; F.burned = true; SFX.burn(); vib([100, 50, 200]); F.shake = 20;
-  for (let i = 0; i < 80; i++) sparkAt(geo().bladeX, geo().bladeY, false);
-  F.popups.push({ x: VW / 2, y: geo().bladeY - 60, txt: "ZHORENÉ!", col: "#ff3020", life: 1.6, big: true });
+  { const g = geo(); for (let i = 0; i < 80; i++) sparkAt(...bp(g, g.bladeX, g.bladeY), false); }
+  F.popups.push({ x: VW / 2, y: geo().vert ? geo().cy : geo().bladeY - 60, txt: "ZHORENÉ!", col: "#ff3020", life: 1.6, big: true });
   setTimeout(() => finishForge(false), 1300);
 }
 
@@ -1151,7 +1168,7 @@ function update(dt) {
     if (!F.target) { F.wait -= dt; if (F.wait <= 0 && F.idx < F.seq.length) spawnTarget(); }
     else {
       F.target.life += dt;
-      if (F.target.core) F.target.x = F.target.baseX + Math.sin(F.t * CONFIG.core.speed * (1 - lvl("hviezdna") * CONFIG.up4.hviezdnaSlow)) * CONFIG.core.amp;
+      if (F.target.core) F.target[F.target.vert ? "y" : "x"] = F.target[F.target.vert ? "baseY" : "baseX"] + Math.sin(F.t * CONFIG.core.speed * (1 - lvl("hviezdna") * CONFIG.up4.hviezdnaSlow)) * CONFIG.core.amp;
       if (F.target.life - F.target.delay > ringT(F.target)) registerHit(0, 0, F.target.x, F.target.y, true, false, 0);
     }
   }
@@ -1159,9 +1176,9 @@ function update(dt) {
   // para pri chladnutí
   const g0 = geo();
   if (pumping) F.pumpHeld = (F.pumpHeld || 0) + dt; F.steamCd = Math.max(0, (F.steamCd || 0) - dt);
-  if (F.wasPumping && !pumping && F.temp > 55 && !F.done && F.pumpHeld > 0.4 && F.steamCd <= 0) { F.steamCd = 1.2; SFX.steam(); for (let i = 0; i < 6; i++) F.steam.push({ x: g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, y: g0.bladeY - 10, vy: -40 - Math.random() * 40, r: 8 + Math.random() * 10, life: 1.2 }); }
+  if (F.wasPumping && !pumping && F.temp > 55 && !F.done && F.pumpHeld > 0.4 && F.steamCd <= 0) { F.steamCd = 1.2; SFX.steam(); for (let i = 0; i < 6; i++) F.steam.push({ ...(([a, b]) => ({ x: a, y: b }))(bp(g0, g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, g0.bladeY - 10)), vy: -40 - Math.random() * 40, r: 8 + Math.random() * 10, life: 1.2 }); }
   if (!pumping) F.pumpHeld = 0; F.wasPumping = pumping;
-  if (!pumping && F.temp > 50 && Math.random() < dt * 2.5 && F.steam.length < 25) F.steam.push({ x: g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, y: g0.bladeY - 10, vy: -30 - Math.random() * 30, r: 6 + Math.random() * 8, life: 1 });
+  if (!pumping && F.temp > 50 && Math.random() < dt * 2.5 && F.steam.length < 25) F.steam.push({ ...(([a, b]) => ({ x: a, y: b }))(bp(g0, g0.bladeX + (Math.random() - .5) * g0.bladeL * 0.8, g0.bladeY - 10)), vy: -30 - Math.random() * 30, r: 6 + Math.random() * 8, life: 1 });
   F.steam.forEach(p => { p.y += p.vy * dt; p.r += 14 * dt; p.life -= dt; }); F.steam = F.steam.filter(p => p.life > 0);
   // žeravé iskry z vyhne
   if (Math.random() < dt * (pumping ? 40 : 12) && F.embers.length < 120) F.embers.push({ x: 1180 + (Math.random() - .5) * 90, y: 570, vx: (Math.random() - .5) * 40, vy: -60 - Math.random() * (pumping ? 160 : 70), life: 1.5 + Math.random() });
@@ -1171,7 +1188,7 @@ function update(dt) {
   // particles
   F.sparks.forEach(s => { s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 900 * dt; s.life -= dt; });
   F.sparks = F.sparks.filter(s => s.life > 0);
-  if (pumping && F.temp > 45 && Math.random() < dt * 20) { const g = geo(); F.sparks.push({ x: g.bladeX + (Math.random() - .5) * g.bladeL, y: g.bladeY, vx: (Math.random() - .5) * 60, vy: -80 - Math.random() * 120, life: 0.8, gold: false }); }
+  if (pumping && F.temp > 45 && Math.random() < dt * 20) { const g = geo(); F.sparks.push({ ...(([a, b]) => ({ x: a, y: b }))(bp(g, g.bladeX + (Math.random() - .5) * g.bladeL, g.bladeY)), vx: (Math.random() - .5) * 60, vy: -80 - Math.random() * 120, life: 0.8, gold: false }); }
   F.popups.forEach(p => { p.life -= dt; p.y -= 40 * dt; });
   F.popups = F.popups.filter(p => p.life > 0);
   F.shake *= Math.pow(0.002, dt); F.flash = Math.max(0, F.flash - dt * 3); F.hammerAnim = Math.max(0, F.hammerAnim - dt * 5); if (F.judge) { F.judge.life -= dt; if (F.judge.life <= 0) F.judge = null; }
@@ -1214,7 +1231,8 @@ function draw() {
   x.fillText("Klikni MYŠOU na terč = kladivo", 900, VH - 20);
   }
   // kovadlina
-  x.save(); x.translate(g.bladeX - 20, g.anvilY); const AW = 1150;
+  if (g.vert) { x.save(); x.translate(g.cx, g.cy); x.rotate(Math.PI / 2); }
+  x.save(); x.translate(g.bladeX - 20, g.anvilY); const AW = g.vert ? g.bladeL * 1.55 : 1150;
   const ag = x.createLinearGradient(0, -20, 0, 60); ag.addColorStop(0, "#5a5f68"); ag.addColorStop(0.3, "#2c2f35"); ag.addColorStop(1, "#111");
   x.fillStyle = ag; x.beginPath();
   x.moveTo(-AW * 0.38, -18); x.lineTo(AW * 0.30, -18); x.quadraticCurveTo(AW * 0.42, -14, AW * 0.44, -4); x.lineTo(AW * 0.28, 8);
@@ -1225,14 +1243,17 @@ function draw() {
   // čepeľ
   drawWeapon(x, F.o.shape, g.bladeX, g.bladeY, g.bladeL, 64, 0, F.burned ? 5 : F.temp, F.phase);
   if (F.gemSet) { const gc = CONFIG.gems.types[F.gemSet].col; x.fillStyle = gc; x.shadowColor = gc; x.shadowBlur = 18; x.beginPath(); x.arc(g.bladeX, g.bladeY, 11, 0, 7); x.fill(); x.shadowBlur = 0; }
-  drawGem(x);
+  if (!g.vert) drawGem(x);
   // horúci opar nad čepeľou
   if (F.temp > 50) { x.strokeStyle = `rgba(255,${120 + F.temp},60,${(F.temp - 50) / 200})`; x.lineWidth = 2; for (let i = 0; i < 4; i++) { x.beginPath(); for (let k = 0; k <= 20; k++) { const px = g.bladeX - g.bladeL * 0.4 + k * g.bladeL * 0.04; const py = g.bladeY - 45 - i * 14 + Math.sin(k * 0.8 + F.t * 6 + i) * 4; k ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); } }
   const nzz = CONFIG.zones[F.phase].length;
   if (nzz > 1 && !F.done && !F.gem) {
     const z = F.seq[F.idx]; if (z) { const zr = zoneRange(z.zi, nzz), x0 = g.bladeX - g.bladeL / 2; x.fillStyle = z.zone === "Mýtické Jadro" ? "rgba(140,220,255,.12)" : "rgba(255,220,120,.10)";
-      x.fillRect(x0 + g.bladeL * zr[0] - 20, g.bladeY - 40, g.bladeL * (zr[1] - zr[0]) + 40, 80); x.fillStyle = "rgba(255,220,150,.7)"; x.font = "bold 16px Georgia"; x.textAlign = "center"; x.fillText(z.zone, x0 + g.bladeL * (zr[0] + zr[1]) / 2, g.bladeY + 60); }
+      x.fillRect(x0 + g.bladeL * zr[0] - 20, g.bladeY - 40, g.bladeL * (zr[1] - zr[0]) + 40, 80); x.fillStyle = "rgba(255,220,150,.7)"; x.font = "bold 16px Georgia"; x.textAlign = "center";
+      if (g.vert) { x.restore(); x.save(); const [lx, ly] = bp(g, x0 + g.bladeL * (zr[0] + zr[1]) / 2, 0); x.font = "bold 20px Georgia"; x.textAlign = "right"; x.translate(lx - 60, ly); x.fillText(z.zone, 0, 6); x.restore(); x.save(); x.translate(g.cx, g.cy); x.rotate(Math.PI / 2); }
+      else x.fillText(z.zone, x0 + g.bladeL * (zr[0] + zr[1]) / 2, g.bladeY + 60); }
   }
+  if (g.vert) { x.restore(); drawGem(x); }
   // terč
   const t = F.target;
   if (t) {
@@ -1261,17 +1282,17 @@ function draw() {
     const cz = t.r * 1.6 * (1 - perfC());
     x.strokeStyle = "rgba(255,220,90,.9)"; x.lineWidth = 2; x.setLineDash([4, 4]); x.beginPath(); x.arc(t.x, t.y, cz, 0, Math.PI * 2); x.stroke(); x.setLineDash([]);
     // živé svetlá
-    if (!F.judge) drawLights(x, MOB ? Math.max(205, Math.min(VW - 205, t.x)) : t.x, t.y - t.r * CONFIG.hammer.ringStart - 34, band(F.temp) === "gold",
+    if (!F.judge) drawLights(x, g.vert ? VW / 2 + 40 : MOB ? Math.max(205, Math.min(VW - 205, t.x)) : t.x, g.vert ? 262 : t.y - t.r * CONFIG.hammer.ringStart - 34, band(F.temp) === "gold",
       Math.hypot(mouseW[0] - t.x, mouseW[1] - t.y) <= cz ? true : (mouseW[0] < -900 ? null : false), green, 1);
-    if (t.life < t.delay) { x.fillStyle = "#ffe0a0"; x.font = "bold 20px Georgia"; x.fillText("PRIPRAV SA…", t.x, t.y - t.r * 2.8); }
+    if (t.life < t.delay) { x.fillStyle = "#ffe0a0"; x.font = "bold 20px Georgia"; x.fillText("PRIPRAV SA…", t.x, Math.max(270, t.y - t.r * 2.8)); }
   }
   // kladivo animácia
   if (F.hammerAnim > 0) {
-    x.save(); x.translate(MOB ? g.bladeX + g.bladeL / 2 - 30 : g.bladeX + g.bladeL / 2 + 60, MOB ? g.bladeY - 150 : g.bladeY - 60); x.scale(1.4, 1.4); x.rotate(-0.9 * F.hammerAnim + 0.2);
+    x.save(); if (g.vert && F.target) x.translate(Math.min(VW - 40, F.target.x + 110), F.target.y - 60); else if (g.vert) x.translate(VW - 60, g.cy); else x.translate(g.bladeX + g.bladeL / 2 + 60, g.bladeY - 60); x.scale(1.4, 1.4); x.rotate(-0.9 * F.hammerAnim + 0.2);
     x.fillStyle = "#5a3a1a"; x.fillRect(-4, -10, 8, 90); x.fillStyle = "#666"; x.fillRect(-26, -26, 52, 26); x.restore();
   }
   if (F.judge && !F.gem) { const j = F.judge, on = Math.floor(j.life * 8) % 2 === 0 || j.life < 1.0;
-    drawLights(x, Math.max(MOB ? 205 : 170, Math.min(VW - (MOB ? 205 : 170), j.x)), j.y - CONFIG.hammer.targetR * CONFIG.hammer.ringStart - 34, j.t, j.c, j.g, on ? 1 : 0.35, true); }
+    drawLights(x, g.vert ? VW / 2 + 40 : Math.max(MOB ? 205 : 170, Math.min(VW - (MOB ? 205 : 170), j.x)), g.vert ? 262 : j.y - CONFIG.hammer.targetR * CONFIG.hammer.ringStart - 34, j.t, j.c, j.g, on ? 1 : 0.35, true); }
   // rázová vlna + para
   F.waves.forEach(w => { x.strokeStyle = w.gold ? `rgba(255,220,100,${w.life * 2})` : `rgba(255,255,255,${w.life * 1.4})`; x.lineWidth = 4 * w.life * 2 + 1; x.beginPath(); x.arc(w.x, w.y, w.r, 0, 7); x.stroke(); });
   F.steam.forEach(p => { x.fillStyle = `rgba(220,225,235,${p.life * 0.09})`; x.beginPath(); x.arc(p.x, p.y, p.r, 0, 7); x.fill(); });
