@@ -2421,7 +2421,7 @@ function updateFruit(dt) {
   const C = CONFIG.fruit, U = fruitU();
   FT.timer += dt;
   if (FT.timer < C.time - 0.6) { FT.spawn -= dt; if (FT.spawn <= 0) { const n = Math.random() < 0.25 ? 2 + Math.floor(Math.random() * 2) : 1; for (let i = 0; i < n; i++) spawnFruit(); FT.spawn = C.spawnMin + Math.random() * (C.spawnMax - C.spawnMin); } }
-  if (FT.timer >= C.time) { if (!FT.over) { FT.over = 1; FT.msg = { t: TR("ft_end"), col: "#ff9a50", l: 1.4 }; SFX.thunk(); FT.trails.clear(); } FT.over += dt; if (FT.over > 1.4) { endFruit(); return; } }
+  if (FT.timer >= C.time) { if (!FT.over) { FT.over = 1; FT.msg = { t: TR("ft_end"), col: "#ff9a50", l: 0.4 }; SFX.thunk(); FT.trails.clear(); } FT.over += dt; if (FT.over > 0.4) { endFruit(); return; } }
   FT.fruits.forEach(f => { f.vy += f.g * dt; f.x += f.vx * dt; f.y += f.vy * dt; f.rot += f.vr * dt; });
   FT.fruits = FT.fruits.filter(f => !f.cut && f.y < RH + 80 * U);
   FT.halves.forEach(h => { h.vy += 900 * U * dt; h.x += h.vx * dt; h.y += h.vy * dt; h.rot += h.vr * dt; h.life -= dt; });
@@ -2433,9 +2433,26 @@ function updateFruit(dt) {
   if (FT.timer - FT.lastSlice > C.comboWin) FT.combo = 0;
   const now = performance.now(); FT.trails.forEach(tr => { while (tr.length > 1 && now - tr[0].t > FT.trailMs) tr.shift(); });
 }
+let FBG = null;
+function drawFruitBg(x) {   // warm wooden dojo backdrop with soft light (cached per size)
+  if (!FBG || FBG.w !== RW || FBG.h !== RH) {
+    const c = document.createElement("canvas"); c.width = Math.round(RW * DPR); c.height = Math.round(RH * DPR); const g = c.getContext("2d"); g.scale(DPR, DPR);
+    const lg = g.createLinearGradient(0, 0, 0, RH); lg.addColorStop(0, "#c98e52"); lg.addColorStop(0.6, "#a8693a"); lg.addColorStop(1, "#7a4824"); g.fillStyle = lg; g.fillRect(0, 0, RW, RH);
+    const pw = Math.max(46, RW / 9);
+    for (let i = 0, px = 0; px < RW; i++, px += pw) { g.fillStyle = i % 2 ? "rgba(255,220,170,.06)" : "rgba(80,40,10,.07)"; g.fillRect(px, 0, pw, RH); g.fillStyle = "rgba(60,28,8,.35)"; g.fillRect(px, 0, 2, RH);
+      g.strokeStyle = "rgba(90,45,15,.18)"; g.lineWidth = 1.2; for (let k = 0; k < 5; k++) { const ox = px + pw * (0.2 + 0.15 * k); g.beginPath(); g.moveTo(ox, 0); for (let y = 0; y <= RH; y += 40) g.lineTo(ox + Math.sin(y / 90 + i * 1.7 + k) * 5, y); g.stroke(); } }
+    g.fillStyle = "#5a3418"; g.fillRect(0, RH * 0.16, RW, 10); g.fillStyle = "rgba(255,230,190,.25)"; g.fillRect(0, RH * 0.16, RW, 2);
+    const fl = g.createLinearGradient(0, RH * 0.82, 0, RH); fl.addColorStop(0, "#d8b77a"); fl.addColorStop(1, "#b89458"); g.fillStyle = fl; g.fillRect(0, RH * 0.82, RW, RH * 0.18);
+    g.fillStyle = "rgba(90,60,20,.35)"; g.fillRect(0, RH * 0.82, RW, 3); for (let px = 0; px < RW; px += RW / 4) g.fillRect(px, RH * 0.82, 2, RH * 0.18);
+    const rg = g.createRadialGradient(RW / 2, RH * 0.38, 10, RW / 2, RH * 0.4, Math.max(RW, RH) * 0.75); rg.addColorStop(0, "rgba(255,240,200,.45)"); rg.addColorStop(0.5, "rgba(255,210,150,.1)"); rg.addColorStop(1, "rgba(40,15,0,.45)");
+    g.fillStyle = rg; g.fillRect(0, 0, RW, RH);
+    FBG = { w: RW, h: RH, c };
+  }
+  x.drawImage(FBG.c, 0, 0, RW, RH);
+}
 function drawFruitTest() {
   const x = fctx, U = fruitU(), C = CONFIG.fruit; x.setTransform(DPR, 0, 0, DPR, 0, 0);
-  drawEnv(x, RES.o.phase, RW, RH); x.fillStyle = "rgba(10,4,2,.62)"; x.fillRect(0, 0, RW, RH);
+  drawFruitBg(x);
   FT.stains.forEach(s => { x.globalAlpha = Math.min(0.5, s.l * 0.4); x.fillStyle = s.c; x.beginPath(); x.ellipse(s.x, s.y, s.r, s.r * 0.6, s.a, 0, 7); x.fill(); }); x.globalAlpha = 1;
   FT.fruits.forEach(f => { x.save(); x.translate(f.x, f.y); x.rotate(f.rot); x.scale(U, U); drawFruitWhole(x, f.k, f.r); x.restore(); });
   FT.halves.forEach(h => { x.save(); x.globalAlpha = Math.min(1, h.life * 1.5); x.translate(h.x, h.y); x.rotate(h.rot); x.scale(U, U);
@@ -2450,12 +2467,13 @@ function drawFruitTest() {
   (FT.pops || []).forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.font = `bold ${Math.round(20 * U)}px Georgia`; x.textAlign = "center"; x.fillStyle = "#fff0b0"; x.fillText(p.t, p.x, p.y); }); x.globalAlpha = 1;
   // HUD: timer bar + score + combo
   const top = 52, left = RW * 0.06, w = RW * 0.88, rem = Math.max(0, C.time - FT.timer);
+  x.fillStyle = "rgba(40,18,6,.55)"; rr2(x, left - 10, top - 8, w + 20, 66, 12); x.fill();
   x.fillStyle = "rgba(0,0,0,.6)"; x.fillRect(left, top, w, 12); x.fillStyle = rem < 3 ? "#ff5030" : "#ffb040"; x.fillRect(left, top, w * rem / C.time, 12);
   x.font = `bold ${Math.round(Math.min(30, 20 * U))}px Georgia`; x.textAlign = "left"; x.fillStyle = "#ffe6c0"; x.fillText(`⏱ ${rem.toFixed(1)} s`, left, top + 44);
   x.textAlign = "right"; x.fillText(`${TR("ft_score")}: ${FT.score}`, left + w, top + 44);
   x.textAlign = "center"; x.fillStyle = FT.combo >= 2 ? "#ffcf40" : "#b88d6c"; x.fillText(`🍉 ${FT.sliced}` + (FT.combo >= 2 ? ` · x${FT.combo}` : ""), RW / 2, top + 44);
   if (FT.msg) { const m = FT.msg; x.globalAlpha = Math.min(1, m.l * 2); x.font = `bold ${Math.round(Math.min(56, 30 * U))}px Georgia`; x.lineWidth = 6; x.strokeStyle = "#200800"; x.strokeText(m.t, RW / 2, RH * 0.32); x.fillStyle = m.col; x.fillText(m.t, RW / 2, RH * 0.32); x.globalAlpha = 1; }
-  x.font = `${Math.round(15 * Math.min(1.3, U))}px Georgia`; x.fillStyle = "#b88d6c"; x.fillText(MTk("ft_hint"), RW / 2, RH - 70);
+  x.font = `${Math.round(15 * Math.min(1.3, U))}px Georgia`; x.fillStyle = "#4a2810"; x.fillText(MTk("ft_hint"), RW / 2, RH - 70);
 }
 fcv.addEventListener("pointerdown", fruitDown); fcv.addEventListener("pointermove", fruitMove);
 window.addEventListener("pointerup", fruitUp); window.addEventListener("pointercancel", fruitUp);
