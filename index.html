@@ -206,6 +206,9 @@ body.mob .oi-card{width:auto;display:flex;align-items:center;gap:0}
 body.mob .oi-frame{width:76px;flex:none;position:relative;z-index:1} body.mob .oi-plate{margin:0 0 0 -10px;flex:1;padding:6px 8px 6px 16px;text-align:left}
 body.mob .oi-letter{width:100%} body.mob .oi-big{font-size:22px} body.mob .oi-stars{font-size:19px} body.mob .oi-wname{font-size:16px} body.mob .oi-paper{padding:10px 10px 8px}
 body.mob #sealBadge{left:auto;right:42%;top:21%;width:50px;height:50px}
+#oi,#oiCatch,#sealBadge,#fcard{display:none!important} /* no order UI over the forge */
+.ordtop{display:flex;gap:10px;align-items:center}.ordtop canvas.opor{width:72px;height:90px;flex:none;border-radius:50%/46%;border:3px solid #a87a2c;box-shadow:0 4px 10px rgba(0,0,0,.6);background:#2a1808}
+.ordinfo{display:flex;align-items:center;justify-content:space-around;gap:6px;margin:6px 0 2px;text-align:center}.ordinfo>div{flex:1}.ordinfo small{display:block;font-size:11px;color:#6a3a14;font-variant:small-caps}.ordinfo .oi-big{font-size:22px} .ordwep{display:block;width:100%;height:56px;margin-top:4px}
 .langrow{display:flex;gap:10px;justify-content:center;margin:8px 0} .langrow .btn{width:auto;min-width:96px;margin:0}
 </style>
 </head>
@@ -288,11 +291,11 @@ body.mob #sealBadge{left:auto;right:42%;top:21%;width:50px;height:50px}
  </div>
 </div>
 
-<!-- BAMBOO -->
-<div class="screen" id="bamboo" style="padding:0">
- <canvas id="bcv" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair"></canvas>
- <div class="hud" style="position:absolute;top:calc(env(safe-area-inset-top) + 44px);left:0;right:0;justify-content:center;pointer-events:none"><span id="bHud"></span></div>
- <button class="btn small" id="bBSkip" style="position:absolute;right:12px;bottom:12px"></button>
+<!-- FRUIT TEST -->
+<div class="screen" id="fruit" style="padding:0">
+ <canvas id="fcv" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair"></canvas>
+ <div class="hud" style="position:absolute;top:calc(env(safe-area-inset-top) + 8px);left:0;right:0;justify-content:center;pointer-events:none"><span id="frHud"></span></div>
+ <button class="btn small" id="bFSkip" style="position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);width:auto"></button>
 </div>
 
 <!-- SHOP -->
@@ -360,10 +363,10 @@ sk: {
  ui: {
   langName: "Slovenčina",
   m_play: "⚒ KOVAŤ", m_shop: "🏚 Dielňa", m_troph: "🏆 Sieň trofejí", m_guide: '❓ Ako dať PERFEKTNÝ úder <span class="kbd">H</span>', m_set: "⚙ Nastavenia",
-  m_keys: '<span class="kbd">MEDZERNÍK</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / pravé tl. myši = mech (drž) · <span class="kbd">MYŠ</span> = kladivo (klikaj na terč) · <span class="kbd">Q</span> zákazka · <span class="kbd">Enter</span> pokračovať · <span class="kbd">P</span>/<span class="kbd">Esc</span> pauza',
-  o_title: "Zákazníci čakajú", o_keys: 'Klávesy <span class="kbd">1</span>–<span class="kbd">4</span> alebo <span class="kbd">Enter</span> = prijať · <span class="kbd">R</span> = iní zákazníci', o_chal: "Denné výzvy", back: "← Späť",
+  m_keys: '<span class="kbd">MEDZERNÍK</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / pravé tl. myši = mech (drž) · <span class="kbd">MYŠ</span> = kladivo (klikaj na terč) · <span class="kbd">Enter</span> pokračovať · <span class="kbd">P</span>/<span class="kbd">Esc</span> pauza',
+  o_title: "Vyber si zákazku", o_keys: 'Klávesy <span class="kbd">1</span>–<span class="kbd">4</span> alebo <span class="kbd">Enter</span> = prijať · <span class="kbd">R</span> = iní zákazníci', o_chal: "Denné výzvy", back: "← Späť",
   mech_ind: "<b>🔥 MECH</b><small>medzerník · F · Shift · pravé tlačidlo myši</small>", mech_btn: "🔥 MECH", focus: "🖱 Klikni do hry, aby fungoval medzerník",
-  r_title: "Výsledok", r_next: "Ďalšia objednávka", r_test: '🎋 Otestovať zbraň na bambuse <span class="kbd">T</span>', r_menu: "Menu",
+  r_title: "Výsledok", r_next: "Ďalšia objednávka", r_test: '🍉 Ovocný test zbrane <span class="kbd">T</span>', r_menu: "Menu",
   e_title: "BOŽSKÝ KOVÁČ<small>Kráľ Svätopluk ti ďakuje</small>",
   e_text: 'Ukoval si <b class="q4">Božskú</b> Čepeľ Hviezd pre Kráľa. Tvoje meno bude žiariť v kronikách kráľovstva naveky.<br><span class="muted">Hra pokračuje v nekonečnom režime – kuj ďalej, zbieraj božské zbrane a trofeje.</span>',
   e_cont: "⚒ Pokračovať – nekonečný režim", b_skip: "Preskočiť ⏎", b_skip_m: "Preskočiť ▶",
@@ -371,7 +374,7 @@ sk: {
   set_title: "Nastavenia", set_tut: "Zopakovať návod", set_resetInfo: "Vymaže všetok postup, mince, vylepšenia aj trofeje.", set_reset: "🗑 Resetovať postup", set_lang: "Jazyk / Language",
   p_title: "Pauza", p_resume: "▶ Pokračovať", p_guide: "❓ Ako dať PERFEKTNÝ úder (H)", p_keys: "P / Esc = pokračovať · Q = zákazka", p_quit: "Vzdať objednávku",
   g_title: "Ako dať PERFEKTNÝ úder",
-  g_body: 'Úder je <b class="q2">PERFEKTNÝ</b>, len keď svietia <b class="q1">všetky 3 svetlá</b>:<br>① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span> / tlačidlo MECH).<br>② <b>Stred</b> – klikni/ťukni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>③ <b>Načasovanie</b> – udri, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>✉ <b>Zákazka</b> – na začiatku kovania príde zákazník a otvorí zapečatený list so zbraňou, gemom, kvalitou a odmenou. Potom sa list zloží do voskovej pečate pri nákove – ťukni na ňu (alebo kláves <span class="kbd">Q</span>) a list sa znova otvorí, kovanie sa vtedy pozastaví.<br>💎 <b>Gemy (Fáza 3+)</b> – niektorí zákazníci chcú zbraň s konkrétnym gemom (napr. „Meč s Rubínom“). Na konci kovania osaď <b>presne ten gem</b>: ťukni/klikni, keď je nad objímkou, a drž kov horúci. Správne = platba ×1,6, reputácia a šanca na unikátnu trofej. Zlý alebo prasknutý gem = zákazník zbraň odmietne. Gemy získaš ako odmenu z iných objednávok alebo kúpiš v Dielni (obmedzený sklad).<br><span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>',
+  g_body: 'Úder je <b class="q2">PERFEKTNÝ</b>, len keď svietia <b class="q1">všetky 3 svetlá</b>:<br>① <b>Teplota</b> – ručička teplomera je v <b class="q2">ZLATOM pásme</b> (drž/pusti <span class="kbd">MEDZERNÍK</span> / tlačidlo MECH).<br>② <b>Stred</b> – klikni/ťukni <b>vnútri žltého prerušovaného krúžku</b> v strede terča.<br>③ <b>Načasovanie</b> – udri, keď je biely zmenšujúci sa krúžok <b class="q1">v ZELENOM páse</b>.<br>✉ <b>Zákazka</b> – ešte pred kovaním si na obrazovke zákaziek vyberieš, ktorú objednávku prijmeš (zákazník, zbraň, gem, kvalita v hviezdach, odmena). Počas kovania ťa už nič neruší.<br>💎 <b>Gemy (Fáza 3+)</b> – niektorí zákazníci chcú zbraň s konkrétnym gemom (napr. „Meč s Rubínom“). Na konci kovania osaď <b>presne ten gem</b>: ťukni/klikni, keď je nad objímkou, a drž kov horúci. Správne = platba ×1,6, reputácia a šanca na unikátnu trofej. Zlý alebo prasknutý gem = zákazník zbraň odmietne. Gemy získaš ako odmenu z iných objednávok alebo kúpiš v Dielni (obmedzený sklad).<br><span class="muted">Po každom údere svetlá bliknú zeleno/červeno a text ukáže, čo nevyšlo (napr. „Príliš skoro“, „Mimo stredu“, „Studený kov“). Perfektné údery za sebou = combo a viac mincí.</span>',
   g_ok: 'Rozumiem! <span class="kbd">Enter</span>', g_hint: 'Návod otvoríš kedykoľvek klávesom <span class="kbd">H</span>',
   c_q: "Naozaj?", c_yes: "Áno", c_no: "Nie", rot: "Otoč telefón na výšku",
   hud_phase: "Fáza {n}: {name}", toast_tut: "Návod sa spustí pri ďalšej objednávke", reset_q: "Naozaj vymazať celý postup?", reset_done: "Postup vymazaný",
@@ -404,11 +407,11 @@ sk: {
   b_cold: "STUDENÝ", b_work: "PRACOVNÝ", b_gold: "★ ZLATÝ ★", b_hot: "PREHRIATY",
   r_angry: "Zákazník odchádza naštvaný", r_refuse: "💎 Zákazník odmieta: {w}", r_payGem: "Platba (gem ×{m})", r_pay: "Platba", r_under: "Nesplnené minimum (časť platby)", r_tip: "Sprepitné za kvalitu",
   r_gemOk: "💎 {i} {g} osadený presne podľa želania", r_chainDone: "🏅 Misia „{n}“ splnená!", r_chainStep: "Misia „{n}“", r_step: "krok {a}/{b}", r_unique: "🏆 Unikátna trofej", r_rewGem: "Odmena: gem",
-  r_repLv: "Reputácia {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputácia: {f}", r_gambler: "🎲 Hazardér doplatí za test na bambuse", r_testIt: "otestuj!", r_xp: "Skúsenosti", r_perf: "Perfektné údery",
-  r_newTroph: "🏆 Nová trofej v Sieni!", r_canUnlock: "⚒ V Dielni môžeš odomknúť Fázu {n} – {name}!", r_total: "Spolu máš", r_bamboo: "Test na bambuse: {c}/{n} prerezané", r_gamblerPay: "🎲 Hazardér platí za {c} rezy",
-  bm_wpow: "Sila zbrane", bm_power: "Sila {p} {op} Tvrdosť {h}  (rýchlosť ×{s})", bm_clean: "ČISTÝ REZ!", bm_div: "BOŽSKÝ REZ!", bm_leg: "LEGENDÁRNY REZ!", bm_stuck: "ZASEKLO SA!",
-  bm_pole: "Tyč {i}/{n}: {name}", bm_hard: "Tvrdosť: {h}", bm_yours: "Tvoja sila: {d}  (×0,6 – ×1,3 podľa rýchlosti)", bm_swing: "Švihni rýchlo cez tyč!", bm_weak: "Na túto tyč je zbraň asi slabá…",
-  bm_cut: "✔ prerezaná", bm_stuckL: "✖ zaseknutá", bm_hint_pc: "Podrž tlačidlo myši a rýchlo švihni naprieč tyčou · Enter = preskočiť · {s} s", bm_hint_m: "Rýchlo švihni prstom naprieč tyčou · {s} s",
+  r_repLv: "Reputácia {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputácia: {f}", r_gambler: "🎲 Hazardér doplatí za ovocný test", r_testIt: "otestuj!", r_xp: "Skúsenosti", r_perf: "Perfektné údery",
+  r_newTroph: "🏆 Nová trofej v Sieni!", r_canUnlock: "⚒ V Dielni môžeš odomknúť Fázu {n} – {name}!", r_total: "Spolu máš", r_fruit: "Ovocný test: {c} ovocí · {p} bodov", r_gamblerPay: "🎲 Hazardér platí za {c} ovocí",
+  ft_wpow: "Sila zbrane", ft_blade: "čepeľ", ft_time: "Čas", ft_score: "Body", ft_combo: "COMBO x{n}!", ft_end: "KONIEC ČASU!", ft_go: "SEKAJ OVOCIE!",
+  ft_hint_pc: "Podrž ľavé tlačidlo myši a švihaj cez ovocie · Enter = preskočiť", ft_hint_m: "Švihaj prstom (aj viacerými) cez ovocie",
+  ft_names: { apple: "Jablko", orange: "Pomaranč", watermelon: "Melón", pineapple: "Ananás", banana: "Banán", pear: "Hruška", cherry: "Čerešne", lemon: "Citrón", plum: "Slivka" },
   sc_reward: "Odmena", sc_min: "Minimálna kvalita", sc_gem: "Požadovaný gem", sc_tap: "ťukni pre začatie kovania", sc_title: "Zákazka", sc_ico: "Zákazka (Q)", sc_from: "Zákazník",
  },
  data: {
@@ -425,11 +428,10 @@ sk: {
   king: ["Kráľ Svätopluk", "Kráľovská objednávka – len BOŽSKÁ zbraň!"],
   chal: { leg: "Ukovaj 2 legendárne", perf: "Daj 10 perfektných úderov", orders: "Splň 3 objednávky", combo: "Dosiahni combo x4", good: "Ukovaj 3× aspoň Kvalitnú", noburn: "4 objednávky bez zhorenia", tip: "Získaj 2× sprepitné", rare: "Splň vzácnu objednávku", trait: "Splň 2 objednávky so špeciálnou vlastnosťou" },
   traits: { urgent: ["Súrne", "rýchlejší krúžok, platí o 40 % viac"], picky: ["Náročný", "vyššia minimálna kvalita, dvojnásobné sprepitné"], generous: ["Štedrý", "bez rizika – zaplatí skoro všetko"],
-    gambler: ["Hazardér", "platí málo, ale +45 % za každú prerezanú tyč bambusu"], material: ["Vlastný kov", "vzácny kov – zhorí rýchlejšie, platí o 80 % viac"], regular: ["Stály zákazník", "dvojnásobná reputácia"] },
+    gambler: ["Hazardér", "platí málo, ale +45 % za každých 5 rozseknutých ovocí"], material: ["Vlastný kov", "vzácny kov – zhorí rýchlejšie, platí o 80 % viac"], regular: ["Stály zákazník", "dvojnásobná reputácia"] },
   events: [["Drak v okolí!", "Treba silnú zbraň proti drakovi"], ["Turnaj v meste", "Šampión chce zbraň na turnaj"], ["Obliehanie hradu", "Posádka potrebuje zbrane hneď"], ["Krvavý mesiac", "Beštie vychádzajú z lesov"]],
   factions: { 1: "Dedinčania", 2: "Žoldnieri", 3: "Mesto", 4: "Kráľ" },
   zones: { base: "Základňa", edge: "Ostrie", hilt: "Rukoväť", mid: "Stred", tip: "Špička", core: "Mýtické Jadro" },
-  poles: ["Tenký zelený bambus", "Hrubý bambus", "Suchý tvrdý bambus", "Čierny železný bambus", "Kamenný bambus", "Dračí bambus"],
   gems: { rubin: ["Rubín", "Rubínom", "ohnivý kameň odvahy"], zafir: ["Zafír", "Zafírom", "kameň pokoja a múdrosti"], smaragd: ["Smaragd", "Smaragdom", "kameň života a ochrany"] },
   stories: {
     rubin: ["Syn ide prvý raz do boja – rubín mu má dodať odvahy.", "Rubín červený ako krv draka, ktorého chce premôcť.", "Rubín na pamiatku padlého brata."],
@@ -440,22 +442,22 @@ sk: {
   shop: {
     hammer: ["Ťažké Kováčske Kladivo", "+35 % sila úderu, údery menej chladia kov."], bellows: ["Kožený Mech", "Silnejšie fúkanie – kov sa ohrieva rýchlejšie."],
     anvil: ["Dvojzónová Kovadlina", "Odomkne Fázu 2 a kovanie mečov (treba 220 XP)."], oil: ["Sud s Kaleným Olejom", "Širšie zlaté pásmo teploty."],
-    brus: ["Brus", "+15 % sila pri teste na bambuse za úroveň."], vyhna: ["Lepšia Vyhňa", "Kov chladne o 15 % pomalšie za úroveň."], presne: ["Presné Kladivo", "Väčší krúžok perfektného stredu."],
+    brus: ["Brus", "+15 % sila zbrane (širšia čepeľ a viac bodov v ovocnom teste) za úroveň."], vyhna: ["Lepšia Vyhňa", "Kov chladne o 15 % pomalšie za úroveň."], presne: ["Presné Kladivo", "Väčší krúžok perfektného stredu."],
     mech2: ["Majstrovský Mech", "Jemné ohrievanie pri zlatom pásme, +0,5 s kým kov zhorí."], stit: ["Kováčsky Štít (Reputácia)", "+10 % platby a častejšie vzácne objednávky za úroveň."],
     ingoty: ["Oceľové Ingoty", "+20 % základná sila zbraní za úroveň."], cech: ["Majstrovský List Cechu", "Odomkne Fázu 3 – Majster Mesta (treba 900 XP)."],
     kvyhna: ["Kamenná Vyhňa", "Kov chladne o ďalších 10 % pomalšie za úroveň."], lupa: ["Zlatnícka Lupa", "O 50 % ľahšie osadenie gemu."], runove: ["Runové Kladivo", "Zelená zóna krúžku o 20 % širšia za úroveň."],
-    pecat: ["Cechová Pečať", "+12 % platba za všetky objednávky."], damask: ["Damascénska Oceľ", "+25 % sila pri teste na bambuse za úroveň."], erb: ["Kráľovský Erb", "Odomkne Fázu 4 – Kráľovstvo (treba 2500 XP)."],
+    pecat: ["Cechová Pečať", "+12 % platba za všetky objednávky."], damask: ["Damascénska Oceľ", "+25 % sila zbrane (širšia čepeľ a viac bodov v ovocnom teste) za úroveň."], erb: ["Kráľovský Erb", "Odomkne Fázu 4 – Kráľovstvo (treba 2500 XP)."],
     drakmech: ["Dračí Mech", "Fúka o 25 % silnejšie, +0,5 s kým kov zhorí."], hviezdna: ["Hviezdna Kovadlina", "Mýtické Jadro sa hýbe o 35 % pomalšie."], priazen: ["Kráľovská Priazeň", "+15 % platba a častejšie vzácne objednávky."],
-    iskra: ["Božská Iskra", "Ešte väčší krúžok perfektného stredu."], mytbrus: ["Mýtický Brus", "+40 % sila pri teste na bambuse."] },
+    iskra: ["Božská Iskra", "Ešte väčší krúžok perfektného stredu."], mytbrus: ["Mýtický Brus", "+40 % sila zbrane (širšia čepeľ a viac bodov v ovocnom teste)."] },
  } },
 en: {
  ui: {
   langName: "English",
   m_play: "⚒ FORGE", m_shop: "🏚 Workshop", m_troph: "🏆 Hall of Trophies", m_guide: '❓ How to strike PERFECTLY <span class="kbd">H</span>', m_set: "⚙ Settings",
-  m_keys: '<span class="kbd">SPACE</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / right mouse = bellows (hold) · <span class="kbd">MOUSE</span> = hammer (click the target) · <span class="kbd">Q</span> order · <span class="kbd">Enter</span> continue · <span class="kbd">P</span>/<span class="kbd">Esc</span> pause',
-  o_title: "Customers Await", o_keys: 'Keys <span class="kbd">1</span>–<span class="kbd">4</span> or <span class="kbd">Enter</span> = accept · <span class="kbd">R</span> = other customers', o_chal: "Daily Challenges", back: "← Back",
+  m_keys: '<span class="kbd">SPACE</span> / <span class="kbd">F</span> / <span class="kbd">Shift</span> / right mouse = bellows (hold) · <span class="kbd">MOUSE</span> = hammer (click the target) · <span class="kbd">Enter</span> continue · <span class="kbd">P</span>/<span class="kbd">Esc</span> pause',
+  o_title: "Choose Your Commission", o_keys: 'Keys <span class="kbd">1</span>–<span class="kbd">4</span> or <span class="kbd">Enter</span> = accept · <span class="kbd">R</span> = other customers', o_chal: "Daily Challenges", back: "← Back",
   mech_ind: "<b>🔥 BELLOWS</b><small>space · F · Shift · right mouse button</small>", mech_btn: "🔥 BELLOWS", focus: "🖱 Click the game so the spacebar works",
-  r_title: "Result", r_next: "Next order", r_test: '🎋 Test the weapon on bamboo <span class="kbd">T</span>', r_menu: "Menu",
+  r_title: "Result", r_next: "Next order", r_test: '🍉 Fruit test the weapon <span class="kbd">T</span>', r_menu: "Menu",
   e_title: "DIVINE SMITH<small>King Svätopluk thanks you</small>",
   e_text: 'You forged the <b class="q4">Divine</b> Blade of Stars for the King. Your name will shine in the chronicles of the realm forever.<br><span class="muted">The game continues in endless mode – keep forging, collect divine weapons and trophies.</span>',
   e_cont: "⚒ Continue – endless mode", b_skip: "Skip ⏎", b_skip_m: "Skip ▶",
@@ -463,7 +465,7 @@ en: {
   set_title: "Settings", set_tut: "Replay tutorial", set_resetInfo: "Erases all progress, coins, upgrades and trophies.", set_reset: "🗑 Reset progress", set_lang: "Language / Jazyk",
   p_title: "Paused", p_resume: "▶ Resume", p_guide: "❓ How to strike PERFECTLY (H)", p_keys: "P / Esc = resume · Q = order", p_quit: "Abandon order",
   g_title: "How to Strike PERFECTLY",
-  g_body: 'A strike is <b class="q2">PERFECT</b> only when <b class="q1">all 3 lights</b> glow:<br>① <b>Heat</b> – the thermometer needle sits in the <b class="q2">GOLDEN band</b> (hold/release <span class="kbd">SPACE</span> / the BELLOWS button).<br>② <b>Center</b> – click/tap <b>inside the dashed yellow ring</b> at the heart of the target.<br>③ <b>Timing</b> – strike when the shrinking white ring is <b class="q1">inside the GREEN band</b>.<br>✉ <b>The order</b> – when forging begins, the customer steps in and breaks open a sealed letter showing the weapon, gem, quality and reward. The letter then folds into a wax seal beside the anvil – tap it (or press <span class="kbd">Q</span>) to read it again; forging pauses meanwhile.<br>💎 <b>Gems (Phase 3+)</b> – some customers want a weapon set with a specific gem (e.g. “Sword with a Ruby”). At the end of forging, set <b>exactly that gem</b>: tap/click when it is above the socket and keep the metal hot. Correct = pay ×1.6, reputation and a chance at a unique trophy. A wrong or cracked gem = the customer rejects the weapon. Gems are earned as rewards from other orders or bought in the Workshop (limited stock).<br><span class="muted">After each strike the lights flash green/red and a note tells you what went wrong (e.g. “Too early”, “Off center”, “Cold metal”). Perfect strikes in a row = combo and more coins.</span>',
+  g_body: 'A strike is <b class="q2">PERFECT</b> only when <b class="q1">all 3 lights</b> glow:<br>① <b>Heat</b> – the thermometer needle sits in the <b class="q2">GOLDEN band</b> (hold/release <span class="kbd">SPACE</span> / the BELLOWS button).<br>② <b>Center</b> – click/tap <b>inside the dashed yellow ring</b> at the heart of the target.<br>③ <b>Timing</b> – strike when the shrinking white ring is <b class="q1">inside the GREEN band</b>.<br>✉ <b>The order</b> – before forging you pick the commission you want on the orders screen (customer, weapon, gem, quality stars, reward). Nothing interrupts you while forging.<br>💎 <b>Gems (Phase 3+)</b> – some customers want a weapon set with a specific gem (e.g. “Sword with a Ruby”). At the end of forging, set <b>exactly that gem</b>: tap/click when it is above the socket and keep the metal hot. Correct = pay ×1.6, reputation and a chance at a unique trophy. A wrong or cracked gem = the customer rejects the weapon. Gems are earned as rewards from other orders or bought in the Workshop (limited stock).<br><span class="muted">After each strike the lights flash green/red and a note tells you what went wrong (e.g. “Too early”, “Off center”, “Cold metal”). Perfect strikes in a row = combo and more coins.</span>',
   g_ok: 'Got it! <span class="kbd">Enter</span>', g_hint: 'Open this guide anytime with <span class="kbd">H</span>',
   c_q: "Are you sure?", c_yes: "Yes", c_no: "No", rot: "Turn your phone upright",
   hud_phase: "Phase {n}: {name}", toast_tut: "The tutorial will play on your next order", reset_q: "Really erase all progress?", reset_done: "Progress erased",
@@ -496,11 +498,11 @@ en: {
   b_cold: "COLD", b_work: "WORKING", b_gold: "★ GOLDEN ★", b_hot: "OVERHEATED",
   r_angry: "The customer storms off", r_refuse: "💎 Customer refuses: {w}", r_payGem: "Payment (gem ×{m})", r_pay: "Payment", r_under: "Minimum not met (partial pay)", r_tip: "Tip for quality",
   r_gemOk: "💎 {i} {g} set exactly as requested", r_chainDone: "🏅 Quest “{n}” complete!", r_chainStep: "Quest “{n}”", r_step: "step {a}/{b}", r_unique: "🏆 Unique trophy", r_rewGem: "Reward: gem",
-  r_repLv: "Reputation {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputation: {f}", r_gambler: "🎲 The gambler pays extra for the bamboo test", r_testIt: "test it!", r_xp: "Experience", r_perf: "Perfect strikes",
-  r_newTroph: "🏆 New trophy in the Hall!", r_canUnlock: "⚒ You can unlock Phase {n} – {name} in the Workshop!", r_total: "You now have", r_bamboo: "Bamboo test: {c}/{n} cut", r_gamblerPay: "🎲 The gambler pays for {c} cuts",
-  bm_wpow: "Weapon power", bm_power: "Power {p} {op} Hardness {h}  (speed ×{s})", bm_clean: "CLEAN CUT!", bm_div: "DIVINE CUT!", bm_leg: "LEGENDARY CUT!", bm_stuck: "STUCK!",
-  bm_pole: "Pole {i}/{n}: {name}", bm_hard: "Hardness: {h}", bm_yours: "Your power: {d}  (×0.6 – ×1.3 by speed)", bm_swing: "Slash fast across the pole!", bm_weak: "Your weapon may be too weak for this pole…",
-  bm_cut: "✔ cut", bm_stuckL: "✖ stuck", bm_hint_pc: "Hold the mouse button and slash fast across the pole · Enter = skip · {s} s", bm_hint_m: "Slash your finger fast across the pole · {s} s",
+  r_repLv: "Reputation {f} Lv {l}", r_combo: "Combo bonus x{m}", r_rep: "Reputation: {f}", r_gambler: "🎲 The gambler pays extra for the fruit test", r_testIt: "test it!", r_xp: "Experience", r_perf: "Perfect strikes",
+  r_newTroph: "🏆 New trophy in the Hall!", r_canUnlock: "⚒ You can unlock Phase {n} – {name} in the Workshop!", r_total: "You now have", r_fruit: "Fruit test: {c} fruit · {p} points", r_gamblerPay: "🎲 The gambler pays for {c} fruit",
+  ft_wpow: "Weapon power", ft_blade: "blade", ft_time: "Time", ft_score: "Score", ft_combo: "COMBO x{n}!", ft_end: "TIME'S UP!", ft_go: "SLICE THE FRUIT!",
+  ft_hint_pc: "Hold the left mouse button and swipe through the fruit · Enter = skip", ft_hint_m: "Swipe your finger (or several) through the fruit",
+  ft_names: { apple: "Apple", orange: "Orange", watermelon: "Watermelon", pineapple: "Pineapple", banana: "Banana", pear: "Pear", cherry: "Cherries", lemon: "Lemon", plum: "Plum" },
   sc_reward: "Reward", sc_min: "Minimum quality", sc_gem: "Required gem", sc_tap: "tap to begin forging", sc_title: "Commission", sc_ico: "Order (Q)", sc_from: "Customer",
  },
  data: {
@@ -517,11 +519,10 @@ en: {
   king: ["King Svätopluk", "A royal commission – DIVINE weapons only!"],
   chal: { leg: "Forge 2 legendary weapons", perf: "Land 10 perfect strikes", orders: "Complete 3 orders", combo: "Reach a x4 combo", good: "Forge 3× at least Fine", noburn: "4 orders without burning", tip: "Earn a tip 2×", rare: "Complete a rare order", trait: "Complete 2 orders with a special trait" },
   traits: { urgent: ["Urgent", "faster ring, pays 40 % more"], picky: ["Picky", "higher minimum quality, double tip"], generous: ["Generous", "no risk – pays almost everything"],
-    gambler: ["Gambler", "pays little, but +45 % for every bamboo pole you cut"], material: ["Own Metal", "precious metal – burns faster, pays 80 % more"], regular: ["Regular", "double reputation"] },
+    gambler: ["Gambler", "pays little, but +45 % for every 5 fruit you slice"], material: ["Own Metal", "precious metal – burns faster, pays 80 % more"], regular: ["Regular", "double reputation"] },
   events: [["A dragon nearby!", "A mighty weapon is needed against the dragon"], ["Tournament in town", "The champion wants a weapon for the joust"], ["Castle under siege", "The garrison needs weapons now"], ["Blood Moon", "Beasts are pouring out of the forests"]],
   factions: { 1: "Villagers", 2: "Mercenaries", 3: "City", 4: "King" },
   zones: { base: "Base", edge: "Edge", hilt: "Hilt", mid: "Middle", tip: "Tip", core: "Mythic Core" },
-  poles: ["Thin green bamboo", "Thick bamboo", "Dry hard bamboo", "Black iron bamboo", "Stone bamboo", "Dragon bamboo"],
   gems: { rubin: ["Ruby", "a Ruby", "fiery stone of courage"], zafir: ["Sapphire", "a Sapphire", "stone of calm and wisdom"], smaragd: ["Emerald", "an Emerald", "stone of life and protection"] },
   stories: {
     rubin: ["My son rides to his first battle – a ruby shall lend him courage.", "A ruby red as the blood of the dragon he means to slay.", "A ruby in memory of a fallen brother."],
@@ -532,13 +533,13 @@ en: {
   shop: {
     hammer: ["Heavy Smith's Hammer", "+35 % strike power, strikes cool the metal less."], bellows: ["Leather Bellows", "Stronger blast – the metal heats faster."],
     anvil: ["Two-Zone Anvil", "Unlocks Phase 2 and sword forging (needs 220 XP)."], oil: ["Barrel of Quenching Oil", "Wider golden heat band."],
-    brus: ["Whetstone", "+15 % power on the bamboo test per level."], vyhna: ["Better Forge", "Metal cools 15 % slower per level."], presne: ["Precision Hammer", "Larger perfect-center ring."],
+    brus: ["Whetstone", "+15 % power (wider blade and more points in the fruit test) per level."], vyhna: ["Better Forge", "Metal cools 15 % slower per level."], presne: ["Precision Hammer", "Larger perfect-center ring."],
     mech2: ["Master Bellows", "Gentle heating near the golden band, +0.5 s before the metal burns."], stit: ["Smith's Shield (Reputation)", "+10 % pay and more rare orders per level."],
     ingoty: ["Steel Ingots", "+20 % base weapon power per level."], cech: ["Guild Master's Charter", "Unlocks Phase 3 – Master of the City (needs 900 XP)."],
     kvyhna: ["Stone Forge", "Metal cools another 10 % slower per level."], lupa: ["Jeweller's Loupe", "Gem setting 50 % easier."], runove: ["Rune Hammer", "Green ring zone 20 % wider per level."],
-    pecat: ["Guild Seal", "+12 % pay on all orders."], damask: ["Damascus Steel", "+25 % power on the bamboo test per level."], erb: ["Royal Coat of Arms", "Unlocks Phase 4 – the Kingdom (needs 2500 XP)."],
+    pecat: ["Guild Seal", "+12 % pay on all orders."], damask: ["Damascus Steel", "+25 % power (wider blade and more points in the fruit test) per level."], erb: ["Royal Coat of Arms", "Unlocks Phase 4 – the Kingdom (needs 2500 XP)."],
     drakmech: ["Dragon Bellows", "Blows 25 % harder, +0.5 s before the metal burns."], hviezdna: ["Star Anvil", "The Mythic Core moves 35 % slower."], priazen: ["Royal Favour", "+15 % pay and more rare orders."],
-    iskra: ["Divine Spark", "An even larger perfect-center ring."], mytbrus: ["Mythic Whetstone", "+40 % power on the bamboo test."] },
+    iskra: ["Divine Spark", "An even larger perfect-center ring."], mytbrus: ["Mythic Whetstone", "+40 % power (wider blade and more points in the fruit test)."] },
  } },
 };
 function langDefault() {
@@ -633,6 +634,7 @@ const CONFIG = {
   unlockPhase: { 3: { coins: 1500, xp: 900 }, 4: { coins: 4000, xp: 2500 } },
   zones: { 1: [["", 5]], 2: [["base", 3], ["edge", 3]], 3: [["hilt", 2], ["mid", 2], ["tip", 2]],
            4: [["hilt", 2], ["mid", 2], ["edge", 2], ["core", 1]] },   // keys -> I18N data.zones
+  moving: { amp: 90, speed: 1.7 },   // Fáza 3: jeden terč, Fáza 4: všetky terče sa plynulo hýbu po čepeli (amp = polovica dráhy, speed rad/s)
   core: { amp: 150, speed: 1.8, ringMult: 1.3 },  // pohyblivý terč Mýtického Jadra
   gems: {
     types: { rubin: { icon: "🔴", col: "#ff2a48", price: 220, name: "", ins: "", desc: "" },
@@ -682,17 +684,12 @@ const CONFIG = {
   up2: { brusDmg: 0.15, vyhnaCool: 0.15, presneCenter: 0.08, mech2NearGold: 6, mech2PumpMult: 0.55, mech2BurnBonus: 0.5,
          stitPay: 0.10, stitRare: 0.05, ingotyDmg: 0.20 },
   futurePhases: [],
-  bamboo: {
+  weapon: {
     weaponDmg: { tesak: 10, sekera: 14, mec: 22, dyka: 16, halapartna: 26, dlhymec: 28, gardovy: 34, bojsekera: 38, kopija: 32, rapir: 30, kralmec: 55, drakobijca: 62, jurkopija: 52, cepel: 70 },
     qualityMult: [1, 1.5, 2.5, 0, 4],   // Obyčajná, Kvalitná, Legendárna, (zhorená), Božská
     hammerBonus: 1.15,           // Ťažké kladivo
-    poles: [["", 10, "#5fae3a"], ["", 20, "#3f8a2a"], ["", 35, "#b8a35a"], ["", 60, "#2a2a30"], ["", 100, "#8a8a92"], ["", 160, "#a02818"]],
-    startPole: { 1: 0, 2: 1, 3: 2, 4: 3 },   // fáza 2 začína od hrubého
-    speedRef: 1600,              // px/s (logických) pre faktor 1.0
-    speedMin: 0.6, speedMax: 1.3,
-    bonusPerCut: 0.05, slowmo: 0.8, slowFactor: 0.3,   // spomalenie pri legendárnej/božskej           // +5 % z platby za každý prerezaný
-    maxTime: 20,                 // s
   },
+  fruit: { time: 10, spawnMin: 0.42, spawnMax: 0.8, bonusPerFruit: 0.012, maxBonus: 0.35, comboWin: 0.45, gamblerPer: 5 },  // ovocný test: 10 s; +1,2 % platby za každé ovocie (max 35 %)
   order: { show: 2.0 },   // order letter: seconds it stays open before folding into the wax seal
   hitsPhase1: 5, zonesPhase2: [["base", 3], ["edge", 3]],
   challengeReward: [40, 70],
@@ -751,7 +748,6 @@ function applyData() {
   for (const k in CONFIG.traits) { CONFIG.traits[k].name = d.traits[k][0]; CONFIG.traits[k].desc = d.traits[k][1]; }
   CONFIG.events.forEach((e, i) => { e.name = d.events[i][0]; e.desc = d.events[i][1]; });
   for (const f in CONFIG.factions) CONFIG.factions[f] = d.factions[f];
-  CONFIG.bamboo.poles.forEach((p, i) => p[0] = d.poles[i]);
   for (const ph in CONFIG.chains) { const ch = CONFIG.chains[ph]; ch.name = d.chains[ph][0]; ch.steps.forEach((st, i) => { st.cust = d.chains[ph][1][i][0]; st.story = d.chains[ph][1][i][1]; }); }
 }
 function itemName(id) { return DD().items[id] || id; }
@@ -781,7 +777,7 @@ function applyLang() {
     e.querySelectorAll("[data-lang]").forEach(b => b.onclick = ev => { ev.stopPropagation(); setLang(b.dataset.lang, true); SFX.click(); }); });
   if (S && S.orders) S.orders.forEach(locOrder);
   if (typeof updMobTexts === "function") updMobTexts();
-  if (typeof cur !== "undefined" && document.getElementById(cur) && cur !== "forge" && cur !== "bamboo" && cur !== "result") show(cur);
+  if (typeof cur !== "undefined" && document.getElementById(cur) && cur !== "forge" && cur !== "fruit" && cur !== "result") show(cur);
 }
 
 /* ===================== ULOŽENIE ===================== */
@@ -877,6 +873,8 @@ const SFX = {
   sizzle() { noise(0.9, 0.12, 4000, "highpass", 0, 0.04); },
   coin() { [0, 0.06, 0.13].forEach(d => { const f = rv(2500, 3400); tone(f, 0.22, "sine", 0.035, d, 0, 0.002); tone(f * 1.47, 0.14, "sine", 0.015, d, 0, 0.002); }); },
   slice() { noise(0.18, 0.28, 5000, "highpass", 0, 0.01); tone(2200, 0.22, "sine", 0.05, 0, -1500, 0.01); },
+  squish() { noise(0.12, 0.22, 700, "lowpass", 0, 0.004); tone(320, 0.08, "sine", 0.06, 0.01, -180, 0.003); },
+  toss() { noise(0.16, 0.05, 900, "bandpass", 0, 0.03); },
   thunk() { tone(105, 0.35, "sine", 0.25, 0, -45, 0.003); noise(0.15, 0.25, 500, "lowpass", 0, 0.002); tone(230, 0.1, "sine", 0.05, 0, -60, 0.003); },
   whoosh() { noise(0.4, 0.14, 700, "lowpass", 0, 0.03); noise(0.25, 0.05, 2200, "bandpass", 0.05, 0.03); },
   steam() { noise(0.7, 0.1, 6000, "highpass", 0, 0.05); noise(0.4, 0.06, 3000, "bandpass", 0.1, 0.05); },
@@ -896,7 +894,7 @@ const $ = id => document.getElementById(id);
 let clickGuard = 0;
 document.addEventListener("click", e => { if (performance.now() < clickGuard) { e.stopPropagation(); e.preventDefault(); } }, true);
 function show(id) { if (id !== "forge") { const po = document.getElementById("pauseOv"); if (po) po.classList.remove("on"); const so = document.getElementById("oi"); if (so) { so.className = ""; $("oiCatch").className = ""; $("sealBadge").className = "hide"; } $("forge").classList.remove("scrolling"); if (F) { (F.oiT || []).forEach(clearTimeout); F.scroll = null; } }
-  if ((cur === "forge" || cur === "bamboo") && id !== cur) clickGuard = performance.now() + 700;
+  if ((cur === "forge" || cur === "fruit") && id !== cur) clickGuard = performance.now() + 700;
   document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
   cur = id; $("app").className = "env" + (F ? F.phase : S.phase);
   if (id === "menu") renderMenu(); if (id === "orders") renderOrders(); if (id === "shop") renderShop();
@@ -941,7 +939,7 @@ function drawBelBtn() { const c = $("belCv"), x = c.getContext("2d"); x.setTrans
   if (on) { x.strokeStyle = "rgba(230,235,255,.35)"; x.lineWidth = 3; x.lineCap = "round"; for (let i = 0; i < 3; i++) { const t = ((F.t * 3 + i / 3) % 1); x.beginPath(); x.moveTo(205 + t * 70, 60 - t * 45 + i * 8); x.lineTo(225 + t * 70, 47 - t * 45 + i * 8); x.stroke(); } }
 }
 function updMobTexts() {
-  const sk = $("bBSkip"); if (sk) sk.textContent = MOB ? TR("b_skip_m") : TR("b_skip");
+  const sk = $("bFSkip"); if (sk) sk.textContent = MOB ? TR("b_skip_m") : TR("b_skip");
 } bind("bResume", () => pause(false));
 bind("bQuit", () => { $("pauseOv").classList.remove("on"); F.paused = false; finishForge(true); });
 
@@ -1023,14 +1021,18 @@ function renderOrders() {
   $("repBar").innerHTML = Object.entries(CONFIG.factions).map(([f, n]) => `<span title="${TR("rep_pts", { n: S.rep[f] })}">${n}: Lv ${repLevel(f)}${repLevel(f) ? ` (+${Math.round(repLevel(f) * CONFIG.rep.payPerLevel * 100)} %)` : ""}</span>`).join("");
   $("ordList").innerHTML = S.orders.map((o, i) => `
    <div class="panel card ${o.rare ? "rare" : ""} ${o.trait === "event" ? "evcard" : ""}">
-    <div class="row"><div class="icon">${o.ico}</div><div class="grow">
-     <div class="name">${i + 1}. ${o.cust}</div><div>${traitTags(o)}</div>
+    <div class="ordtop"><canvas class="opor" data-p="${i}" width="120" height="150"></canvas><div class="grow">
+     <div class="name">${i + 1}. ${o.ico} ${o.cust}</div><div>${traitTags(o)}</div>
      <div>${TR("o_wants")}: <b>${o.name}</b></div>
-     <div class="muted">${TR("o_min")}: <b class="q${o.minQ}">${QN[o.minQ]}</b> · ${TR("o_pays")}: <b>🪙 ${o.pay}</b></div>
      ${traitDesc(o) ? `<div class="muted" style="font-style:italic">${traitDesc(o)}</div>` : ""}
-    </div></div>${gemCardHtml(o)}
+    </div></div><canvas class="ordwep" data-w="${i}" width="440" height="110"></canvas>
+    <div class="ordinfo">${o.gemReq ? `<div><div class="oi-big"><span class="oi-gemi" style="--gc:${CONFIG.gems.types[o.gemReq].col}">${CONFIG.gems.types[o.gemReq].icon}</span></div><small>${CONFIG.gems.types[o.gemReq].name}</small></div>` : ""}
+     <div><div class="oi-big oi-stars${o.minQ === 4 ? " div" : ""}">${"★".repeat(o.minQ === 4 ? 3 : o.minQ + 1)}<span class="off">${"★".repeat(3 - (o.minQ === 4 ? 3 : o.minQ + 1))}</span></div><small>${TR("o_min")}: <b class="q${o.minQ}">${QN[o.minQ]}</b></small></div>
+     <div><div class="oi-big">🪙 ${o.pay}</div><small>${TR("sc_reward")}</small></div></div>${gemCardHtml(o)}
     <button class="btn gold" data-o="${i}" style="min-height:48px" ${o.gemReq && !S.gems[o.gemReq] ? "disabled" : ""}>${o.gemReq && !S.gems[o.gemReq] ? TR("o_missing", { g: gemFull(o.gemReq) }) : TR("o_accept")}</button>
    </div>`).join("");
+  $("ordList").querySelectorAll("canvas[data-p]").forEach(c => { try { paintPortrait(c, S.orders[+c.dataset.p]); } catch (e) { console.error(e); } });
+  $("ordList").querySelectorAll("canvas[data-w]").forEach(c => paintWep(c, S.orders[+c.dataset.w]));
   $("ordList").querySelectorAll("[data-o]").forEach(b => b.onclick = () => { audioInit(); SFX.click(); startForge(+b.dataset.o); });
   const rc = CONFIG.refreshCost[S.phase]; $("bRefresh").textContent = TR("o_refresh", { c: rc }); $("bRefresh").disabled = S.coins < rc;
   renderChal();
@@ -1062,7 +1064,7 @@ function perfC() { return CONFIG.hammer.perfectCenter - (MOB ? CONFIG.mobile.cen
 function gTol() { return CONFIG.hammer.greenTol * (1 + lvl("runove") * CONFIG.up3.runoveGreen) * (MOB ? CONFIG.mobile.greenMult : 1); }
 function payBonusAll() { return (1 + lvl("stit") * CONFIG.up2.stitPay) * (1 + lvl("pecat") * CONFIG.up3.pecatPay) * (1 + lvl("priazen") * CONFIG.up4.priazenPay); }
 function weaponDmg(item, q) {
-  const B = CONFIG.bamboo; let d = (B.weaponDmg[item] || 15) * B.qualityMult[q];
+  const B = CONFIG.weapon; let d = (B.weaponDmg[item] || 15) * B.qualityMult[q];
   if (lvl("hammer")) d *= B.hammerBonus;
   d *= 1 + lvl("brus") * CONFIG.up2.brusDmg; d *= 1 + lvl("ingoty") * CONFIG.up2.ingotyDmg;
   d *= 1 + lvl("damask") * CONFIG.up3.damaskDmg; d *= 1 + lvl("mytbrus") * CONFIG.up4.mytbrusDmg;
@@ -1508,11 +1510,10 @@ function resize() {
   if (MOB) { BSC = Math.min(RH / 720 * 0.9, RW / 520); } else BSC = Math.min(RW / 1280, RH / 720);
   BOX = (RW - 1280 * BSC) / 2; BOY = (RH - 720 * BSC) / 2;
   if (typeof updMobTexts === "function") updMobTexts();
-  cv.width = RW * DPR; cv.height = RH * DPR; if (typeof bcv !== "undefined") { bcv.width = RW * DPR; bcv.height = RH * DPR; }
+  cv.width = RW * DPR; cv.height = RH * DPR; if (typeof fcv !== "undefined") { fcv.width = RW * DPR; fcv.height = RH * DPR; }
   const e = $("embers"); e.width = RW; e.height = RH;
 }
-const bcv = document.getElementById("bcv"), bctx = bcv.getContext("2d");
-function toWorldB(e) { const r = bcv.getBoundingClientRect(); return [(e.clientX - r.left - BOX) / BSC, (e.clientY - r.top - BOY) / BSC]; }
+const fcv = document.getElementById("fcv"), fctx = fcv.getContext("2d");
 function toWorld(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - OX) / SC, (e.clientY - r.top - OY) / SC]; }
 window.addEventListener("resize", resize);
 
@@ -1575,10 +1576,11 @@ function startForge(idx) {
     waves: [], steam: [], embers: [], puffs: [], belSq: 0, hitStop: 0, wasPumping: false, corePerfect: false, gem: null, gemSet: null,
     hot: 0, bellows: new Set(), combo: 0, maxCombo: 0, perfects: 0, legPts: 0, popups: [], sparks: [], shake: 0, done: false, paused: false,
     t: 0, lastBand: "cold", warnT: 0, tut: !S.tutDone ? 0 : -1, tutT: 0, goldHold: 0, flash: 0, hammerAnim: 0 };
+  F.moverIdx = o.phase === 3 ? Math.floor(Math.random() * seq.length) : -1;
   if (S.buffs.zafir) { S.buffs.zafir = 0; save(); }
   $("fPhase").textContent = TR("f_phase", { n: o.phase, env: PH[o.phase].env });
   $("fcard").innerHTML = `<span style="font-size:22px">${o.ico}</span><div class="grow"><b>${o.cust}</b>${traitTags(o)}${F.coolMult < 1 ? `<span class="tag">🔵 ${gemName("zafir")}</span>` : ""}<br>${o.name} · min. <span class="q${o.minQ}">${QN[o.minQ]}</span> · 🪙${o.pay}</div>`;
-  show("forge"); focusGame(); scrollOpen(true);
+  show("forge"); focusGame();
   if (F.tut === 0) tutMsg(MTk("tut0") + TR("tut0_b"));
   else tutMsg("");
   updFHud();
@@ -1655,12 +1657,16 @@ function orderFill(o) {
   $("oiStars").className = "oi-big oi-stars" + (o.minQ === 4 ? " div" : ""); $("oiStars").innerHTML = "★".repeat(on) + `<span class="off">${"★".repeat(3 - on)}</span>`;
   $("oiMinL").textContent = QN[o.minQ]; $("oiCoins").textContent = "🪙 " + o.pay; $("oiRewL").textContent = TR("sc_reward");
   const st = o.gemReq ? o.story : traitDesc(o); $("oiStory").textContent = st ? "„" + st + "“" : ""; $("oiTap").textContent = TR("sc_tap");
-  const c = $("oiWep"), x = c.getContext("2d"); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.width, c.height);
+  paintWep($("oiWep"), o);
+}
+function paintWep(c, o) {
+  const x = c.getContext("2d"); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.width, c.height);
   x.save(); x.translate(232, 62); x.rotate(-0.05); const ks = /axe|spear/.test(o.shape) ? 1.3 : 1.55; x.scale(ks, ks);
   try { drawWeapon(x, o.shape, 0, 0, 120 * 1.5, 46, o.minQ === 4 ? 4 : Math.max(1, o.minQ), null, itemPhase(o.item), o.item, { gem: o.gemReq }); } catch (e) { console.error(e); }
   x.restore();
 }
 function scrollOpen(auto) {
+  return; // order letter during forging removed – orders are chosen beforehand
   if (!F || F.done || F.scroll) return;
   if (F.paused && !$("pauseOv").classList.contains("on")) return;   // e.g. guide open
   F.scroll = "open"; F.paused = true; F.bellows.clear(); $("pauseOv").classList.remove("on");
@@ -1716,7 +1722,10 @@ function spawnTarget() {
   const core = s.zone === "core";
   const fx = core ? 0.6 : zr[0] + Math.random() * (zr[1] - zr[0]);
   const [x, y] = bp(g, g.bladeX - g.bladeL / 2 + g.bladeL * fx, g.bladeY + (core ? 0 : (Math.random() - 0.5) * 30));
-  F.target = { x, y, baseX: x, baseY: y, vert: !!g.vert, core, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
+  const mv = !core && (F.phase === 4 || (F.phase === 3 && F.idx === F.moverIdx));
+  let mvA = 0, mvB = 0;
+  if (mv) { const a = g.bladeX - g.bladeL / 2 + g.bladeL * 0.1, b = g.bladeX - g.bladeL / 2 + g.bladeL * 0.9; mvA = Math.max(a, Math.min(b, g.bladeX - g.bladeL / 2 + g.bladeL * fx - CONFIG.moving.amp)); mvB = Math.min(b, mvA + 2 * CONFIG.moving.amp); }
+  F.target = { x, y, baseX: x, baseY: y, vert: !!g.vert, core, move: mv, mvA, mvB, mvPh: Math.random() * 6.28, r: CONFIG.hammer.targetR * (MOB ? CONFIG.mobile.targetMult : 1), life: 0, delay: F.first ? CONFIG.hammer.firstGrace : 0 };
   if (core) { F.popups.push({ x: VW / 2 + 60, y: MOB ? 380 : 235, txt: TR("pop_core"), col: "#9fe0ff", life: 2, small: true }); }
   F.first = false;
 }
@@ -1757,10 +1766,9 @@ function kbd(e) {
   if ($("confirmOv").classList.contains("on")) { if (k === "Escape") $("confirmOv").classList.remove("on"); return; }
   if ($("guideOv").classList.contains("on") && k !== "h" && k !== "H" && k !== "Enter" && k !== "Escape") return;
   if (cur === "forge" && F && !F.done && F.scroll) { if (["q", "Q", "Enter", "Escape", "p", "P"].includes(k)) { e.preventDefault(); scrollClose(); } return; }
-  if ((k === "q" || k === "Q") && cur === "forge" && F && !F.done && !$("guideOv").classList.contains("on")) { e.preventDefault(); scrollToggle(); return; }
   if ((k === "p" || k === "P" || k === "Escape") && !$("guideOv").classList.contains("on")) {
     if (cur === "forge" && F && !F.done) { e.preventDefault(); pause(!F.paused); return; }
-    if (k === "Escape" && cur === "bamboo") { endBamboo(); return; }
+    if (k === "Escape" && cur === "fruit") { endFruit(); return; }
     if (k === "Escape" && cur !== "menu" && cur !== "forge") { show("menu"); return; }
   }
   if (k === "h" || k === "H") { e.preventDefault(); if ($("guideOv").classList.contains("on")) guideClose(); else if (!(F && F.paused && !F.guidePaused && $("pauseOv").classList.contains("on"))) guideOpen(); else { $("pauseOv").classList.remove("on"); F.paused = false; guideOpen(() => pause(true)); } return; }
@@ -1772,14 +1780,14 @@ function kbd(e) {
     else if (cur === "ending") show("orders");
     else if (cur === "menu") show("orders");
     else if (cur === "result") show("orders");
-    else if (cur === "bamboo") endBamboo();
+    else if (cur === "fruit") endFruit();
     else if (cur === "orders") startForge(0);
     else if (cur === "shop") show("orders");
   }
   if (cur === "forge" && F && F.gem && F.gem.stage === "pick" && ["0", "1", "2", "3"].includes(k)) { gemPick(k === "0" ? "none" : Object.keys(CONFIG.gems.types)[+k - 1]); return; }
   if (cur === "orders" && ["1", "2", "3", "4"].includes(k)) startForge(+k - 1);
   if (cur === "orders" && (k === "r" || k === "R")) refreshOrders();
-  if (cur === "result" && (k === "t" || k === "T")) startBamboo();
+  if (cur === "result" && (k === "t" || k === "T")) startFruit();
 }
 [window, document].forEach(t => { t.addEventListener("keydown", kbd, { capture: true }); t.addEventListener("keyup", kbd, { capture: true }); });
 window.addEventListener("blur", () => { HELD.keys.clear(); HELD.rmb = false; });
@@ -1971,6 +1979,7 @@ function update(dt) {
     if (!F.target) { F.wait -= dt; if (F.wait <= 0 && F.idx < F.seq.length) spawnTarget(); }
     else {
       F.target.life += dt;
+      if (F.target.move) { const T = F.target, g = geo(), u = 0.5 - 0.5 * Math.cos(T.mvPh + F.t * CONFIG.moving.speed), along = T.mvA + (T.mvB - T.mvA) * u, p = bp(g, along, g.bladeY); T.x = p[0]; T.y = p[1]; }
       if (F.target.core) F.target[F.target.vert ? "y" : "x"] = F.target[F.target.vert ? "baseY" : "baseX"] + Math.sin(F.t * CONFIG.core.speed * (1 - lvl("hviezdna") * CONFIG.up4.hviezdnaSlow)) * CONFIG.core.amp;
       if (F.target.life - F.target.delay > ringT(F.target)) registerHit(0, 0, F.target.x, F.target.y, true, false, 0);
     }
@@ -2147,7 +2156,7 @@ function loop(now) {
     $("mechInd").classList.toggle("on", bellowsOn() && !F.paused); $("mechBtn").classList.toggle("on", bellowsOn() && !F.paused); if (MOB) drawBelBtn();
     $("focusOv").style.display = (!MOB && !TOUCH && !document.hasFocus() && !F.paused && !F.done) ? "block" : "none";
   }
-  if (cur === "bamboo" && BT && !BT.ended) { try { updateBamboo(dt); if (BT) drawBamboo(); } catch (err) { console.error(err); } }
+  if (cur === "fruit" && FT && !FT.ended) { try { updateFruit(dt); if (FT) drawFruitTest(); } catch (err) { console.error(err); } }
   if (cur === "forge" && F && !F.paused) { try { update(dt); draw(); } catch (err) { console.error(err); } }
   else if (cur === "forge" && F && F.scroll) { try { draw(); } catch (err) { console.error(err); } }
   else if (AC) stopLoops();
@@ -2289,146 +2298,168 @@ function drawEnding(dt) {
   for (let i = 0; i < 18; i++) { x.rotate(Math.PI * 2 / 18); const gr = x.createLinearGradient(0, 0, 400, 0); gr.addColorStop(0, "rgba(255,240,190,.5)"); gr.addColorStop(1, "rgba(160,200,255,0)"); x.fillStyle = gr; x.beginPath(); x.moveTo(0, 0); x.lineTo(400, -30); x.lineTo(400, 30); x.fill(); }
   x.restore(); x.save(); x.translate(W / 2 + 20, H / 2); x.rotate(-0.25 + Math.sin(endT) * 0.03); drawWeapon(x, "sword", 0, 0, 360, 80, 4, null, 4, "cepel", { t: endT }); x.restore();
 }
-/* ===================== TEST NA BAMBUSE ===================== */
-let RES = null, BT = null;
+let RES = null, FT = null;
 function renderResBox() {
   $("resBox").innerHTML = RES.extra + RES.lines.map(l => `<div class="res-line"><span>${l[0]}</span><b>${l[1]}</b></div>`).join("") +
     `<div class="res-line" style="border:0"><span>${TR("r_total")}</span><b>🪙 ${S.coins} · ✦ ${S.xp}</b></div>`;
 }
-function startBamboo() {
+/* ===================== FRUIT TEST (ovocný test zbrane) ===================== */
+const FRUITS = {
+  apple:      { r: 34, sk: ["#ff6a5a", "#b8161a"], fl: "#fff1c8", ju: "#ffe7a0", rim: "#c81c1c" },
+  orange:     { r: 34, sk: ["#ffc050", "#e06800"], fl: "#ffa62a", ju: "#ffa020", rim: "#f08a10" },
+  watermelon: { r: 50, sk: ["#6ccc52", "#1d6418"], fl: "#ff3a4c", ju: "#ff2a40", rim: "#e9ffd8" },
+  pineapple:  { r: 40, sk: ["#f0c048", "#9a5e10"], fl: "#ffe468", ju: "#fff070", rim: "#d8a030" },
+  banana:     { r: 38, sk: ["#fff070", "#d6aa18"], fl: "#fff8dc", ju: "#fff6c0", rim: "#e8c030" },
+  pear:       { r: 34, sk: ["#e2ee70", "#7c9c20"], fl: "#fbf6d6", ju: "#f4f4c0", rim: "#a0b830" },
+  cherry:     { r: 24, sk: ["#ff4058", "#6a0010"], fl: "#a8101e", ju: "#c0102a", rim: "#80081a" },
+  lemon:      { r: 30, sk: ["#fff460", "#d8b800"], fl: "#fff6a0", ju: "#fff890", rim: "#f0d820" },
+  plum:       { r: 28, sk: ["#b070e0", "#3a0a5a"], fl: "#f0c040", ju: "#d0a030", rim: "#5a1a7a" },
+};
+const FRUIT_KEYS = Object.keys(FRUITS);
+function fruitPath(x, k, r) {
+  x.beginPath();
+  if (k === "watermelon") x.ellipse(0, 0, r * 1.18, r * 0.92, 0, 0, 7);
+  else if (k === "pineapple") x.ellipse(0, 0, r * 0.78, r, 0, 0, 7);
+  else if (k === "lemon") { x.ellipse(0, 0, r * 1.2, r * 0.9, 0, 0, 7); }
+  else if (k === "pear") { x.arc(0, r * 0.25, r * 0.85, 0, 7); x.moveTo(r * 0.55, -r * 0.45); x.arc(0, -r * 0.45, r * 0.55, 0, 7); }
+  else if (k === "banana") { x.arc(0, -r * 0.9, r * 1.5, 0.22 * Math.PI, 0.78 * Math.PI); x.arc(0, -r * 1.55, r * 1.55, 0.74 * Math.PI, 0.26 * Math.PI, true); x.closePath(); }
+  else if (k === "cherry") { x.arc(-r * 0.5, r * 0.25, r * 0.62, 0, 7); x.moveTo(r * 1.12, r * 0.15); x.arc(r * 0.5, r * 0.15, r * 0.62, 0, 7); }
+  else x.arc(0, 0, r, 0, 7);
+}
+function drawFruitWhole(x, k, r) {
+  const f = FRUITS[k];
+  if (k === "cherry") { x.strokeStyle = "#4a7a1a"; x.lineWidth = 3; x.beginPath(); x.moveTo(-r * 0.5, -r * 0.3); x.quadraticCurveTo(-r * 0.2, -r * 1.3, r * 0.2, -r * 1.4); x.moveTo(r * 0.5, -r * 0.4); x.quadraticCurveTo(r * 0.4, -r * 1.1, r * 0.2, -r * 1.4); x.stroke(); }
+  if (k === "pineapple") { x.fillStyle = "#3a9a2a"; for (let i = -2; i <= 2; i++) { x.beginPath(); x.moveTo(-r * 0.25 + i * r * 0.1, -r * 0.85); x.lineTo(i * r * 0.28, -r * 1.75 + Math.abs(i) * r * 0.25); x.lineTo(r * 0.25 + i * r * 0.1, -r * 0.85); x.fill(); } }
+  const g = x.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r * 1.25); g.addColorStop(0, f.sk[0]); g.addColorStop(1, f.sk[1]);
+  fruitPath(x, k, r); x.fillStyle = g; x.fill();
+  x.save(); fruitPath(x, k, r); x.clip();
+  if (k === "watermelon") { x.strokeStyle = "rgba(10,60,10,.75)"; x.lineWidth = r * 0.16; for (let i = -3; i <= 3; i++) { x.beginPath(); x.ellipse(i * r * 0.38, 0, r * 0.12, r, 0, 0, 7); x.stroke(); } }
+  if (k === "pineapple") { x.strokeStyle = "rgba(90,50,0,.6)"; x.lineWidth = 2; for (let i = -6; i <= 6; i++) { x.beginPath(); x.moveTo(i * r * 0.3 - r, -r); x.lineTo(i * r * 0.3 + r, r); x.moveTo(i * r * 0.3 + r, -r); x.lineTo(i * r * 0.3 - r, r); x.stroke(); } }
+  if (k === "orange" || k === "lemon") { x.fillStyle = "rgba(255,255,255,.15)"; for (let i = 0; i < 26; i++) { const a = i * 2.4, d = (i % 7) / 7 * r; x.fillRect(Math.cos(a) * d, Math.sin(a) * d, 2, 2); } }
+  if (k === "banana") { x.strokeStyle = "rgba(120,80,0,.5)"; x.lineWidth = 2; x.beginPath(); x.arc(0, -r * 1.2, r * 1.5, 0.3 * Math.PI, 0.7 * Math.PI); x.stroke(); }
+  x.restore();
+  x.fillStyle = "rgba(255,255,255,.35)"; x.beginPath(); x.ellipse(-r * 0.35, -r * 0.4, r * 0.22, r * 0.12, -0.6, 0, 7); x.fill();
+  if (k === "apple" || k === "pear" || k === "plum") { const ty = k === "pear" ? -r * 0.95 : -r * 0.9; x.strokeStyle = "#5a3210"; x.lineWidth = 4; x.lineCap = "round"; x.beginPath(); x.moveTo(0, ty + 6); x.lineTo(r * 0.08, ty - r * 0.35); x.stroke();
+    if (k !== "plum") { x.fillStyle = "#4aa82a"; x.beginPath(); x.ellipse(r * 0.3, ty - r * 0.2, r * 0.28, r * 0.12, -0.5, 0, 7); x.fill(); } }
+  if (k === "banana") { x.fillStyle = "#5a3a10"; x.fillRect(-r * 1.35, -r * 0.2, 6, 6); x.fillRect(r * 1.3, -r * 0.25, 6, 6); }
+}
+function drawFruitHalf(x, k, r, side) {   // cut face of one half (clipped by caller to its half-plane)
+  const f = FRUITS[k];
+  fruitPath(x, k, r); x.fillStyle = f.rim; x.fill();
+  x.save(); x.scale(0.86, 0.86); fruitPath(x, k, r); x.restore(); x.fillStyle = f.fl; x.fill();
+  if (k === "watermelon") { x.save(); x.scale(0.78, 0.78); fruitPath(x, k, r); x.restore(); x.fillStyle = "#ff3a4c"; x.fill(); x.fillStyle = "#1a0a0a"; for (let i = 0; i < 9; i++) { x.beginPath(); x.ellipse(Math.cos(i * 2.1) * r * 0.55, Math.sin(i * 2.1) * r * 0.45, 3, 5, i, 0, 7); x.fill(); } }
+  if (k === "orange" || k === "lemon") { x.strokeStyle = "rgba(255,255,255,.55)"; x.lineWidth = 1.5; for (let i = 0; i < 8; i++) { x.beginPath(); x.moveTo(0, 0); x.lineTo(Math.cos(i * 0.785) * r * 0.8, Math.sin(i * 0.785) * r * 0.7); x.stroke(); } }
+  if (k === "apple" || k === "pear") { x.fillStyle = "#4a2a0a"; for (let i = 0; i < 4; i++) { x.beginPath(); x.ellipse(Math.cos(i * 1.57) * r * 0.18, Math.sin(i * 1.57) * r * 0.18, 2.5, 4.5, i * 1.57, 0, 7); x.fill(); } }
+  if (k === "pineapple") { x.fillStyle = "#f0c840"; x.beginPath(); x.arc(0, 0, r * 0.22, 0, 7); x.fill(); }
+  if (k === "plum") { x.fillStyle = "#8a5a20"; x.beginPath(); x.ellipse(0, 0, r * 0.3, r * 0.42, 0, 0, 7); x.fill(); }
+}
+function fruitU() { return Math.max(0.8, Math.min(RW, RH) / 420); }  // scale for CSS-px world
+function startFruit() {
   if (!RES || RES.tested || RES.q === 3) return;
   RES.tested = true; $("bTest").style.display = "none";
-  const B = CONFIG.bamboo, st = B.startPole[RES.o.phase] || 0;
-  BT = { dmg: weaponDmg(RES.o.item, RES.q), poles: B.poles.slice(st, st + 3), i: 0, state: "wait", t: 0, timer: 0, cuts: 0,
-    trail: [], down: false, pieces: [], parts: [], shake: 0, msg: null, stuck: null, results: [] };
-  resize(); show("bamboo"); focusGame();
-  $("bHud").innerHTML = `${RES.o.name} · <span class="q${RES.q}">${QN[RES.q]}</span> · ${TR("bm_wpow")}: <b>${BT.dmg}</b>`;
+  resize();
+  const dmg = weaponDmg(RES.o.item, RES.q), rk = rank(RES.q);
+  FT = { dmg, timer: 0, spawn: 0.35, fruits: [], halves: [], drops: [], stains: [], trails: new Map(), score: 0, sliced: 0, combo: 0, maxCombo: 0, lastSlice: -9, msg: { t: TR("ft_go"), col: "#ffe08a", l: 1.2 }, ended: false, over: 0,
+    bladeW: 7 + Math.min(16, dmg / 5) + rk * 2, trailMs: 110 + Math.min(150, dmg * 2) + rk * 25, pts: 10 + Math.min(20, Math.round(dmg / 6)), hitBonus: rk * 4 };
+  show("fruit"); focusGame();
+  $("frHud").innerHTML = `${RES.o.name} · <span class="q${RES.q}">${QN[RES.q]}</span> · ${TR("ft_wpow")}: <b>${dmg}</b>`;
 }
-function endBamboo() {
-  if (!BT || BT.ended) return; BT.ended = true;
-  const B = CONFIG.bamboo, bonus = Math.round(Math.max(RES.payBase, RES.o.pay) * B.bonusPerCut * BT.cuts);
-  S.coins += bonus; S.stats.earned += bonus; S.stats.bambooCuts = (S.stats.bambooCuts || 0) + BT.cuts; save();
-  RES.lines.splice(RES.lines.length - 2, 0, [TR("r_bamboo", { c: BT.cuts, n: BT.poles.length }), "🪙 +" + bonus]);
-  if (RES.o.trait === "gambler") { const gb = Math.round(RES.o.pay / CONFIG.traits.gambler.pay * CONFIG.traits.gambler.perCut * BT.cuts); S.coins += gb; S.stats.earned += gb; save();
-    RES.lines = RES.lines.filter(l => !l[0].startsWith("🎲")); RES.lines.splice(RES.lines.length - 2, 0, [TR("r_gamblerPay", { c: BT.cuts }), "🪙 +" + gb]); }
+function endFruit() {
+  if (!FT || FT.ended) return; FT.ended = true;
+  const C = CONFIG.fruit, base = Math.max(RES.payBase, RES.o.pay), bonus = Math.round(base * Math.min(C.maxBonus, FT.sliced * C.bonusPerFruit));
+  S.coins += bonus; S.stats.earned += bonus; S.stats.fruitSliced = (S.stats.fruitSliced || 0) + FT.sliced; S.stats.fruitBest = Math.max(S.stats.fruitBest || 0, FT.score); save();
+  RES.lines.splice(RES.lines.length - 2, 0, [TR("r_fruit", { c: FT.sliced, p: FT.score }), "🪙 +" + bonus]);
+  if (RES.o.trait === "gambler") { const n = Math.floor(FT.sliced / C.gamblerPer), gb = Math.round(RES.o.pay / CONFIG.traits.gambler.pay * CONFIG.traits.gambler.perCut * n); S.coins += gb; S.stats.earned += gb; save();
+    RES.lines = RES.lines.filter(l => !l[0].startsWith("🎲")); RES.lines.splice(RES.lines.length - 2, 0, [TR("r_gamblerPay", { c: FT.sliced }), "🪙 +" + gb]); }
+  FT.trails.clear();
   renderResBox(); show("result"); if (bonus) SFX.coin();
-  BT = null;
+  FT = null;
 }
-function bPole() { return BT.poles[BT.i]; }
-const POLE = { x: 640, top: 130, bot: 640 };
-function poleW(h) { return 34 + h * 0.5; }
-function bambooDown(e) { if (!BT || BT.ended) return; e.preventDefault(); audioInit(); BT.down = true; BT.trail = [{ p: toWorldB(e), t: performance.now() }]; }
-function bambooMove(e) {
-  if (!BT || !BT.down || BT.ended) return;
-  const p = toWorldB(e), now = performance.now(), tr = BT.trail, prev = tr[tr.length - 1];
-  tr.push({ p, t: now }); while (tr.length > 14) tr.shift();
-  if (BT.state !== "ready" || !prev) return;
-  const w = poleW(bPole()[1]) / 2, x0 = POLE.x - w, x1 = POLE.x + w;
-  // prešiel ťah cez stred tyče?
-  if ((prev.p[0] - POLE.x) * (p[0] - POLE.x) <= 0 && prev.p[0] !== p[0]) {
-    const k = (POLE.x - prev.p[0]) / (p[0] - prev.p[0]), y = prev.p[1] + (p[1] - prev.p[1]) * k;
-    if (y < POLE.top + 40 || y > POLE.bot - 30) return;
-    let a = tr[0]; for (const q of tr) if (now - q.t <= 90) { a = q; break; }
-    const dtt = Math.max(8, now - a.t), sp = Math.hypot(p[0] - a.p[0], p[1] - a.p[1]) / (dtt / 1000);
-    const B = CONFIG.bamboo, sf = Math.max(B.speedMin, Math.min(B.speedMax, sp / B.speedRef));
-    const slope = Math.max(-0.6, Math.min(0.6, (p[1] - prev.p[1]) / (p[0] - prev.p[0] || 1)));
-    slashPole(y, slope, sf, Math.sign(p[0] - prev.p[0]) || 1);
+function fruitPos(e) { const r = fcv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function fruitDown(e) { if (!FT || FT.ended) return; if (e.pointerType === "mouse" && e.button !== 0) return; e.preventDefault(); audioInit(); const p = fruitPos(e); FT.trails.set(e.pointerId, [{ x: p[0], y: p[1], t: performance.now() }]); }
+function fruitMove(e) {
+  if (!FT || FT.ended) return; const tr = FT.trails.get(e.pointerId); if (!tr) return;
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of (evs.length ? evs : [e])) {
+    const p = fruitPos(ev), now = performance.now(), prev = tr[tr.length - 1];
+    tr.push({ x: p[0], y: p[1], t: now });
+    if (prev && FT.timer < CONFIG.fruit.time) sliceSeg(prev.x, prev.y, p[0], p[1]);
+  }
+  while (tr.length > 40) tr.shift();
+}
+function fruitUp(e) { if (FT) FT.trails.delete(e.pointerId); }
+function sliceSeg(ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy; if (L2 < 4) return;
+  const U = fruitU();
+  for (const f of FT.fruits) {
+    if (f.cut) continue;
+    const t = Math.max(0, Math.min(1, ((f.x - ax) * dx + (f.y - ay) * dy) / L2)), px = ax + dx * t, py = ay + dy * t;
+    if (Math.hypot(f.x - px, f.y - py) <= f.r * U + (FT.bladeW + FT.hitBonus) * U / 2 + 6) cutFruit(f, Math.atan2(dy, dx));
   }
 }
-function bambooUp() { if (BT) BT.down = false; }
-function slashPole(y, slope, sf, dir) {
-  const pole = bPole(), power = Math.round(BT.dmg * sf * 10) / 10, ok = power >= pole[1];
-  BT.state = "after"; BT.t = 0;
-  BT.results.push({ ok, power, h: pole[1] });
-  const msg = TR("bm_power", { p: power, op: ok ? "≥" : "<", h: pole[1], s: sf.toFixed(2) });
-  if (ok) {
-    BT.cuts++;
-    BT.pieces.push({ y, slope, dx: 0, dy: 0, vx: dir * 140, vy: -40, rot: 0, vr: dir * 1.6, col: pole[2], w: poleW(pole[1]) });
-    for (let i = 0; i < 40; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 600, vy: (Math.random() - .8) * 400, l: 0.6 + Math.random() * 0.8, leaf: Math.random() < 0.5, c: pole[2] });
-    BT.msg = { t: TR("bm_clean"), sub: msg, col: "#7dff8c", l: 1.6 };
-    if (rank(RES.q) >= 2) { BT.slow = CONFIG.bamboo.slowmo; BT.msg.t = RES.q === 4 ? TR("bm_div") : TR("bm_leg"); }
-    SFX.slice(); vib([20, 10, 30]); BT.shake = 6;
-  } else {
-    BT.stuck = { y, slope, dir }; BT.shake = 14;
-    for (let i = 0; i < 14; i++) BT.parts.push({ x: POLE.x, y, vx: (Math.random() - .5) * 300, vy: -Math.random() * 300, l: 0.5, leaf: false, c: "#ffb040" });
-    BT.msg = { t: TR("bm_stuck"), sub: msg, col: "#ff6a50", l: 1.6 };
-    SFX.thunk(); vib(80);
-  }
+function cutFruit(f, ang) {
+  f.cut = true; const U = fruitU(), F2 = FRUITS[f.k];
+  const nx = -Math.sin(ang), ny = Math.cos(ang), sp = 140 * U;
+  [-1, 1].forEach(sd => FT.halves.push({ k: f.k, x: f.x, y: f.y, r: f.r, ang, side: sd, vx: f.vx + nx * sd * sp, vy: f.vy + ny * sd * sp - 60 * U, rot: f.rot, vr: f.vr + sd * 3, life: 2.2 }));
+  for (let i = 0; i < 26; i++) { const a = Math.random() * 6.28, v = (80 + Math.random() * 320) * U; FT.drops.push({ x: f.x, y: f.y, vx: Math.cos(a) * v + Math.cos(ang) * 120 * U, vy: Math.sin(a) * v - 80 * U, s: (2 + Math.random() * 4) * U, l: 0.5 + Math.random() * 0.6, c: F2.ju }); }
+  FT.stains.push({ x: f.x, y: f.y, r: f.r * U * (1.2 + Math.random() * 0.5), c: F2.ju, l: 1.6, a: ang });
+  const now = FT.timer; FT.combo = now - FT.lastSlice <= CONFIG.fruit.comboWin ? FT.combo + 1 : 1; FT.lastSlice = now; FT.maxCombo = Math.max(FT.maxCombo, FT.combo);
+  const pts = Math.round(FT.pts * (1 + 0.25 * (FT.combo - 1)));
+  FT.score += pts; FT.sliced++;
+  FT.pops = FT.pops || []; FT.pops.push({ x: f.x, y: f.y - f.r * U, t: "+" + pts, l: 0.9 });
+  if (FT.combo >= 3) FT.msg = { t: TR("ft_combo", { n: FT.combo }), col: "#ffcf40", l: 0.9 };
+  SFX.slice(); SFX.squish(); vib(15);
 }
-function updateBamboo(dt) {
-  if (BT.slow > 0) { BT.slow -= dt; dt *= CONFIG.bamboo.slowFactor; }
-  BT.timer += dt; BT.t += dt;
-  if (BT.state === "wait" && BT.t > 0.5) { BT.state = "ready"; BT.t = 0; }
-  if (BT.state === "after" && BT.t > 1.5) {
-    BT.i++; BT.t = 0; BT.stuck = null; BT.pieces = [];
-    if (BT.i >= BT.poles.length) { BT.state = "end"; setTimeout(endBamboo, 300); } else BT.state = "wait";
-  }
-  if (BT.timer > CONFIG.bamboo.maxTime && BT.state !== "end") { BT.state = "end"; endBamboo(); return; }
-  BT.pieces.forEach(p => { p.vy += 900 * dt; p.dx += p.vx * dt; p.dy += p.vy * dt; p.rot += p.vr * dt; });
-  BT.parts.forEach(p => { p.vy += 700 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.l -= dt; });
-  BT.parts = BT.parts.filter(p => p.l > 0);
-  BT.shake *= Math.pow(0.003, dt); if (BT.msg) { BT.msg.l -= dt; if (BT.msg.l <= 0) BT.msg = null; }
-  const now = performance.now(); BT.trail = BT.trail.filter(q => now - q.t < 160);
+function spawnFruit() {
+  const U = fruitU(), k = FRUIT_KEYS[Math.floor(Math.random() * FRUIT_KEYS.length)], r = FRUITS[k].r;
+  const x0 = RW * (0.15 + Math.random() * 0.7), g = 900 * U, h = RH * (0.5 + Math.random() * 0.32);
+  const vy = -Math.sqrt(2 * g * h), tFlight = 2 * h / -vy * 1, tx = RW * (0.25 + Math.random() * 0.5);
+  FT.fruits.push({ k, r, x: x0, y: RH + r * U, vx: (tx - x0) / Math.max(0.8, tFlight), vy, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 4, g });
+  if (Math.random() < 0.35) SFX.toss();
 }
-function drawPoleSeg(x, w, y0, y1, col) {
-  x.fillStyle = col; x.fillRect(-w / 2, y0, w, y1 - y0);
-  const g = x.createLinearGradient(-w / 2, 0, w / 2, 0); g.addColorStop(0, "rgba(0,0,0,.35)"); g.addColorStop(0.35, "rgba(255,255,255,.25)"); g.addColorStop(1, "rgba(0,0,0,.45)");
-  x.fillStyle = g; x.fillRect(-w / 2, y0, w, y1 - y0);
-  x.fillStyle = "rgba(0,0,0,.35)"; for (let yy = POLE.top + 90; yy < POLE.bot; yy += 110) if (yy > y0 && yy < y1) x.fillRect(-w / 2 - 2, yy, w + 4, 6);
+function updateFruit(dt) {
+  const C = CONFIG.fruit, U = fruitU();
+  FT.timer += dt;
+  if (FT.timer < C.time - 0.6) { FT.spawn -= dt; if (FT.spawn <= 0) { const n = Math.random() < 0.25 ? 2 + Math.floor(Math.random() * 2) : 1; for (let i = 0; i < n; i++) spawnFruit(); FT.spawn = C.spawnMin + Math.random() * (C.spawnMax - C.spawnMin); } }
+  if (FT.timer >= C.time) { if (!FT.over) { FT.over = 1; FT.msg = { t: TR("ft_end"), col: "#ff9a50", l: 1.4 }; SFX.thunk(); FT.trails.clear(); } FT.over += dt; if (FT.over > 1.4) { endFruit(); return; } }
+  FT.fruits.forEach(f => { f.vy += f.g * dt; f.x += f.vx * dt; f.y += f.vy * dt; f.rot += f.vr * dt; });
+  FT.fruits = FT.fruits.filter(f => !f.cut && f.y < RH + 80 * U);
+  FT.halves.forEach(h => { h.vy += 900 * U * dt; h.x += h.vx * dt; h.y += h.vy * dt; h.rot += h.vr * dt; h.life -= dt; });
+  FT.halves = FT.halves.filter(h => h.life > 0 && h.y < RH + 120 * U);
+  FT.drops.forEach(p => { p.vy += 700 * U * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.l -= dt; }); FT.drops = FT.drops.filter(p => p.l > 0);
+  FT.stains.forEach(s => s.l -= dt); FT.stains = FT.stains.filter(s => s.l > 0);
+  (FT.pops || []).forEach(p => { p.l -= dt; p.y -= 50 * dt; }); if (FT.pops) FT.pops = FT.pops.filter(p => p.l > 0);
+  if (FT.msg) { FT.msg.l -= dt; if (FT.msg.l <= 0) FT.msg = null; }
+  if (FT.timer - FT.lastSlice > C.comboWin) FT.combo = 0;
+  const now = performance.now(); FT.trails.forEach(tr => { while (tr.length > 1 && now - tr[0].t > FT.trailMs) tr.shift(); });
 }
-function drawBamboo() {
-  const x = bctx; x.setTransform(DPR, 0, 0, DPR, 0, 0); x.clearRect(0, 0, RW, RH);
-  x.fillStyle = "#0c0705"; x.fillRect(0, 0, RW, RH);
-  x.setTransform(DPR * BSC, 0, 0, DPR * BSC, DPR * BOX, DPR * BOY); x.save();
-  if (BT.shake > 0.3) x.translate((Math.random() - .5) * BT.shake, (Math.random() - .5) * BT.shake);
-  drawEnv(x, RES.o.phase, 1280, 720); x.fillStyle = "rgba(0,0,0,.55)"; x.fillRect(0, 0, 1280, 720);
-  if (BT.slow > 0) { x.fillStyle = `rgba(255,230,150,${BT.slow * 0.15})`; x.fillRect(0, 0, 1280, 720); }
-  x.fillStyle = "#1a0d06"; x.fillRect(0, POLE.bot, 1280, 80); x.fillStyle = "#3a2010"; x.fillRect(POLE.x - 90, POLE.bot - 10, 180, 22);
-  const pole = bPole();
-  if (pole && BT.state !== "end") {
-    const w = poleW(pole[1]);
-    x.save(); x.translate(POLE.x, 0);
-    if (BT.pieces.length) {
-      const pc = BT.pieces[0];
-      // spodok (zostáva)
-      x.save(); x.beginPath(); x.moveTo(-w, pc.y + pc.slope * -w); x.lineTo(w, pc.y + pc.slope * w); x.lineTo(w, POLE.bot); x.lineTo(-w, POLE.bot); x.closePath(); x.clip();
-      drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]); x.restore();
-      // vrch (padá)
-      x.save(); x.translate(pc.dx, pc.dy); x.translate(0, pc.y); x.rotate(pc.rot); x.translate(0, -pc.y);
-      x.beginPath(); x.moveTo(-w, POLE.top - 10); x.lineTo(w, POLE.top - 10); x.lineTo(w, pc.y + pc.slope * w); x.lineTo(-w, pc.y + pc.slope * -w); x.closePath(); x.clip();
-      drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]); x.restore();
-      x.fillStyle = "#f4f0c8"; x.beginPath(); x.ellipse(0, pc.y, w / 2, 5, Math.atan(pc.slope), 0, 7); x.fill();
-    } else drawPoleSeg(x, w, POLE.top, POLE.bot, pole[2]);
-    x.restore();
-    if (BT.stuck) { // zaseknutá čepeľ
-      x.save(); x.translate(POLE.x, BT.stuck.y); x.rotate(Math.atan(BT.stuck.slope) + (BT.stuck.dir < 0 ? Math.PI : 0));
-      drawWeapon(x, RES.o.shape, -170, 0, 300, 50, RES.q, null, itemPhase(RES.o.item), RES.o.item, { t: performance.now() / 1000, gem: RES.gem }); x.restore();
-      x.strokeStyle = "#000"; x.lineWidth = 3; x.beginPath(); x.moveTo(POLE.x - 4, BT.stuck.y - 12); x.lineTo(POLE.x + 6, BT.stuck.y + 14); x.stroke();
-    }
-    // štítok
-    if (MOB) { x.save(); x.translate(-432, 360); x.scale(1.0, 1.0); } x.fillStyle = "rgba(15,6,3,.9)"; x.strokeStyle = "#6a3416"; x.lineWidth = 2; x.fillRect(820, 200, 380, 150); x.strokeRect(820, 200, 380, 150);
-    x.textAlign = "left"; x.fillStyle = "#ffd6a0"; x.font = "bold 24px Georgia"; x.fillText(TR("bm_pole", { i: BT.i + 1, n: BT.poles.length, name: pole[0] }), 836, 236);
-    x.font = "bold 22px Georgia"; x.fillStyle = "#ff9a70"; x.fillText(TR("bm_hard", { h: pole[1] }), 836, 276);
-    x.fillStyle = BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? "#7dff8c" : "#ff6a50";
-    x.fillText(TR("bm_yours", { d: BT.dmg }), 836, 312);
-    x.font = "16px Georgia"; x.fillStyle = "#b88d6c"; x.fillText(BT.dmg * CONFIG.bamboo.speedMax >= pole[1] ? TR("bm_swing") : TR("bm_weak"), 836, 338); if (MOB) x.restore();
-  }
-  // výsledky
-  BT.results.forEach((r, i) => { x.fillStyle = r.ok ? "#7dff8c" : "#ff6a50"; x.font = MOB ? "bold 17px Georgia" : "bold 22px Georgia"; x.textAlign = "left"; x.fillText(`${i + 1}. ${r.ok ? TR("bm_cut") : TR("bm_stuckL")} (${r.power} / ${r.h})`, MOB ? 385 : 70, (MOB ? 190 : 230) + i * (MOB ? 26 : 34)); });
-  // častice
-  BT.parts.forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.fillStyle = p.leaf ? "#6fcf4a" : p.c; if (p.leaf) { x.beginPath(); x.ellipse(p.x, p.y, 7, 3, p.x / 30, 0, 7); x.fill(); } else x.fillRect(p.x, p.y, 4, 4); });
+function drawFruitTest() {
+  const x = fctx, U = fruitU(), C = CONFIG.fruit; x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  drawEnv(x, RES.o.phase, RW, RH); x.fillStyle = "rgba(10,4,2,.62)"; x.fillRect(0, 0, RW, RH);
+  FT.stains.forEach(s => { x.globalAlpha = Math.min(0.5, s.l * 0.4); x.fillStyle = s.c; x.beginPath(); x.ellipse(s.x, s.y, s.r, s.r * 0.6, s.a, 0, 7); x.fill(); }); x.globalAlpha = 1;
+  FT.fruits.forEach(f => { x.save(); x.translate(f.x, f.y); x.rotate(f.rot); x.scale(U, U); drawFruitWhole(x, f.k, f.r); x.restore(); });
+  FT.halves.forEach(h => { x.save(); x.globalAlpha = Math.min(1, h.life * 1.5); x.translate(h.x, h.y); x.rotate(h.rot); x.scale(U, U);
+    x.save(); x.rotate(h.ang); x.beginPath(); x.rect(-h.r * 2.5, h.side > 0 ? 0 : -h.r * 2.5, h.r * 5, h.r * 2.5); x.restore(); x.clip();
+    drawFruitHalf(x, h.k, h.r, h.side); x.restore(); });
+  FT.drops.forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.fillStyle = p.c; x.beginPath(); x.arc(p.x, p.y, p.s, 0, 7); x.fill(); }); x.globalAlpha = 1;
+  // blade trails (wider/longer for better weapons)
+  const glow = rank(RES.q) >= 2 ? (RES.q === 4 ? "#9fdcff" : "#ffd060") : "#ffffff";
+  x.lineCap = "round"; x.lineJoin = "round";
+  FT.trails.forEach(tr => { if (tr.length < 2) return; for (let i = 1; i < tr.length; i++) { const k = i / tr.length; x.strokeStyle = glow; x.globalAlpha = k * 0.9; x.lineWidth = FT.bladeW * U * k + 1; x.beginPath(); x.moveTo(tr[i - 1].x, tr[i - 1].y); x.lineTo(tr[i].x, tr[i].y); x.stroke(); } });
   x.globalAlpha = 1;
-  // stopa švihu
-  const tr = BT.trail; if (tr.length > 1) { x.lineCap = "round"; for (let i = 1; i < tr.length; i++) { x.strokeStyle = `rgba(255,240,200,${i / tr.length})`; x.lineWidth = 2 + i * 0.9; x.beginPath(); x.moveTo(tr[i - 1].p[0], tr[i - 1].p[1]); x.lineTo(tr[i].p[0], tr[i].p[1]); x.stroke(); } }
-  if (BT.msg) { const m = BT.msg; x.globalAlpha = Math.min(1, m.l * 2); x.textAlign = "center"; x.font = MOB ? "bold 44px Georgia" : "bold 56px Georgia"; x.lineWidth = 6; x.strokeStyle = "#200800"; x.strokeText(m.t, 640, 110); x.fillStyle = m.col; x.fillText(m.t, 640, 110);
-    x.font = "bold 22px Georgia"; x.fillStyle = "#ffe6c0"; x.fillText(m.sub, 640, 120 + 40); x.globalAlpha = 1; }
-  x.textAlign = "center"; x.font = "18px Georgia"; x.fillStyle = "#b88d6c";
-  x.fillText(MTk("bm_hint", { s: Math.max(0, Math.ceil(CONFIG.bamboo.maxTime - BT.timer)) }), 640, MOB ? 548 : 30);
-  x.restore();
+  (FT.pops || []).forEach(p => { x.globalAlpha = Math.min(1, p.l * 2); x.font = `bold ${Math.round(20 * U)}px Georgia`; x.textAlign = "center"; x.fillStyle = "#fff0b0"; x.fillText(p.t, p.x, p.y); }); x.globalAlpha = 1;
+  // HUD: timer bar + score + combo
+  const top = 52, left = RW * 0.06, w = RW * 0.88, rem = Math.max(0, C.time - FT.timer);
+  x.fillStyle = "rgba(0,0,0,.6)"; x.fillRect(left, top, w, 12); x.fillStyle = rem < 3 ? "#ff5030" : "#ffb040"; x.fillRect(left, top, w * rem / C.time, 12);
+  x.font = `bold ${Math.round(Math.min(30, 20 * U))}px Georgia`; x.textAlign = "left"; x.fillStyle = "#ffe6c0"; x.fillText(`⏱ ${rem.toFixed(1)} s`, left, top + 44);
+  x.textAlign = "right"; x.fillText(`${TR("ft_score")}: ${FT.score}`, left + w, top + 44);
+  x.textAlign = "center"; x.fillStyle = FT.combo >= 2 ? "#ffcf40" : "#b88d6c"; x.fillText(`🍉 ${FT.sliced}` + (FT.combo >= 2 ? ` · x${FT.combo}` : ""), RW / 2, top + 44);
+  if (FT.msg) { const m = FT.msg; x.globalAlpha = Math.min(1, m.l * 2); x.font = `bold ${Math.round(Math.min(56, 30 * U))}px Georgia`; x.lineWidth = 6; x.strokeStyle = "#200800"; x.strokeText(m.t, RW / 2, RH * 0.32); x.fillStyle = m.col; x.fillText(m.t, RW / 2, RH * 0.32); x.globalAlpha = 1; }
+  x.font = `${Math.round(15 * Math.min(1.3, U))}px Georgia`; x.fillStyle = "#b88d6c"; x.fillText(MTk("ft_hint"), RW / 2, RH - 70);
 }
-bcv.addEventListener("pointerdown", e => { if (e.button === 0 || e.pointerType !== "mouse") bambooDown(e); });
-bcv.addEventListener("pointermove", bambooMove); window.addEventListener("pointerup", bambooUp);
-bind("bTest", startBamboo); bind("bBSkip", endBamboo);
+fcv.addEventListener("pointerdown", fruitDown); fcv.addEventListener("pointermove", fruitMove);
+window.addEventListener("pointerup", fruitUp); window.addEventListener("pointercancel", fruitUp);
+bind("bTest", startFruit); bind("bFSkip", endFruit);
 /* ===================== POZADIE – ŽERAVÉ ISKRY ===================== */
 const embers = [];
 function drawEmbers(dt) {
